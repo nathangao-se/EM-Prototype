@@ -1,0 +1,271 @@
+/* ========================================
+   GOALS SECTION
+   ======================================== */
+.goals {
+  display: flex;
+  gap: 20px;
+  background: #eef7f7;
+  border: 1px solid #e8d4f9;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* Goals Card (Left Side) */
+.goals-card {
+  flex: 1;
+  min-width: 250px;
+  height: 197px; /* alert-card (165px) + category row (28px) + title bump (4px) */
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.goals-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #41494d;
+  line-height: 24px;
+  margin: 0;
+}
+
+.goals-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.goals-metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.goals-metric-value {
+  font-family: 'Figtree', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 40px;
+}
+
+.goals-metric-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+
+.goals-subtitle {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  margin: 0;
+}
+
+.goals-progress {
+  position: relative;
+  width: 100%;
+  height: 12px;
+}
+
+.goals-progress-track {
+  position: absolute;
+  inset: 0;
+  background: #dfe7eb;
+  border-radius: 500px;
+}
+
+.goals-progress-segment {
+  position: absolute;
+  top: 0;
+  height: 12px;
+}
+
+.goals-progress-verified {
+  left: 0;
+  background: #008029;
+  border-radius: 500px 0 0 500px;
+}
+
+.goals-progress-pending {
+  background: #42caff;
+}
+
+.goals-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.goals-card .btn-outline {
+  align-self: flex-start;
+}
+
+/* Goals Alerts (Right Side) */
+.goals-alerts {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.goals-alerts-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #41494d;
+  line-height: 20px;
+}
+
+.goals-alerts-list {
+  display: flex;
+  gap: 16px;
+}
+
+/* ========================================
+   ALERT GROUP (Category Header + Card)
+   ======================================== */
+.alert-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.alert-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 4px;
+}
+
+.alert-group-category {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #41494d;
+}
+
+.alert-group-summary {
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+/* ========================================
+   ALERT CARDS
+   ======================================== */
+.alert-card {
+  width: 282px;
+  height: 165px;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  grid-template-rows: auto auto auto auto 1fr;
+  gap: 4px;
+}
+
+.alert-card-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #41494d;
+  line-height: 20px;
+  margin: 0;
+}
+
+.alert-card-metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.alert-card-icon {
+  font-size: 16px;
+  color: #f59e0b;
+}
+
+.alert-card-value {
+  font-family: 'Figtree', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 32px;
+}
+
+.alert-card-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+
+.alert-card-subtitle {
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  margin: 0;
+}
+
+.alert-card-progress {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  margin-top: 8px;
+}
+
+.alert-card-progress-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #dfe7eb;
+  border-radius: 500px;
+  z-index: 1;
+}
+
+.alert-card-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 8px;
+  width: calc(var(--progress, 0) * 1%);
+  background: #f59e0b;
+  border-radius: 500px;
+  z-index: 2;
+}
+
+/* Alert Card Variants */
+.alert-card--warning .alert-card-icon,
+.alert-card--warning .alert-card-progress-fill {
+  color: #f59e0b;
+  background: #f59e0b;
+}
+
+.alert-card--success .alert-card-icon {
+  color: #008029;
+}
+
+.alert-card--success .alert-card-progress-fill {
+  background: #008029;
+}
+
+.alert-card .btn {
+  align-self: end;
+  justify-self: start;
+}

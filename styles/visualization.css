@@ -1,0 +1,341 @@
+/* ========================================
+   VISUALIZATION COMPONENT
+   Map tags + generic button grid
+   Styles from Figma: Tag, qsb-chip
+   ======================================== */
+
+/* ===== CONTAINER ===== */
+#visualization-container {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+}
+
+.visualization {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== IMAGE-BASED (MAP MODE) ===== */
+.visualization--image {
+  position: relative;
+}
+
+.visualization-image {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.visualization-regions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ===== MAP TAG (positioned hotspot) ===== */
+.viz-tag {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Tag container (pill, default) --- */
+.viz-tag-container {
+  background: #ffffff;
+  border: 2px solid #009edb;
+  border-radius: 2000px;
+  padding: 8px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0px 2px 6px 0px rgba(9, 11, 12, 0.12);
+  transition: all 0.15s ease;
+}
+
+/* --- Tag pin (CSS triangle) --- */
+.viz-tag-pin {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #009edb;
+}
+
+/* --- Hover background circle --- */
+.viz-tag-hover-bg {
+  position: absolute;
+  bottom: -88px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-radius: 5000px;
+  background: #42caff;
+  opacity: 0;
+  transition: all 0.15s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* --- Hover label (hidden by default) --- */
+.viz-tag-label {
+  display: none;
+  font-family: 'Figtree', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #676f73;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: 0.14px;
+  line-height: 1.5;
+}
+
+/* --- HOVER STATE: expand tag --- */
+.viz-tag:hover .viz-tag-container {
+  border-radius: 5000px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 32px;
+  box-shadow: none;
+}
+
+.viz-tag:hover .viz-tag-label {
+  display: block;
+}
+
+.viz-tag:hover .viz-chip--neutral {
+  display: none;
+}
+
+/* Shrink the status chip on hover */
+.viz-tag:hover .viz-chip--blue,
+.viz-tag:hover .viz-chip--warning,
+.viz-tag:hover .viz-chip--danger {
+  height: 32px;
+  padding: 0 16px;
+}
+
+.viz-tag:hover .viz-chip--blue .viz-chip-icon,
+.viz-tag:hover .viz-chip--warning .viz-chip-icon,
+.viz-tag:hover .viz-chip--danger .viz-chip-icon {
+  font-size: 14px;
+}
+
+.viz-tag:hover .viz-chip--blue .viz-chip-text,
+.viz-tag:hover .viz-chip--warning .viz-chip-text,
+.viz-tag:hover .viz-chip--danger .viz-chip-text {
+  font-size: 18px;
+}
+
+.viz-tag:hover .viz-tag-hover-bg {
+  width: 220px;
+  height: 220px;
+  opacity: 0.3;
+}
+
+.viz-tag:active .viz-tag-container {
+  transform: scale(0.97);
+  transition: transform 0.15s ease;
+}
+
+/* ===== QSB CHIP (shared across both modes) ===== */
+.viz-chip {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+/* Chip icon */
+.viz-chip-icon {
+  font-size: 21px;
+  line-height: 1;
+  transition: font-size 0.15s ease;
+}
+
+/* Chip text */
+.viz-chip-text {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: font-size 0.15s ease;
+}
+
+/* Default text visible, hover text hidden */
+.viz-chip-text--hover {
+  display: none;
+}
+
+/* On tag hover: swap text */
+.viz-tag:hover .viz-chip-text--default {
+  display: none;
+}
+
+.viz-tag:hover .viz-chip-text--hover {
+  display: block;
+}
+
+/* --- Neutral chip (left chip on map tags) --- */
+.viz-chip--neutral {
+  background: #ffffff;
+  border: 1px solid #cbd3d6;
+}
+
+.viz-chip--neutral .viz-chip-icon {
+  color: #1d201f;
+}
+
+.viz-chip--neutral .viz-chip-text {
+  font-weight: 300;
+  font-size: 24px;
+  color: #1d201f;
+}
+
+/* --- Blue chip (info/default status) --- */
+.viz-chip--blue {
+  background: #dbf5ff;
+  border: 1px solid #42caff;
+}
+
+.viz-chip--blue .viz-chip-icon {
+  color: #005c80;
+}
+
+.viz-chip--blue .viz-chip-text {
+  color: #005c80;
+}
+
+/* --- Warning chip (orange) --- */
+.viz-chip--warning {
+  background: #a35b00;
+  border: none;
+}
+
+.viz-chip--warning .viz-chip-icon {
+  color: #ffffff;
+}
+
+.viz-chip--warning .viz-chip-text {
+  color: #ffffff;
+}
+
+/* --- Danger chip (red) --- */
+.viz-chip--danger {
+  background: #cc1300;
+  border: none;
+}
+
+.viz-chip--danger .viz-chip-icon {
+  color: #ffffff;
+}
+
+.viz-chip--danger .viz-chip-text {
+  color: #ffffff;
+}
+
+/* --- Danger chip standalone (generic mode: white text) --- */
+.viz-chip--danger-standalone {
+  background: #cc1300;
+  border: none;
+}
+
+.viz-chip--danger-standalone .viz-chip-icon {
+  color: #ffffff;
+}
+
+.viz-chip--danger-standalone .viz-chip-text {
+  color: #ffffff;
+}
+
+/* ===== GENERIC MODE (button grid) ===== */
+.visualization--buttons {
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visualization-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  align-content: center;
+}
+
+/* --- Generic container (label + chip) --- */
+.viz-generic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 4px;
+  padding: 8px 16px 12px;
+  overflow: hidden;
+  
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.viz-generic:hover {
+  border-color: #009edb;
+  box-shadow: 0px 2px 6px 0px rgba(9, 11, 12, 0.12);
+}
+
+.viz-generic:active {
+  transform: scale(0.97);
+}
+
+/* --- Generic label (above chip) --- */
+.viz-generic-label {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #676f73;
+  white-space: nowrap;
+  letter-spacing: 0.18px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* ===== EMPTY STATE ===== */
+.visualization-empty {
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+  padding: 40px 20px;
+}

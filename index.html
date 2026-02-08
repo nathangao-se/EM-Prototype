@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accor x SE Admin</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Component Styles -->
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/header.css">
+  <link rel="stylesheet" href="styles/goals.css">
+  <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="stylesheet" href="styles/visualization.css">
+  <link rel="stylesheet" href="styles/dev-panel.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- ========== HEADER SECTION ========== -->
+    <header class="header">
+      <div class="header-main">
+        <div class="header-logo">
+          <i class="fa-solid fa-leaf" style="font-size: 28px; color: #008029;"></i>
+        </div>
+        <h1 class="header-title">Accor RA+  admin</h1>
+        <nav class="header-actions">
+          <button class="btn btn-outline">
+            <i class="fa-solid fa-database"></i>
+            <span>Libraries/data</span>
+          </button>
+          <button class="btn btn-outline">
+            <i class="fa-regular fa-envelope"></i>
+            <span>org settings</span>
+          </button>
+        </nav>
+      </div>
+      <div class="header-user">
+        <div class="header-notification">
+          <i class="fa-solid fa-bell" style="font-size: 18px; color: #676f73;"></i>
+        </div>
+        <div class="header-avatar">
+          <i class="fa-solid fa-circle-user" style="font-size: 32px; color: #676f73;"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== GOALS SECTION (rendered dynamically from config) ========== -->
+    <section class="goals"></section>
+
+    <!-- ========== DASHBOARD SECTION ========== -->
+    <section class="dashboard">
+      <!-- Dashboard Tabs -->
+      <div class="dashboard-tabs">
+        <button class="dashboard-tab dashboard-tab--active">Navigator</button>
+        <button class="dashboard-tab">Custom view</button>
+      </div>
+      
+      <!-- Dashboard Content (Regular View) -->
+      <div class="dashboard-content">
+        
+        <!-- [SELECTION] Left Section - Selectors -->
+        <div class="dashboard-selection">
+          <!-- Dynamic Control Area (Map/Diagram/Visualization) -->
+          <div class="dashboard-control-card">
+            <div id="visualization-container"></div>
+          </div>
+          
+          <!-- Hierarchy List -->
+          <div class="dashboard-card dashboard-hierarchy-card">
+            <div class="dashboard-card-header">
+              <span class="dashboard-card-title">Hierarchy</span>
+            </div>
+            <div class="dashboard-hierarchy-divider"></div>
+            
+            <!-- Hierarchy Items - World Level (populated by JS) -->
+            <div class="dashboard-hierarchy-items"></div>
+          </div>
+        </div>
+        <!-- /[SELECTION] -->
+        
+        <!-- Vertical Divider -->
+        <div class="dashboard-divider"></div>
+        
+        <!-- [DASH CONTENT] Sites List Card -->
+        <div class="dashboard-card dashboard-detail-nav">
+          <div class="dashboard-card-header dashboard-detail-header">
+            <button class="dashboard-collapse-btn dashboard-collapse-btn-nav" id="collapse-btn-nav">
+              <i class="fa-solid fa-chevron-left"></i>
+              <span>Back</span>
+            </button>
+            <span class="dashboard-card-title">Global Portfolio sites</span>
+            <button class="dashboard-expand-btn">
+              <span>Expand</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+          
+          <div class="dashboard-detail-divider"></div>
+          
+          <!-- Site List (populated by JS on load) -->
+          <div class="dashboard-detail-collapsed"></div>
+        </div>
+        
+        <!-- [DASH CONTENT EXPANDED] Site Detail Card (visible when expanded) -->
+        <div class="dashboard-card dashboard-detail-expanded">
+          <div class="dashboard-card-header dashboard-detail-expanded-header">
+            <span class="dashboard-card-title dashboard-detail-expanded-title">Select a site</span>
+          </div>
+          
+          <div class="dashboard-detail-divider"></div>
+          
+          <div class="dashboard-detail-expanded-content">
+            <p class="dashboard-detail-placeholder">Click a site on the left to view details</p>
+            <table class="dashboard-table" style="display: none;">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Issue</th>
+                  <th>Severity</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /[DASH CONTENT] -->
+        
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ========== DEV PANEL ========== -->
+  <div id="dev-panel" class="dev-panel">
+    <button id="dev-panel-toggle" class="dev-panel-toggle">☰ Dev</button>
+    <div class="dev-panel-content">
+      <div class="dev-panel-section">
+        <div class="dev-panel-label">Perspective</div>
+        <div class="dev-panel-options">
+          <button class="dev-panel-option dev-panel-option--active" data-config="global-oversight">Global Admin</button>
+          <button class="dev-panel-option" data-config="site-manager">Site Manager</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (order matters: utils first, then configs, then components, then dev tools) -->
+  <script src="js/utils.js"></script>
+  <script src="js/config-global-oversight.js"></script>
+  <script src="js/config-site-manager.js"></script>
+  <script src="js/goals.js"></script>
+  <script src="js/visualization.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/dev-panel.js"></script>
+</body>
+</html>

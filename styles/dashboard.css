@@ -1,0 +1,592 @@
+/* ========================================
+   DASHBOARD SECTION
+   ======================================== */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+/* Dashboard Tabs */
+.dashboard-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.dashboard-tab {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #a0a8ab;
+  background: transparent;
+  border: none;
+  padding: 4px 8px 8px 8px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  position: relative;
+}
+
+.dashboard-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 8px;
+  right: 8px;
+  height: 3px;
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.15s ease;
+}
+
+.dashboard-tab:hover {
+  color: #676f73;
+}
+
+.dashboard-tab--active {
+  color: #41494d;
+}
+
+.dashboard-tab--active::after {
+  background: #41494d;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  display: flex;
+  gap: 16px;
+  transition: gap 0.3s ease;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Selection Section (Left) */
+.dashboard-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 60%;
+  flex-shrink: 0;
+  min-height: 0;
+  opacity: 1;
+  overflow: hidden;
+  transition: opacity 0.25s ease, width 0.3s ease;
+}
+
+.dashboard-control-card {
+  background: #ffffff;
+  border: 1px solid #cbd3d6;
+  border-radius: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.dashboard-control-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Shared Dashboard Card Structure */
+.dashboard-card {
+  background: #ffffff;
+  border: 1px solid #cbd3d6;
+  border-radius: 16px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.dashboard-card-header {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  gap: 12px;
+}
+
+.dashboard-card-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 24px;
+}
+
+/* Hierarchy Card */
+.dashboard-hierarchy-card {
+  flex: 1 1 0;
+}
+
+.dashboard-hierarchy-items {
+  flex: 1 1 0;
+  overflow-y: auto;
+}
+
+.dashboard-hierarchy-divider {
+  height: 1px;
+  background: #abb3b8;
+}
+
+.dashboard-hierarchy-divider--light {
+  background: #cbd3d6;
+}
+
+.dashboard-hierarchy-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 4px;
+  min-height: 56px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.dashboard-hierarchy-item:hover {
+  background-color: #f5f8fa;
+}
+
+.dashboard-hierarchy-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dashboard-hierarchy-item-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 20px;
+}
+
+.dashboard-hierarchy-item-meta {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.dashboard-hierarchy-item-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-hierarchy-item-numbers {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.dashboard-hierarchy-item-percent {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.dashboard-hierarchy-item-change {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.dashboard-hierarchy-item-change--up {
+  color: #dc2626;
+}
+
+.dashboard-hierarchy-item-change--down {
+  color: #008029;
+}
+
+.dashboard-hierarchy-item--selected {
+  background: #f0f9ff;
+  margin: 0 -4px;
+  padding: 12px 8px;
+  border-radius: 8px;
+}
+
+/* Shared Progress Bar */
+.dashboard-progress-bar {
+  position: relative;
+  width: 192px;
+  height: 12px;
+}
+
+.dashboard-progress-track {
+  position: absolute;
+  inset: 0;
+  background: #dfe7eb;
+  border-radius: 500px;
+}
+
+.dashboard-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 12px;
+  background: #42caff;
+  border-radius: 500px 0 0 500px;
+}
+
+/* Vertical Divider */
+.dashboard-divider {
+  width: 1px;
+  background: #dfe7eb;
+  align-self: stretch;
+  opacity: 1;
+  transition: opacity 0.2s ease, width 0.2s ease;
+}
+
+/* Site List Card Header */
+
+.dashboard-detail-header {
+  justify-content: space-between;
+}
+
+
+.dashboard-expand-btn,
+.dashboard-collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-family: 'Figtree', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #008029;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 24px;
+}
+
+.dashboard-expand-btn:hover,
+.dashboard-collapse-btn:hover {
+  background: rgba(0, 128, 41, 0.08);
+  border-radius: 4px;
+}
+
+.dashboard-expand-btn i,
+.dashboard-collapse-btn i {
+  font-size: 16px;
+}
+
+/* Back button - hidden by default in condensed state */
+.dashboard-collapse-btn-nav {
+  display: none;
+}
+
+.dashboard-header-divider {
+  width: 1px;
+  height: 24px;
+  background: #d5dde0;
+}
+
+.dashboard-detail-divider {
+  height: 1px;
+  background: #abb3b8;
+}
+
+.dashboard-detail-divider--light {
+  background: #cbd3d6;
+}
+
+.dashboard-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 4px;
+  min-height: 56px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.dashboard-detail-item:hover {
+  background-color: #f5f8fa;
+}
+
+.dashboard-detail-item--selected {
+  background-color: #f0f8f4;
+  margin: 0 -4px;
+  padding: 12px 8px !important;
+  border-radius: 8px;
+}
+
+.dashboard-detail-item--selected:hover {
+  background-color: #f0f8f4;
+}
+
+.dashboard-detail-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dashboard-detail-item-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 20px;
+}
+
+.dashboard-detail-item-meta {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.dashboard-detail-item-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-detail-item-numbers {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.dashboard-detail-item-incidents {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.dashboard-detail-item-change {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.dashboard-detail-item-change--up {
+  color: #dc2626;
+}
+
+.dashboard-detail-item-change--down {
+  color: #008029;
+}
+
+.sparkline {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Site list container */
+.dashboard-detail-collapsed {
+  flex: 1 1 0;
+  overflow-y: auto;
+}
+
+/* Dashboard Table */
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+}
+
+.dashboard-table th {
+  text-align: left;
+  padding: 12px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #676f73;
+  border-bottom: 1px solid #abb3b8;
+}
+
+.dashboard-table td {
+  padding: 12px 8px;
+  color: #1d201f;
+  border-bottom: 1px solid #cbd3d6;
+}
+
+.dashboard-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.dashboard-table tbody tr:hover {
+  background-color: #f5f8fa;
+}
+
+.dashboard-table-site {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.dashboard-table-trend {
+  padding: 8px;
+}
+
+.dashboard-table-change--up {
+  color: #dc2626;
+}
+
+.dashboard-table-change--down {
+  color: #008029;
+}
+
+.dashboard-table-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dashboard-table-status--good {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.dashboard-table-status--warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.dashboard-table-status--neutral {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+/* Alert Table Styling */
+.dashboard-table-category {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dashboard-table-category--energy {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.dashboard-table-category--water {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.dashboard-table-category--waste {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.dashboard-table-category--carbon {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.dashboard-table-issue {
+  max-width: 300px;
+}
+
+.dashboard-table-severity {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dashboard-table-severity--high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.dashboard-table-severity--medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.dashboard-table-severity--low {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.dashboard-table-date {
+  color: #676f73;
+  white-space: nowrap;
+}
+
+/* ========================================
+   DASHBOARD EXPANDED STATE
+   ======================================== */
+
+/* Condensed card (sites list) - fills remaining space in condensed state */
+.dashboard-detail-nav {
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  transition: width 0.3s ease, flex 0.3s ease;
+}
+
+/* Expanded card - hidden by default */
+.dashboard-detail-expanded {
+  display: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-detail-placeholder {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  color: #676f73;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.dashboard-content--expanded {
+  gap: 16px;
+  flex: 1;
+}
+
+.dashboard-content--expanded .dashboard-selection {
+  display: none;
+}
+
+.dashboard-content--expanded .dashboard-divider {
+  display: none;
+}
+
+/* Nav card shrinks in expanded state */
+.dashboard-content--expanded .dashboard-detail-nav {
+  width: 380px;
+  flex: none;
+}
+
+.dashboard-content--expanded .dashboard-detail-nav .dashboard-expand-btn {
+  display: none;
+}
+
+.dashboard-content--expanded .dashboard-collapse-btn-nav {
+  display: flex;
+}
+
+/* Expanded card shows in expanded state */
+.dashboard-content--expanded .dashboard-detail-expanded {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-detail-expanded-content {
+  flex: 1;
+  overflow-y: auto;
+}

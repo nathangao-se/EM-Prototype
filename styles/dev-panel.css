@@ -1,0 +1,93 @@
+/* ========================================
+   DEV PANEL - Prototype Controls
+   ======================================== */
+
+.dev-panel {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 9999;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+  font-size: 12px;
+}
+
+.dev-panel-toggle {
+  background: #1e1e1e;
+  color: #a0a0a0;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.dev-panel-toggle:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.dev-panel-content {
+  display: none;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dev-panel--expanded .dev-panel-content {
+  display: block;
+}
+
+.dev-panel-section {
+  margin-bottom: 12px;
+}
+
+.dev-panel-section:last-child {
+  margin-bottom: 0;
+}
+
+.dev-panel-label {
+  color: #888;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.dev-panel-options {
+  display: flex;
+  gap: 4px;
+}
+
+.dev-panel-option {
+  flex: 1;
+  background: #2a2a2a;
+  color: #a0a0a0;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.dev-panel-option:hover {
+  background: #333;
+  color: #fff;
+}
+
+.dev-panel-option--active {
+  background: #0066cc;
+  color: #fff;
+  border-color: #0077ee;
+}
+
+.dev-panel-option--active:hover {
+  background: #0077ee;
+}
