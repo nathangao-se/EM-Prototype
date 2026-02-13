@@ -59,6 +59,7 @@
 
   // Expose globally so goals.js can call it
   window.openCategoryModal = openModal;
+  window.closeCategoryModal = closeModal;
 
   // Close handlers
   closeBtn.addEventListener('click', closeModal);

@@ -100,6 +100,7 @@
         var idx = parseInt(link.dataset.alertIndex, 10);
         var alert = alerts[idx];
         if (alert && alert.modalItems && typeof window.openCategoryModal === 'function') {
+          if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
           window.openCategoryModal(alert.category, alert.modalItems);
         }
       });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accor x SE Admin</title>
+  <title>RA+ Admin</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="styles/visualization.css">
   <link rel="stylesheet" href="styles/modal.css">
   <link rel="stylesheet" href="styles/dev-panel.css">
+  <link rel="stylesheet" href="styles/project-bar.css">
   <link rel="stylesheet" href="styles/wizard.css">
 </head>
 <body>
@@ -32,7 +33,7 @@
         <div class="header-logo">
           <i class="fa-solid fa-leaf" style="font-size: 28px; color: #008029;"></i>
         </div>
-        <h1 class="header-title">Accor RA+  admin</h1>
+        <h1 class="header-title">RA+ Admin</h1>
         <nav class="header-actions">
           <button class="btn btn-outline">
             <i class="fa-solid fa-database"></i>
@@ -56,6 +57,9 @@
 
     <!-- ========== GOALS SECTION (rendered dynamically from config) ========== -->
     <section class="goals"></section>
+
+    <!-- ========== PROJECT STATUS BAR (modular, config-driven) ========== -->
+    <section class="project-bar project-bar--hidden"></section>
 
     <!-- ========== DASHBOARD SECTION ========== -->
     <section class="dashboard">
@@ -191,6 +195,29 @@
     </div>
   </div>
 
+  <!-- ========== CAMPAIGN WIZARD OVERLAY ========== -->
+  <div id="dcc-wizard-overlay" class="wizard-overlay">
+    <div class="wizard dcc-wizard">
+      <div class="wizard-header">
+        <span class="wizard-header-title"></span>
+        <button class="wizard-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="wizard-body"></div>
+      <div class="wizard-footer"></div>
+    </div>
+  </div>
+
+  <!-- ========== RECONCILE SOURCE DATA OVERLAY ========== -->
+  <div id="rec-overlay" class="rec-overlay">
+    <div class="rec-modal">
+      <div class="rec-header">
+        <span class="rec-header-title">Activity mapping</span>
+        <button class="rec-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="rec-body"></div>
+    </div>
+  </div>
+
   <!-- ========== DEV PANEL ========== -->
   <div id="dev-panel" class="dev-panel dev-panel--expanded">
     <button id="dev-panel-toggle" class="dev-panel-toggle">× Dev</button>
@@ -205,8 +232,9 @@
       <div class="dev-panel-section">
         <div class="dev-panel-label">Wizards</div>
         <div class="dev-panel-options">
-          <button class="dev-panel-option" id="dev-open-wizard">Activity Setup</button>
           <button class="dev-panel-option" id="dev-open-inventory-wizard">Create Inventory</button>
+          <button class="dev-panel-option" id="dev-open-campaign-wizard">Data Collection</button>
+          <button class="dev-panel-option" id="dev-open-reconcile">Activity Map</button>
         </div>
       </div>
     </div>
@@ -218,10 +246,13 @@
   <script src="js/config-site-manager.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/goals.js"></script>
+  <script src="js/project-bar.js"></script>
   <script src="js/visualization.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/wizard.js"></script>
   <script src="js/inventory-wizard.js"></script>
+  <script src="js/campaign-wizard.js"></script>
+  <script src="js/reconcile.js"></script>
   <script src="js/dev-panel.js"></script>
 </body>
 </html>

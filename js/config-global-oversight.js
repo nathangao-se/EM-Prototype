@@ -2258,3 +2258,46 @@ CONFIG_GLOBAL_OVERSIGHT.siteDirectory['East China Regional Office'] = {
   change: '0%', changeDir: 'neutral', status: 'good', spark: [0, 0, 0, 1, 0],
   alerts: [{ category: 'Energy', issue: 'Regional energy audit coordination needed', severity: 'low', date: 'Feb 6' }]
 };
+
+// ===== PROJECT STATUS BAR =====
+CONFIG_GLOBAL_OVERSIGHT.projectBar = {
+  title: 'Project: Q2 global audit',
+  cards: [
+    {
+      label: 'File collection and activities',
+      value: '50%',
+      unit: 'Activities normalized',
+      icon: 'fa-solid fa-triangle-exclamation',
+      iconBg: 'warning',
+      subtitle: '5 files uploaded, 45/90 normalized',
+      progress: 50,
+      actions: [
+        { label: 'Add files', icon: 'fa-solid fa-plus' },
+        { label: 'Create campaign', icon: 'fa-solid fa-plus' }
+      ]
+    },
+    {
+      label: 'Emissions calculations',
+      value: '38.64%',
+      unit: 'EF Map rate',
+      subtitle: '84 total emissions, 46 mapped, using 4 methods',
+      progress: 46,
+      actions: [
+        { label: 'Review EF progress', icon: 'fa-solid fa-chart-simple' },
+        { label: 'Calculations', icon: 'fa-solid fa-plus' }
+      ]
+    },
+    {
+      label: 'Inventory and Statements',
+      value: '0',
+      unit: 'Inventories completed',
+      chip: 'Planning',
+      chipIcon: 'fa-regular fa-clock',
+      subtitle: '3 inventories projections waiting',
+      progress: 43,
+      actions: [
+        { label: 'Create inventory projections', icon: 'fa-solid fa-chart-simple' }
+      ]
+    }
+  ]
+};

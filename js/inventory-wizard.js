@@ -17,11 +17,12 @@
   // ===========================================
   // STATE
   // ===========================================
-  var currentStep = 0; // 0-indexed: 0=BasicInfo, 1=Activities, 2=Entities, 3=TrimActivities, 4=Review
+  var currentStep = 0; // 0-indexed: 0=BasicInfo, 1=Entities, 2=Activities, 3=TrimActivities, 4=Review
   var consolidationChoice = 'operational';
   var activitySelections = {};   // { activityId: true/false }
-  var entitySelections = {};     // { entityId: true/false }
+  var entitySelections = {};     // { entityId: true/false } — Screen 3 selections
   var entityExpanded = {};       // { entityId: true/false }
+  var trimEntitySelections = {}; // { entityId: true/false } — Screen 4 entity picks (subset of entitySelections)
   var trimIncluded = {};         // { activityId: true/false } — activities included for selected entities
   var formData = {
     name: '',
@@ -36,8 +37,8 @@
 
   var STEPS = [
     { label: 'Basic info', key: 'basic' },
-    { label: 'Select activities', key: 'activities' },
     { label: 'Add entities', key: 'entities' },
+    { label: 'Select activities', key: 'activities' },
     { label: 'Trim activities', key: 'trim' },
     { label: 'Review', key: 'review' }
   ];
@@ -47,16 +48,32 @@
   // ===========================================
 
   var ACTIVITIES = [
-    { id: 'sc',  name: 'Stationary combustion', scope: 1, entities: 1223, records: 847, calc: 'RA+ Standard v2.1', status: 'ready' },
-    { id: 'mc',  name: 'Mobile combustion',     scope: 1, entities: 1223, records: 847, calc: 'RA+ Standard v2.1', status: 'ready' },
-    { id: 'fe',  name: 'Fugitive emissions',    scope: 2, entities: 1223, records: 847, calc: 'GHG Protocol v3.1', status: 'need' },
-    { id: 'pe',  name: 'Purchased electricity',  scope: 2, entities: 1223, records: 847, calc: 'GHG Protocol v3.1', status: 'need' },
-    { id: 'sh',  name: 'Purchased steam & heat', scope: 2, entities: 890,  records: 612, calc: 'GHG Protocol v3.1', status: 'ready' },
-    { id: 'bt',  name: 'Business travel',        scope: 3, entities: 645,  records: 423, calc: 'RA+ Standard v2.1', status: 'ready' }
+    // Scope 1
+    { id: 'sc',  name: 'Stationary combustion',           scope: 1, entities: 1223, records: 847,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'mc',  name: 'Mobile combustion',                scope: 1, entities: 1223, records: 847,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'fe',  name: 'Fugitive emissions',               scope: 1, entities: 987,  records: 634,  calc: 'GHG Protocol v3.1',  status: 'need' },
+    { id: 'pe2', name: 'Process emissions',                 scope: 1, entities: 412,  records: 283,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    // Scope 2
+    { id: 'pe',  name: 'Purchased electricity',             scope: 2, entities: 1223, records: 847,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'sh',  name: 'Purchased steam & heat',            scope: 2, entities: 890,  records: 612,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'pc',  name: 'Purchased cooling',                 scope: 2, entities: 345,  records: 198,  calc: 'GHG Protocol v3.1',  status: 'need' },
+    // Scope 3
+    { id: 'pgs', name: 'Purchased goods & services',        scope: 3, entities: 1102, records: 4210, calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'cg',  name: 'Capital goods',                     scope: 3, entities: 578,  records: 1340, calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'fera',name: 'Fuel & energy related activities',  scope: 3, entities: 1041, records: 892,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'ut',  name: 'Upstream transportation',           scope: 3, entities: 764,  records: 2105, calc: 'RA+ Standard v2.1',  status: 'need' },
+    { id: 'wg',  name: 'Waste generated in operations',     scope: 3, entities: 923,  records: 1570, calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'bt',  name: 'Business travel',                   scope: 3, entities: 645,  records: 423,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'ec',  name: 'Employee commuting',                scope: 3, entities: 645,  records: 389,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'dt',  name: 'Downstream transportation',         scope: 3, entities: 510,  records: 1780, calc: 'GHG Protocol v3.1',  status: 'need' },
+    { id: 'usp', name: 'Use of sold products',              scope: 3, entities: 298,  records: 940,  calc: 'GHG Protocol v3.1',  status: 'need' },
+    { id: 'eol', name: 'End-of-life treatment',             scope: 3, entities: 298,  records: 467,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'fr',  name: 'Franchises',                        scope: 3, entities: 134,  records: 312,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'inv', name: 'Investments',                       scope: 3, entities: 89,   records: 156,  calc: 'RA+ Standard v2.1',  status: 'need' }
   ];
 
-  // Initialize activity selections (none selected — starts at 0)
-  ACTIVITIES.forEach(function (a) { activitySelections[a.id] = false; });
+  // Initialize activity selections (all selected by default)
+  ACTIVITIES.forEach(function (a) { activitySelections[a.id] = true; });
 
   var ENTITY_TREE = [
     {
@@ -85,11 +102,11 @@
   entityExpanded['americas'] = true;
   entityExpanded['offices'] = true;
 
-  // Initialize trim included/excluded (all included by default)
-  var TRIM_INCLUDED = ['fe', 'pe', 'sh', 'bt'];
+  // Initialize trim included/excluded for demo
+  var TRIM_INCLUDED = ['fe', 'pe', 'sh', 'bt', 'pgs', 'wg', 'ec', 'eol'];
   var TRIM_EXCLUDED = ['sc', 'mc'];
-  TRIM_INCLUDED.forEach(function (id) { trimIncluded[id] = true; });
-  TRIM_EXCLUDED.forEach(function (id) { trimIncluded[id] = false; });
+  ACTIVITIES.forEach(function (a) { trimIncluded[a.id] = true; }); // default all included
+  TRIM_EXCLUDED.forEach(function (id) { trimIncluded[id] = false; }); // then exclude these
 
   // ===========================================
   // TOTALS — computed dynamically from selections
@@ -142,6 +159,7 @@
   }
 
   window.openInventoryWizard = openWizard;
+  window.closeInventoryWizard = closeWizard;
 
   closeBtn.addEventListener('click', closeWizard);
   overlay.addEventListener('click', function (e) {
@@ -160,9 +178,9 @@
     wizardEl.style.width = (STEP_WIDTHS[currentStep] || 800) + 'px';
     switch (currentStep) {
       case 0: renderBasicInfo(); break;
-      case 1: renderSelectActivities(); break;
-      case 2: renderAddEntities(); break;
-      case 3: renderTrimActivities(); break;
+      case 1: renderAddEntities(); break;
+      case 2: renderSelectActivities(); break;
+      case 3: initTrimSelections(); renderTrimActivities(); break;
       case 4: renderReview(); break;
     }
   }
@@ -269,7 +287,7 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Select activities</button>';
+      '<button class="wizard-btn-green" id="inv-next">Next: Select entities</button>';
 
     bindFooterNav(-1, 1);
 
@@ -299,7 +317,7 @@
   function renderSelectActivities() {
     titleEl.textContent = 'Create new inventory: Select activities';
 
-    var stepperHTML = buildStepper(1);
+    var stepperHTML = buildStepper(2);
     var statsHTML = buildStatsBar();
 
     var toolbarHTML =
@@ -308,10 +326,11 @@
         '<button class="inv-bulk-btn">Bulk Actions <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></button>' +
       '</div>';
 
+    var allActSelected = ACTIVITIES.every(function (a) { return activitySelections[a.id]; });
     var tableHTML =
       '<div class="inv-table-wrap"><table class="inv-table">' +
         '<thead><tr>' +
-          '<th style="width:32px"></th>' +
+          '<th style="width:32px"><input type="checkbox" class="inv-table-checkbox" id="inv-act-select-all"' + (allActSelected ? ' checked' : '') + '></th>' +
           '<th>Activities</th>' +
           '<th>Status</th>' +
           '<th style="text-align:right">Entities</th>' +
@@ -349,17 +368,35 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Add entities</button>';
+      '<button class="wizard-btn-green" id="inv-next">Next: Trim activities</button>';
 
-    bindFooterNav(0, 2);
+    bindFooterNav(1, 3);
 
-    // Checkbox binding — live-update stats bar
-    body.querySelectorAll('.inv-table-checkbox').forEach(function (cb) {
+    // Individual checkbox binding
+    body.querySelectorAll('.inv-table-checkbox[data-act-id]').forEach(function (cb) {
       cb.addEventListener('change', function () {
         activitySelections[this.dataset.actId] = this.checked;
+        // Update select-all state
+        var selectAll = document.getElementById('inv-act-select-all');
+        if (selectAll) {
+          selectAll.checked = ACTIVITIES.every(function (a) { return activitySelections[a.id]; });
+        }
         refreshStatsBar();
       });
     });
+
+    // Select-all checkbox
+    var selectAllAct = document.getElementById('inv-act-select-all');
+    if (selectAllAct) {
+      selectAllAct.addEventListener('change', function () {
+        var checked = this.checked;
+        ACTIVITIES.forEach(function (a) { activitySelections[a.id] = checked; });
+        body.querySelectorAll('.inv-table-checkbox[data-act-id]').forEach(function (cb) {
+          cb.checked = checked;
+        });
+        refreshStatsBar();
+      });
+    }
   }
 
   // ===========================================
@@ -369,7 +406,7 @@
   function renderAddEntities() {
     titleEl.textContent = 'Create new inventory: Add entities';
 
-    var stepperHTML = buildStepper(2);
+    var stepperHTML = buildStepper(1);
     var statsHTML = buildStatsBar();
 
     var toolbarHTML =
@@ -378,14 +415,18 @@
         '<button class="inv-bulk-btn">Bulk Actions <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></button>' +
       '</div>';
 
+    var selectAllChecked = isAllEntitiesSelected() ? ' checked' : '';
     var headerHTML =
       '<div class="inv-tree-header">' +
-        '<span class="inv-tree-header-entity">Entities <span class="inv-tree-name-count">(selected/total)</span></span>' +
+        '<span class="inv-tree-header-entity" style="display:flex;align-items:center;gap:8px">' +
+          '<input type="checkbox" class="inv-tree-cb" id="inv-select-all"' + selectAllChecked + '>' +
+          'Entities <span class="inv-tree-name-count">(selected/total)</span>' +
+        '</span>' +
         '<span class="inv-tree-header-act">Activities</span>' +
         '<span class="inv-tree-header-rec">Records</span>' +
       '</div>';
 
-    var treeHTML = '<div class="inv-tree-wrap">' + buildEntityTree(ENTITY_TREE, 0) + '</div>';
+    var treeHTML = '<div class="inv-tree-wrap" id="inv-entity-tree-wrap">' + buildEntityTree(ENTITY_TREE, 0) + '</div>';
 
     body.innerHTML = stepperHTML + statsHTML + toolbarHTML + headerHTML + treeHTML;
 
@@ -393,10 +434,22 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: trim activities</button>';
+      '<button class="wizard-btn-green" id="inv-next">Next: Select activities</button>';
 
-    bindFooterNav(1, 3);
+    bindFooterNav(0, 2);
     bindTreeInteractions();
+  }
+
+  function isAllEntitiesSelected() {
+    var all = true;
+    function walk(nodes) {
+      nodes.forEach(function (n) {
+        if (!entitySelections[n.id]) all = false;
+        if (n.children) walk(n.children);
+      });
+    }
+    walk(ENTITY_TREE);
+    return all;
   }
 
   function buildEntityTree(nodes, depth) {
@@ -464,6 +517,37 @@
     return count || 1;
   }
 
+  // Helper: find a node by id in the tree
+  function findNode(id, nodes) {
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === id) return nodes[i];
+      if (nodes[i].children) {
+        var found = findNode(id, nodes[i].children);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  // Cascading: set all descendants to the same checked state
+  function setDescendants(node, checked, selectionMap) {
+    if (node.children) {
+      node.children.forEach(function (c) {
+        selectionMap[c.id] = checked;
+        setDescendants(c, checked, selectionMap);
+      });
+    }
+  }
+
+  // Refresh the entity tree UI checkboxes to match state
+  function refreshEntityTreeUI() {
+    body.querySelectorAll('.inv-tree-cb[data-cb-id]').forEach(function (cb) {
+      cb.checked = !!entitySelections[cb.dataset.cbId];
+    });
+    var selectAll = document.getElementById('inv-select-all');
+    if (selectAll) selectAll.checked = isAllEntitiesSelected();
+  }
+
   function bindTreeInteractions() {
     // Toggle expand/collapse
     body.querySelectorAll('.inv-tree-toggle[data-toggle-id]').forEach(function (btn) {
@@ -481,55 +565,83 @@
       });
     });
 
-    // Checkbox — live-update stats bar
+    // Checkbox with cascading selection
     body.querySelectorAll('.inv-tree-cb[data-cb-id]').forEach(function (cb) {
       cb.addEventListener('change', function () {
         var id = this.dataset.cbId;
-        entitySelections[id] = this.checked;
+        var checked = this.checked;
+        entitySelections[id] = checked;
+        // Cascade to children
+        var node = findNode(id, ENTITY_TREE);
+        if (node) setDescendants(node, checked, entitySelections);
+        refreshEntityTreeUI();
         refreshStatsBar();
       });
     });
+
+    // Select All checkbox
+    var selectAll = document.getElementById('inv-select-all');
+    if (selectAll) {
+      selectAll.addEventListener('change', function () {
+        var checked = this.checked;
+        function walkAll(nodes) {
+          nodes.forEach(function (n) {
+            entitySelections[n.id] = checked;
+            if (n.children) walkAll(n.children);
+          });
+        }
+        walkAll(ENTITY_TREE);
+        refreshEntityTreeUI();
+        refreshStatsBar();
+      });
+    }
   }
 
   // ===========================================
   // STEP 3 — TRIM / FILTER ACTIVITIES
   // ===========================================
 
+  // On entering step 3, reset trim state
+  function initTrimSelections() {
+    trimEntitySelections = {};
+    // Reset all activities to included; user removes from here
+    ACTIVITIES.forEach(function (a) { trimIncluded[a.id] = true; });
+  }
+
+  // Check if an entity (or any descendant) was selected on Screen 3
+  function isEntityEligible(node) {
+    if (entitySelections[node.id]) return true;
+    if (node.children) {
+      for (var i = 0; i < node.children.length; i++) {
+        if (isEntityEligible(node.children[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  // Count how many entities are currently picked in Screen 4 trim
+  function countTrimSelected() {
+    var n = 0;
+    for (var k in trimEntitySelections) {
+      if (trimEntitySelections[k]) n++;
+    }
+    return n;
+  }
+
   function renderTrimActivities() {
-    titleEl.textContent = 'Create new inventory: Filter out activities';
+    titleEl.textContent = 'Create new inventory: Trim activities';
 
     var stepperHTML = buildStepper(3);
     var statsHTML = buildStatsBar();
 
-    var toolbarHTML =
-      '<div class="inv-toolbar">' +
-        '<input type="text" class="inv-search" placeholder="Search entities...">' +
-        '<button class="inv-bulk-btn">Bulk Actions <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></button>' +
-      '</div>';
-
-    // Build split view
+    // Build left entity tree
     var leftHTML = buildFilterEntityTree(ENTITY_TREE, 0);
 
-    var includedHTML = '';
-    var excludedHTML = '';
-    ACTIVITIES.forEach(function (a) {
-      var scopeClass = a.scope === 1 ? 'inv-scope-badge--s1' : a.scope === 2 ? 'inv-scope-badge--s2' : 'inv-scope-badge--s3';
-      if (trimIncluded[a.id]) {
-        includedHTML +=
-          '<div class="inv-activity-row">' +
-            '<input type="checkbox" class="inv-activity-cb" data-trim-id="' + a.id + '" checked>' +
-            '<span class="inv-activity-row-name">' + esc(a.name) + '</span>' +
-            '<span class="inv-scope-badge ' + scopeClass + '">Scope ' + a.scope + '</span>' +
-          '</div>';
-      } else {
-        excludedHTML +=
-          '<div class="inv-activity-row">' +
-            '<input type="checkbox" class="inv-activity-cb" data-trim-id="' + a.id + '">' +
-            '<span class="inv-activity-row-name">' + esc(a.name) + '</span>' +
-            '<span class="inv-scope-badge ' + scopeClass + '">Scope ' + a.scope + '</span>' +
-          '</div>';
-      }
-    });
+    // Build right activity columns
+    var activityColumnsHTML = buildActivityColumns();
+
+    var numSelected = countTrimSelected();
+    var entityWord = numSelected === 1 ? 'entity' : 'entities';
 
     var splitHTML =
       '<div class="inv-filter-split">' +
@@ -539,26 +651,17 @@
             '<span class="inv-tree-header-act" style="width:56px">Activities</span>' +
             '<span class="inv-tree-header-rec" style="width:56px">Records</span>' +
           '</div>' +
-          '<div class="inv-tree-wrap" style="max-height:340px;padding:8px">' + leftHTML + '</div>' +
+          '<div class="inv-tree-wrap" style="padding:8px">' + leftHTML + '</div>' +
         '</div>' +
         '<div class="inv-filter-right">' +
           '<div class="inv-filter-right-header">' +
             '<input type="text" class="inv-filter-search" placeholder="Filter activities">' +
           '</div>' +
-          '<div class="inv-activity-columns">' +
-            '<div class="inv-activity-col" style="padding-right:16px">' +
-              '<div class="inv-activity-col-title">Activities in both entities</div>' +
-              includedHTML +
-            '</div>' +
-            '<div class="inv-activity-col" style="padding-left:16px;border-left:1px solid #d5dde0">' +
-              '<div class="inv-activity-col-title">Activities removed from both entities</div>' +
-              excludedHTML +
-            '</div>' +
-          '</div>' +
+          '<div id="inv-activity-columns-container">' + activityColumnsHTML + '</div>' +
         '</div>' +
       '</div>';
 
-    body.innerHTML = stepperHTML + statsHTML + toolbarHTML + splitHTML;
+    body.innerHTML = stepperHTML + statsHTML + splitHTML;
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
@@ -568,11 +671,79 @@
 
     bindFooterNav(2, 4);
     bindFilterTreeInteractions();
+    bindActivityToggles();
+  }
 
-    // Trim checkbox binding
-    body.querySelectorAll('.inv-activity-cb[data-trim-id]').forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        trimIncluded[this.dataset.trimId] = this.checked;
+  function buildActivityColumns() {
+    var numSelected = countTrimSelected();
+
+    if (numSelected === 0) {
+      return '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73;padding:16px 0">Select entities on the left to view their activities</div>';
+    }
+
+    var includedHTML = '';
+    var excludedHTML = '';
+    ACTIVITIES.forEach(function (a) {
+      var scopeClass = a.scope === 1 ? 'inv-scope-badge--s1' : a.scope === 2 ? 'inv-scope-badge--s2' : 'inv-scope-badge--s3';
+      if (trimIncluded[a.id]) {
+        // Left column: clickable row to exclude (no checkbox)
+        includedHTML +=
+          '<div class="inv-activity-row inv-activity-row--included" data-trim-exclude-id="' + a.id + '">' +
+            '<span class="inv-activity-row-name">' + esc(a.name) + '</span>' +
+            '<span class="inv-scope-badge ' + scopeClass + '">Scope ' + a.scope + '</span>' +
+            '<button class="inv-exclude-btn">Exclude</button>' +
+          '</div>';
+      } else {
+        // Right column: no checkbox, just clickable row to restore
+        excludedHTML +=
+          '<div class="inv-activity-row inv-activity-row--excluded" data-trim-restore-id="' + a.id + '">' +
+            '<span class="inv-activity-row-name">' + esc(a.name) + '</span>' +
+            '<span class="inv-scope-badge ' + scopeClass + '">Scope ' + a.scope + '</span>' +
+            '<button class="inv-restore-btn">Restore</button>' +
+          '</div>';
+      }
+    });
+
+    if (!includedHTML) {
+      includedHTML = '<div style="font-size:13px;color:#676f73;padding:4px 0">None</div>';
+    }
+    if (!excludedHTML) {
+      excludedHTML = '<div style="font-size:13px;color:#676f73;padding:4px 0">None</div>';
+    }
+
+    return '<div class="inv-activity-columns">' +
+      '<div class="inv-activity-col" style="padding-right:16px">' +
+        '<div class="inv-activity-col-title">Activities in both entities</div>' +
+        includedHTML +
+      '</div>' +
+      '<div class="inv-activity-col" style="padding-left:16px;border-left:1px solid #d5dde0">' +
+        '<div class="inv-activity-col-title">Activities excluded from both entities</div>' +
+        excludedHTML +
+      '</div>' +
+    '</div>';
+  }
+
+  function refreshActivityColumns() {
+    var container = document.getElementById('inv-activity-columns-container');
+    if (container) {
+      container.innerHTML = buildActivityColumns();
+      bindActivityToggles();
+    }
+  }
+
+  function bindActivityToggles() {
+    // Left column: click "Exclude" to move to excluded
+    body.querySelectorAll('[data-trim-exclude-id]').forEach(function (row) {
+      row.addEventListener('click', function () {
+        trimIncluded[this.dataset.trimExcludeId] = false;
+        refreshActivityColumns();
+      });
+    });
+    // Right column: click "Restore" to move back to included
+    body.querySelectorAll('[data-trim-restore-id]').forEach(function (row) {
+      row.addEventListener('click', function () {
+        trimIncluded[this.dataset.trimRestoreId] = true;
+        refreshActivityColumns();
       });
     });
   }
@@ -582,11 +753,13 @@
     nodes.forEach(function (node) {
       var hasChildren = node.children && node.children.length > 0;
       var isExpanded = entityExpanded[node.id];
-      var isChecked = entitySelections[node.id];
+      var eligible = isEntityEligible(node);
+      var isTrimSelected = trimEntitySelections[node.id] || false;
       var selectedCount = countSelected(node);
       var totalCount = node.total || countTotal(node);
 
-      html += '<div class="inv-tree-node" style="padding-left:' + (depth * 20) + 'px;font-size:13px">';
+      var disabledClass = eligible ? '' : ' opacity:0.4;';
+      html += '<div class="inv-tree-node" style="padding-left:' + (depth * 20) + 'px;font-size:13px;' + disabledClass + '">';
 
       if (hasChildren) {
         html += '<button class="inv-tree-toggle" data-filter-toggle-id="' + node.id + '" style="width:20px;font-size:10px">' +
@@ -596,7 +769,10 @@
         html += '<span class="inv-tree-toggle inv-tree-toggle--leaf" style="width:20px"></span>';
       }
 
-      html += '<input type="checkbox" class="inv-tree-cb" data-filter-cb-id="' + node.id + '"' + (isChecked ? ' checked' : '') + '>';
+      // Checkbox: disabled if not eligible from Screen 3, checked from trimEntitySelections
+      var disabledAttr = eligible ? '' : ' disabled';
+      var checkedAttr = isTrimSelected ? ' checked' : '';
+      html += '<input type="checkbox" class="inv-tree-cb" data-filter-cb-id="' + node.id + '"' + checkedAttr + disabledAttr + '>';
 
       html += '<span class="inv-tree-name" style="font-size:13px">' + esc(node.name);
       if (totalCount > 0) {
@@ -618,7 +794,18 @@
     return html;
   }
 
+  // Refresh Screen 4 filter tree checkboxes to match state
+  function refreshFilterTreeUI() {
+    body.querySelectorAll('.inv-tree-cb[data-filter-cb-id]').forEach(function (cb) {
+      var id = cb.dataset.filterCbId;
+      var eligible = isEntityEligible(findNode(id, ENTITY_TREE) || { id: id });
+      cb.checked = !!trimEntitySelections[id];
+      cb.disabled = !eligible;
+    });
+  }
+
   function bindFilterTreeInteractions() {
+    // Toggle expand/collapse
     body.querySelectorAll('.inv-tree-toggle[data-filter-toggle-id]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var id = this.dataset.filterToggleId;
@@ -629,10 +816,29 @@
         if (icon) icon.className = entityExpanded[id] ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right';
       });
     });
+
+    // Checkbox with cascading: updates trimEntitySelections, then refreshes
     body.querySelectorAll('.inv-tree-cb[data-filter-cb-id]').forEach(function (cb) {
       cb.addEventListener('change', function () {
-        entitySelections[this.dataset.filterCbId] = this.checked;
-        refreshStatsBar();
+        var id = this.dataset.filterCbId;
+        var checked = this.checked;
+        trimEntitySelections[id] = checked;
+        // Cascade to eligible children
+        var node = findNode(id, ENTITY_TREE);
+        if (node) {
+          (function cascadeFilter(n) {
+            if (n.children) {
+              n.children.forEach(function (c) {
+                if (isEntityEligible(c)) {
+                  trimEntitySelections[c.id] = checked;
+                }
+                cascadeFilter(c);
+              });
+            }
+          })(node);
+        }
+        refreshFilterTreeUI();
+        refreshActivityColumns();
       });
     });
   }

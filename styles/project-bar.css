@@ -1,0 +1,219 @@
+/* ========================================
+   PROJECT STATUS BAR
+   A modular, horizontal KPI section that sits
+   between the goals area and the dashboard.
+   Can be shown/hidden without layout disruption.
+   ======================================== */
+
+.project-bar {
+  background: #eaf5ef;
+  border: 1px solid #b8e0c8;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+/* Hidden state — collapses cleanly out of the flex layout */
+.project-bar--hidden {
+  display: none;
+}
+
+/* ----------------------------------------
+   TITLE
+   ---------------------------------------- */
+.project-bar__title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  line-height: 28px;
+}
+
+/* ----------------------------------------
+   COLUMNS ROW (3 cards side-by-side)
+   ---------------------------------------- */
+.project-bar__columns {
+  display: flex;
+  gap: 24px;
+}
+
+/* ----------------------------------------
+   INDIVIDUAL CARD
+   ---------------------------------------- */
+.project-bar__card {
+  flex: 1;
+  min-width: 0;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+/* ----------------------------------------
+   CARD HEADING ROW
+   ---------------------------------------- */
+.project-bar__card-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-bar__card-label {
+  flex: 1;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #41494d;
+  line-height: 1.4;
+}
+
+/* Status chip (e.g. "Planning") — positioned absolutely so it
+   never influences the card's intrinsic size or stretches it. */
+.project-bar__chip {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  white-space: nowrap;
+}
+
+.project-bar__chip--blue {
+  background: #dbf5ff;
+  border: 1px solid #42caff;
+}
+
+.project-bar__chip-icon {
+  font-size: 14px;
+  color: #0075a3;
+}
+
+/* ----------------------------------------
+   KPI ROW (big number + unit)
+   ---------------------------------------- */
+.project-bar__kpi {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.project-bar__kpi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.project-bar__kpi-icon--warning {
+  background: #ffefdb;
+  color: #804700;
+  font-size: 21px;
+}
+
+.project-bar__kpi-value {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 40px;
+}
+
+.project-bar__kpi-unit {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 25px;
+  padding-bottom: 2px;
+}
+
+/* ----------------------------------------
+   SUBTITLE / DESCRIPTION TEXT
+   ---------------------------------------- */
+.project-bar__subtitle {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.4;
+}
+
+/* ----------------------------------------
+   PROGRESS BAR
+   ---------------------------------------- */
+.project-bar__progress {
+  display: flex;
+  gap: 1px;
+  height: 8px;
+  width: 100%;
+  align-items: center;
+}
+
+.project-bar__progress-fill {
+  height: 8px;
+  background: #42caff;
+  border-radius: 999px 0 0 999px;
+  flex-shrink: 0;
+}
+
+.project-bar__progress-bg {
+  flex: 1;
+  height: 8px;
+  background: #d5dde0;
+  border-radius: 0 8px 8px 0;
+  min-width: 1px;
+  min-height: 1px;
+}
+
+/* ----------------------------------------
+   ACTION BUTTONS ROW
+   ---------------------------------------- */
+.project-bar__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.project-bar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  background: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease;
+}
+
+.project-bar__btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.project-bar__btn i {
+  font-size: 14px;
+}

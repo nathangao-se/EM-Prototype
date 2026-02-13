@@ -506,6 +506,10 @@
       renderGoals(config);
     }
     
+    if (typeof renderProjectBar === 'function') {
+      renderProjectBar(config);
+    }
+    
     initDashboard();
   };
   
@@ -546,6 +550,11 @@
   // Render goals
   if (typeof renderGoals === 'function') {
     renderGoals(activeConfig);
+  }
+  
+  // Render project bar
+  if (typeof renderProjectBar === 'function') {
+    renderProjectBar(activeConfig);
   }
   
   // Init dashboard

@@ -87,6 +87,7 @@
   }
 
   window.openActivityWizard = openWizard;
+  window.closeActivityWizard = closeWizard;
 
   closeBtn.addEventListener('click', closeWizard);
   overlay.addEventListener('click', function (e) {
