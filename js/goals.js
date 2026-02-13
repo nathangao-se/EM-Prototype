@@ -59,11 +59,11 @@
     const alertsHTML = alerts.length > 0 ? `
       <div class="goals-alerts">
         <div class="goals-alerts-list">
-          ${alerts.map(alert => `
+          ${alerts.map((alert, alertIndex) => `
             <div class="alert-group">
               <div class="alert-group-header">
                 <span class="alert-group-category">${alert.category}</span>
-                <span class="alert-group-summary">${alert.summary}</span>
+                <a href="#" class="alert-group-summary-link" data-alert-index="${alertIndex}">${alert.summary}</a>
               </div>
               <article class="alert-card${alert.card.variant ? ` alert-card--${alert.card.variant}` : ''}" style="--progress: ${alert.card.progress};">
                 <p class="alert-card-title">${alert.card.title}</p>
@@ -92,6 +92,18 @@
     `;
     
     goalsSection.innerHTML = mainGoalHTML + alertsHTML;
+    
+    // Attach click-through handlers to summary links
+    goalsSection.querySelectorAll('.alert-group-summary-link').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var idx = parseInt(link.dataset.alertIndex, 10);
+        var alert = alerts[idx];
+        if (alert && alert.modalItems && typeof window.openCategoryModal === 'function') {
+          window.openCategoryModal(alert.category, alert.modalItems);
+        }
+      });
+    });
   }
   
   // Expose for external use

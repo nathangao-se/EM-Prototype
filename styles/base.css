@@ -15,7 +15,7 @@ html, body {
 }
 
 body {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-weight: 400;
   color: #1d201f;
   -webkit-font-smoothing: antialiased;
@@ -46,7 +46,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-size: 16px;
   font-weight: 400;
   cursor: pointer;
@@ -77,7 +77,7 @@ body {
   border-radius: 4px;
   color: #ffffff;
   padding: 0 8px;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
 }
 

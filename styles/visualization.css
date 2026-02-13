@@ -1,6 +1,6 @@
 /* ========================================
    VISUALIZATION COMPONENT
-   Map tags + generic button grid
+   Map tags + box button grid
    Styles from Figma: Tag, qsb-chip
    ======================================== */
 
@@ -18,6 +18,38 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ===== BACK BUTTON (drill-down navigation) ===== */
+.viz-back-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 150ms ease;
+  backdrop-filter: blur(4px);
+}
+
+.viz-back-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+.viz-back-btn i {
+  font-size: 12px;
 }
 
 /* ===== IMAGE-BASED (MAP MODE) ===== */
@@ -59,9 +91,9 @@
 /* --- Tag container (pill, default) --- */
 .viz-tag-container {
   background: #ffffff;
-  border: 2px solid #009edb;
+  border: 1px solid #009edb;
   border-radius: 2000px;
-  padding: 8px;
+  padding: 4px;
   display: flex;
   gap: 4px;
   align-items: center;
@@ -91,6 +123,7 @@
   border-radius: 5000px;
   background: #42caff;
   opacity: 0;
+  filter: blur(24px);
   transition: all 0.15s ease;
   pointer-events: none;
   z-index: -1;
@@ -99,7 +132,7 @@
 /* --- Hover label (hidden by default) --- */
 .viz-tag-label {
   display: none;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-weight: 400;
   font-size: 14px;
   color: #676f73;
@@ -163,8 +196,8 @@
   gap: 6px;
   align-items: center;
   justify-content: center;
-  height: 40px;
-  padding: 0 16px;
+  height: auto;
+  padding: 4px 8px;
   border-radius: 999px;
   white-space: nowrap;
   flex-shrink: 0;
@@ -173,16 +206,16 @@
 
 /* Chip icon */
 .viz-chip-icon {
-  font-size: 21px;
+  font-size: 16px;
   line-height: 1;
   transition: font-size 0.15s ease;
 }
 
 /* Chip text */
 .viz-chip-text {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-weight: 600;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -215,7 +248,7 @@
 
 .viz-chip--neutral .viz-chip-text {
   font-weight: 300;
-  font-size: 24px;
+  font-size: 20px;
   color: #1d201f;
 }
 
@@ -261,7 +294,7 @@
   color: #ffffff;
 }
 
-/* --- Danger chip standalone (generic mode: white text) --- */
+/* --- Danger chip standalone (box mode: white text) --- */
 .viz-chip--danger-standalone {
   background: #cc1300;
   border: none;
@@ -275,7 +308,7 @@
   color: #ffffff;
 }
 
-/* ===== GENERIC MODE (button grid) ===== */
+/* ===== BOX MODE (button grid) ===== */
 .visualization--buttons {
   padding: 20px;
   width: 100%;
@@ -293,8 +326,8 @@
   align-content: center;
 }
 
-/* --- Generic container (label + chip) --- */
-.viz-generic {
+/* --- Box container (label + chip) --- */
+.viz-box {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -311,18 +344,18 @@
   transition: all 0.15s ease;
 }
 
-.viz-generic:hover {
+.viz-box:hover {
   border-color: #009edb;
   box-shadow: 0px 2px 6px 0px rgba(9, 11, 12, 0.12);
 }
 
-.viz-generic:active {
+.viz-box:active {
   transform: scale(0.97);
 }
 
-/* --- Generic label (above chip) --- */
-.viz-generic-label {
-  font-family: 'Figtree', sans-serif;
+/* --- Box label (above chip) --- */
+.viz-box-label {
+  font-family: 'Nunito Sans', sans-serif;
   font-weight: 500;
   font-size: 18px;
   color: #676f73;

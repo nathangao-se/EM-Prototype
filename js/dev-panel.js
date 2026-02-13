@@ -6,6 +6,8 @@
   const panel = document.getElementById('dev-panel');
   const toggleBtn = document.getElementById('dev-panel-toggle');
   const options = document.querySelectorAll('.dev-panel-option[data-config]');
+  const wizardBtn = document.getElementById('dev-open-wizard');
+  const invWizardBtn = document.getElementById('dev-open-inventory-wizard');
   
   // Track current config
   let currentConfigId = 'global-oversight';
@@ -45,5 +47,25 @@
       }
     });
   });
+  
+  // ===========================================
+  // WIZARD TRIGGER
+  // ===========================================
+  
+  if (wizardBtn) {
+    wizardBtn.addEventListener('click', () => {
+      if (typeof window.openActivityWizard === 'function') {
+        window.openActivityWizard();
+      }
+    });
+  }
+  
+  if (invWizardBtn) {
+    invWizardBtn.addEventListener('click', () => {
+      if (typeof window.openInventoryWizard === 'function') {
+        window.openInventoryWizard();
+      }
+    });
+  }
   
 })();

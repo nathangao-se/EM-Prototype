@@ -1,0 +1,1516 @@
+/* ========================================
+   WIZARD — Activity Collection Setup
+   ======================================== */
+
+/* Overlay */
+.wizard-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.wizard-overlay--open {
+  display: flex;
+}
+
+/* Container */
+.wizard {
+  width: 800px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 3px 6px 0 rgba(9, 11, 12, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.wizard-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px 0 24px;
+  flex-shrink: 0;
+}
+
+.wizard-header-title {
+  flex: 1;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  line-height: 28px;
+}
+
+.wizard-close-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #1d201f;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.wizard-close-btn:hover {
+  background: #f1f5f9;
+}
+
+/* ========================================
+   BODY — scrollable content area
+   ======================================== */
+.wizard-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.wizard-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-top: none;
+  flex-shrink: 0;
+}
+
+.wizard-footer-spacer {
+  flex: 1;
+}
+
+.wizard-btn-discard {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #cc1300;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-discard i {
+  font-size: 18px;
+}
+
+.wizard-btn-discard:hover {
+  opacity: 0.8;
+}
+
+.wizard-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 80px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  color: #1d201f;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-outline:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.wizard-btn-green {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 200px;
+  padding: 0 8px;
+  background: #008029;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-green:hover {
+  background: #006622;
+}
+
+.wizard-btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 80px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  color: #1d201f;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-cancel:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ========================================
+   STEP 0 — INTRO (Selection Cards)
+   ======================================== */
+.wizard-intro-cards {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+}
+
+.wizard-intro-divider-v {
+  width: 1px;
+  height: 184px;
+  background: #d5dde0;
+  flex-shrink: 0;
+}
+
+.wizard-selection-card {
+  width: 200px;
+  height: 200px;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wizard-selection-card:hover {
+  border-color: #008029;
+  box-shadow: 0 2px 8px rgba(0, 128, 41, 0.12);
+}
+
+.wizard-selection-card--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wizard-selection-card--disabled:hover {
+  border-color: #d5dde0;
+  box-shadow: none;
+}
+
+.wizard-selection-card-icon {
+  font-size: 48px;
+  color: #1d201f;
+  line-height: 1;
+}
+
+.wizard-selection-card-divider {
+  width: 100%;
+  height: 1px;
+  background: #d5dde0;
+}
+
+.wizard-selection-card-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  text-align: center;
+  line-height: 25px;
+}
+
+.wizard-intro-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.5;
+}
+
+/* Center footer for intro */
+.wizard-footer--center {
+  justify-content: center;
+}
+
+/* ========================================
+   STEPPER
+   ======================================== */
+.wizard-stepper {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.wizard-stepper-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wizard-stepper-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wizard-stepper-item--active .wizard-stepper-label {
+  color: #1d201f;
+}
+
+.wizard-stepper-item--complete .wizard-stepper-label {
+  color: #008029;
+}
+
+.wizard-stepper-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  background: #008029;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 7px;
+  line-height: 1;
+}
+
+.wizard-stepper-bar {
+  height: 4px;
+  background: #d5dde0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.wizard-stepper-bar-fill {
+  height: 100%;
+  border-radius: 16px;
+  width: 0;
+  transition: width 0.3s ease;
+}
+
+.wizard-stepper-item--active .wizard-stepper-bar-fill {
+  background: #008029;
+  width: 100%;
+}
+
+.wizard-stepper-item--complete .wizard-stepper-bar-fill {
+  background: #003310;
+  width: 100%;
+}
+
+/* ========================================
+   INSTRUCTION TEXT
+   ======================================== */
+.wizard-instruction {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.5;
+}
+
+.wizard-instruction a {
+  color: #1d201f;
+  text-decoration: underline;
+}
+
+/* ========================================
+   UPLOAD AREA
+   ======================================== */
+.wizard-upload-area {
+  width: 100%;
+  height: 180px;
+  border: 1px dashed #676f73;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.wizard-upload-area:hover {
+  border-color: #008029;
+  background: rgba(0, 128, 41, 0.02);
+}
+
+.wizard-upload-icon {
+  width: 40px;
+  height: 40px;
+  background: #008029;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.wizard-upload-text {
+  text-align: center;
+}
+
+.wizard-upload-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  margin-bottom: 12px;
+}
+
+.wizard-upload-title-browse {
+  color: #008029;
+  cursor: pointer;
+}
+
+.wizard-upload-meta {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.6;
+}
+
+/* OR + checkbox */
+.wizard-or-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.wizard-or-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  text-align: center;
+}
+
+.wizard-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.wizard-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.wizard-checkbox:checked {
+  background: #008029;
+  border-color: #008029;
+}
+
+.wizard-checkbox:checked::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.wizard-checkbox-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+/* ========================================
+   FILE LIST
+   ======================================== */
+.wizard-file-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wizard-file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  height: 36px;
+  border-bottom: 1px solid #f1f5f9;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+.wizard-file-item:last-child {
+  border-bottom: none;
+}
+
+.wizard-file-icon {
+  color: #676f73;
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.wizard-file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wizard-file-size {
+  color: #676f73;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.wizard-file-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #676f73;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.wizard-file-status {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.wizard-file-status--ok {
+  color: #008029;
+}
+
+.wizard-file-status--processing {
+  color: #a16207;
+}
+
+/* ========================================
+   BANNER (info)
+   ======================================== */
+.wizard-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: #edfaff;
+  border: 1px solid #42caff;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.wizard-banner-icon {
+  font-size: 28px;
+  color: #009edb;
+  flex-shrink: 0;
+}
+
+.wizard-banner-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.5;
+}
+
+/* ========================================
+   COLUMN MAPPING CARD
+   ======================================== */
+.wizard-mapping-card {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  background: #ffffff;
+  width: 100%;
+}
+
+.wizard-mapping-column-name {
+  width: 160px;
+  flex-shrink: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 20px;
+}
+
+.wizard-mapping-divider {
+  width: 1px;
+  background: #d5dde0;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+.wizard-mapping-options {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wizard-mapping-section-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.wizard-mapping-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.wizard-radio {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #676f73;
+  border-radius: 999px;
+  background: #ffffff;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.wizard-radio:checked {
+  border-color: #008029;
+  border-width: 5px;
+}
+
+.wizard-mapping-option-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  min-width: 100px;
+}
+
+.wizard-mapping-option-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.wizard-mapping-hr {
+  width: 100%;
+  height: 1px;
+  background: #d5dde0;
+  border: none;
+  margin: 0;
+}
+
+/* ========================================
+   REVIEW STEP — Collaborators
+   ======================================== */
+.wizard-section-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 25px;
+}
+
+.wizard-collab-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.wizard-collab-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  color: #1d201f;
+  outline: none;
+}
+
+.wizard-collab-input:focus {
+  border-color: #008029;
+}
+
+.wizard-collab-tags {
+  display: flex;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.wizard-collab-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #1d201f;
+  border-radius: 2px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  background: transparent;
+}
+
+.wizard-collab-tag-remove {
+  font-size: 12px;
+  color: #1d201f;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.wizard-review-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wizard-review-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 25px;
+}
+
+/* ========================================
+   STEP VISIBILITY
+   ======================================== */
+.wizard-step {
+  display: none;
+  flex-direction: column;
+}
+
+.wizard-step--active {
+  display: flex;
+}
+
+/* ========================================
+   INVENTORY WIZARD — Create new inventory
+   ======================================== */
+
+/* Dynamic width via JS; default to 800px */
+.inv-wizard {
+  width: 800px;
+  transition: width 0.25s ease;
+}
+
+/* ========================================
+   KPI / STATS BAR
+   ======================================== */
+.inv-stats-bar {
+  display: flex;
+  gap: 0;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+  width: 100%;
+}
+
+.inv-stat {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.inv-stat-value {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 1;
+}
+
+.inv-stat-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.2;
+}
+
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+.inv-form-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.inv-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inv-form-field--flex1 {
+  flex: 1;
+  min-width: 0;
+}
+
+.inv-form-field--w368 {
+  width: 368px;
+  flex-shrink: 0;
+}
+
+.inv-form-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 20px;
+}
+
+.inv-form-input,
+.inv-form-select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inv-form-input:focus,
+.inv-form-select:focus {
+  border-color: #008029;
+}
+
+.inv-form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%231d201f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.inv-form-divider {
+  width: 100%;
+  height: 1px;
+  background: #d5dde0;
+  border: none;
+  margin: 0;
+}
+
+/* ========================================
+   CONSOLIDATION APPROACH CARD
+   ======================================== */
+.inv-consolidation {
+  background: #f5f8fa;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inv-consolidation-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 20px;
+}
+
+.inv-radio-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inv-radio-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.inv-radio {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #676f73;
+  border-radius: 999px;
+  background: #ffffff;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  margin: 0;
+}
+
+.inv-radio:checked {
+  border-color: #008029;
+  border-width: 5px;
+}
+
+.inv-radio-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 20px;
+}
+
+.inv-radio-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 22px;
+  padding-left: 28px;
+}
+
+/* ========================================
+   SEARCH + BULK ACTIONS BAR
+   ======================================== */
+.inv-toolbar {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  align-items: center;
+}
+
+.inv-search {
+  flex: 1;
+  height: 32px;
+  padding: 0 8px 0 32px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Ccircle cx='5.5' cy='5.5' r='4.5' stroke='%23676f73' stroke-width='1.2' fill='none'/%3E%3Cline x1='9' y1='9' x2='13' y2='13' stroke='%23676f73' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 10px center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  color: #1d201f;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.inv-search:focus {
+  border-color: #008029;
+}
+
+.inv-bulk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.inv-bulk-btn:hover {
+  background: #f5f8fa;
+}
+
+/* ========================================
+   ACTIVITIES TABLE (Step 2)
+   ======================================== */
+.inv-table-wrap {
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+}
+
+.inv-table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1d201f;
+  padding: 8px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #d5dde0;
+  white-space: nowrap;
+}
+
+.inv-table td {
+  padding: 10px 12px;
+  color: #1d201f;
+  font-weight: 400;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.inv-table tr:last-child td {
+  border-bottom: none;
+}
+
+.inv-table-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.inv-table-checkbox:checked {
+  background: #008029;
+  border-color: #008029;
+}
+
+.inv-table-checkbox:checked::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 11px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Scope badges */
+.inv-scope-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.inv-scope-badge--s1 {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.inv-scope-badge--s2 {
+  background: #e0f2fe;
+  color: #075985;
+  border: 1px solid #7dd3fc;
+}
+
+.inv-scope-badge--s3 {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+/* Status badges */
+.inv-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.inv-status-badge--ready {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.inv-status-badge--need {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+/* Calc method dropdown look */
+.inv-calc-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid #d5dde0;
+  border-radius: 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #1d201f;
+  background: #ffffff;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.inv-calc-select i {
+  font-size: 10px;
+  color: #676f73;
+}
+
+.inv-more-btn {
+  background: none;
+  border: none;
+  color: #676f73;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* ========================================
+   ENTITY TREE (Step 3 + 4)
+   ======================================== */
+.inv-tree-header {
+  display: flex;
+  align-items: center;
+  padding: 0 0 4px 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.inv-tree-header-entity {
+  flex: 1;
+}
+
+.inv-tree-header-act {
+  width: 72px;
+  text-align: right;
+}
+
+.inv-tree-header-rec {
+  width: 72px;
+  text-align: right;
+}
+
+.inv-tree-wrap {
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: 400px;
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.inv-tree-node {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  user-select: none;
+}
+
+.inv-tree-toggle {
+  width: 24px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #1d201f;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.inv-tree-toggle--leaf {
+  visibility: hidden;
+}
+
+.inv-tree-cb {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #676f73;
+  border-radius: 3px;
+  background: #ffffff;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  margin: 0 8px 0 0;
+}
+
+.inv-tree-cb:checked {
+  background: #008029;
+  border-color: #008029;
+}
+
+.inv-tree-cb:checked::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 10px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.inv-tree-cb--indeterminate {
+  background: #008029;
+  border-color: #008029;
+}
+
+.inv-tree-cb--indeterminate::after {
+  content: '\f068';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 9px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.inv-tree-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 28px;
+}
+
+.inv-tree-name-count {
+  color: #676f73;
+  font-weight: 400;
+}
+
+.inv-tree-act {
+  width: 72px;
+  text-align: right;
+  color: #1d201f;
+  flex-shrink: 0;
+}
+
+.inv-tree-rec {
+  width: 72px;
+  text-align: right;
+  color: #1d201f;
+  flex-shrink: 0;
+}
+
+.inv-tree-children {
+  display: none;
+}
+
+.inv-tree-children--open {
+  display: block;
+}
+
+/* Tree lines */
+.inv-tree-line {
+  width: 24px;
+  height: 28px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.inv-tree-line::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d5dde0;
+}
+
+.inv-tree-line--hook::before {
+  bottom: 50%;
+}
+
+.inv-tree-line--hook::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  width: 10px;
+  height: 1px;
+  background: #d5dde0;
+}
+
+.inv-tree-line--cross::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  width: 10px;
+  height: 1px;
+  background: #d5dde0;
+}
+
+/* ========================================
+   FILTER SPLIT VIEW (Step 4)
+   ======================================== */
+.inv-filter-split {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  min-height: 300px;
+}
+
+.inv-filter-left {
+  width: 38%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-right: 1px solid #d5dde0;
+  padding-right: 16px;
+}
+
+.inv-filter-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 16px;
+}
+
+.inv-filter-right-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.inv-filter-search {
+  height: 28px;
+  padding: 0 8px 0 28px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Ccircle cx='5' cy='5' r='3.5' stroke='%23676f73' stroke-width='1' fill='none'/%3E%3Cline x1='8' y1='8' x2='11' y2='11' stroke='%23676f73' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 8px center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  outline: none;
+  box-sizing: border-box;
+  width: 200px;
+}
+
+.inv-activity-columns {
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+
+.inv-activity-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.inv-activity-col-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1d201f;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.inv-activity-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+}
+
+.inv-activity-row-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inv-activity-cb {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #676f73;
+  border-radius: 3px;
+  background: #ffffff;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  margin: 0;
+}
+
+.inv-activity-cb:checked {
+  background: #008029;
+  border-color: #008029;
+}
+
+.inv-activity-cb:checked::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 10px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   REVIEW STEP (Step 5)
+   ======================================== */
+.inv-review-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.inv-review-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.inv-review-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px 16px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+}
+
+.inv-review-label {
+  color: #676f73;
+  font-weight: 400;
+}
+
+.inv-review-value {
+  color: #1d201f;
+  font-weight: 400;
+}
+
+.inv-review-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.inv-review-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border: 1px solid #d5dde0;
+  border-radius: 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #1d201f;
+  background: #f5f8fa;
+}

@@ -1,0 +1,144 @@
+---
+description: Context and implementation details for the "Create new inventory" wizard feature
+globs:
+  - js/inventory-wizard.js
+  - styles/wizard.css
+---
+
+# Inventory Wizard — "Create new inventory"
+
+## Overview
+
+A 5-step modal wizard for creating a new GHG inventory. Triggered from the Dev Panel ("Create Inventory" button). Implemented as a standalone JS module (`js/inventory-wizard.js`) using shared CSS from `styles/wizard.css`.
+
+## Figma Source
+
+- **File**: Nathan Scratchpad — `https://www.figma.com/design/7spzLNCC1E8AI45L5HrhrQ/Nathan-Scratchpad`
+- **Parent frame**: `618:44788` (Frame 2134540100) — contains all 4 visible screens side-by-side
+- **Screen node IDs**:
+  - Step 1 — Basic info: `612:33012` (800×697)
+  - Step 2 — Select activities: `618:22620` (1000×809)
+  - Step 3 — Add entities: `612:42527` (1000×809)
+  - Step 4 — Filter out activities: `618:36470` (1200×809)
+  - Step 5 — Review: not in Figma (generated to complete the flow)
+
+## Architecture
+
+### Files
+
+| File | Purpose |
+|------|---------|
+| `js/inventory-wizard.js` | Self-contained IIFE. All state, data, rendering, and event binding. Exposes `window.openInventoryWizard()`. |
+| `styles/wizard.css` | Shared wizard CSS (overlay, header, footer, stepper, buttons) **plus** inventory-specific classes prefixed with `inv-`. |
+| `index.html` | Contains `#inv-wizard-overlay` (HTML shell), dev panel trigger button `#dev-open-inventory-wizard`, and `<script>` tag. |
+| `js/dev-panel.js` | Wires the dev panel button to call `window.openInventoryWizard()`. |
+
+### HTML Shell (in index.html)
+
+```html
+<div id="inv-wizard-overlay" class="wizard-overlay">
+  <div class="wizard inv-wizard">
+    <div class="wizard-header">
+      <span class="wizard-header-title"></span>
+      <button class="wizard-close-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="wizard-body"></div>
+    <div class="wizard-footer"></div>
+  </div>
+</div>
+```
+
+### State Model
+
+- `currentStep` (0–4): Which step is active.
+- `consolidationChoice`: `'operational'` | `'financial'` | `'equity'`
+- `activitySelections`: `{ activityId: boolean }` — which activities are checked.
+- `entitySelections`: `{ entityId: boolean }` — which entities are checked.
+- `entityExpanded`: `{ entityId: boolean }` — tree expand/collapse state.
+- `trimIncluded`: `{ activityId: boolean }` — which activities survive the trim step.
+- `formData`: `{ name, startDate, endDate, framework, gwp, gases }` — form values.
+
+### Steps and Widths
+
+| Step | Index | Title | Width | Key Content |
+|------|-------|-------|-------|-------------|
+| Basic info | 0 | Create new inventory: basic info | 800px | Form fields: name, dates, GHG framework, GWP version, gases dropdown, consolidation approach radio card |
+| Select activities | 1 | Create new inventory: Select activities | 1000px | KPI stats bar, search+bulk toolbar, data table with checkboxes, scope/status badges, calc method |
+| Add entities | 2 | Create new inventory: Add entities | 1000px | KPI stats bar, search+bulk toolbar, collapsible tree with checkboxes, activities/records columns |
+| Trim activities | 3 | Create new inventory: Filter out activities | 1200px | KPI stats bar, search+bulk toolbar, split view: entity tree (left) + included/excluded activity columns (right) |
+| Review | 4 | Create new inventory: Review | 1000px | KPI stats bar, summary grids for basic info, selected activities chips, entity count, trim summary |
+
+### Sample Data
+
+**Activities** (6 items):
+- Stationary combustion (Scope 1, RA+ Standard v2.1, Ready)
+- Mobile combustion (Scope 1, RA+ Standard v2.1, Ready)
+- Fugitive emissions (Scope 2, GHG Protocol v3.1, Needs data)
+- Purchased electricity (Scope 2, GHG Protocol v3.1, Needs data)
+- Purchased steam & heat (Scope 2, GHG Protocol v3.1, Ready)
+- Business travel (Scope 3, RA+ Standard v2.1, Ready)
+
+**Entity Tree** (3 regions):
+- Americas (534 entities, 40 activities, 8,420 records)
+  - Offices (127) — expanded by default
+    - Boston HQ - Building A, B
+    - Denver Regional Office
+    - Toronto Office, Mexico City Office, Denver Regional office
+  - Warehouses (89)
+  - Factories (224)
+- EMEA (489 entities, 11 activities, 7,230 records)
+- APAC (224 entities, 9 activities, 8,420 records)
+
+**KPI Bar** (static totals): 1,241 entities | 20,770 records | 32 activities
+
+## CSS Class Conventions
+
+All inventory-specific classes use the `inv-` prefix. Shared wizard infrastructure (overlay, header, footer, stepper, buttons) uses `wizard-` prefix.
+
+Key inventory classes:
+- `.inv-wizard` — container (dynamic width)
+- `.inv-stats-bar`, `.inv-stat`, `.inv-stat-value`, `.inv-stat-label` — KPI bar
+- `.inv-form-*` — form fields, labels, inputs, selects, dividers
+- `.inv-consolidation`, `.inv-radio-*` — consolidation approach card
+- `.inv-toolbar`, `.inv-search`, `.inv-bulk-btn` — search/action bar
+- `.inv-table-wrap`, `.inv-table`, `.inv-table-checkbox` — activities table
+- `.inv-scope-badge--s1/s2/s3` — scope color badges
+- `.inv-status-badge--ready/need` — status badges
+- `.inv-tree-*` — entity tree (header, wrap, node, toggle, checkbox, name, counts, children)
+- `.inv-filter-split`, `.inv-filter-left`, `.inv-filter-right` — trim step split view
+- `.inv-activity-*` — activity rows in filter columns
+- `.inv-review-*` — review step grids, chips, sections
+
+## Design Tokens (from Figma)
+
+- **Font**: `'Nunito Sans', sans-serif` — weights: 400 (regular), 600 (semibold), 700 (bold)
+- **Colors**:
+  - Black/text: `#1d201f`
+  - Subdued text: `#676f73`
+  - Borders: `#d5dde0` (cards), `#676f73` (inputs)
+  - Green primary: `#008029` (buttons, checked states, active stepper)
+  - Green dark: `#003310` (complete stepper)
+  - Background light: `#f5f8fa` (consolidation card)
+  - Scope 1 badge: bg `#dcfce7`, text `#166534`, border `#86efac`
+  - Scope 2 badge: bg `#e0f2fe`, text `#075985`, border `#7dd3fc`
+  - Scope 3 badge: bg `#fef3c7`, text `#92400e`, border `#fcd34d`
+  - Status ready: bg `#dcfce7`, text `#166534`, border `#86efac`
+  - Status need: bg `#fef2f2`, text `#991b1b`, border `#fca5a5`
+- **Border radius**: 4px (inputs/buttons), 8px (cards/tables), 12px (consolidation), 16px (wizard modal, stepper bars)
+- **Elevation**: `0 3px 6px 0 rgba(9, 11, 12, 0.12)` (wizard modal shadow)
+
+## Relationship to Other Wizards
+
+The **Activity Setup wizard** (`js/wizard.js`) is a separate, pre-existing wizard for uploading activity/emissions files. It uses the `#wizard-overlay` shell and `window.openActivityWizard()`. They share the same base CSS classes but are fully independent JS modules.
+
+## Known Gaps / Future Work
+
+- Form inputs don't persist between step navigations (re-render resets them; `formData` captures initial values but doesn't bind live)
+- Entity tree checkboxes don't cascade (checking a parent doesn't auto-check children)
+- KPI stats bar values are hardcoded, not dynamically computed from selections
+- No actual form validation
+- Trim step checkbox changes don't re-render the split view (state updates but UI is static)
+- No Review step in Figma — current implementation is a summary approximation
+- Search/filter inputs are non-functional placeholders
+- Bulk Actions dropdown is non-functional
+- Calc method dropdowns in the activities table are display-only

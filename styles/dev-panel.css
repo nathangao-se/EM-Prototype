@@ -4,11 +4,15 @@
 
 .dev-panel {
   position: fixed;
-  top: 16px;
-  left: 16px;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 9999;
   font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
   font-size: 12px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
 }
 
 .dev-panel-toggle {
@@ -32,21 +36,19 @@
   background: #1e1e1e;
   border: 1px solid #333;
   border-radius: 6px;
-  padding: 12px;
-  margin-top: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
   min-width: 200px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dev-panel--expanded .dev-panel-content {
-  display: block;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
 }
 
 .dev-panel-section {
-  margin-bottom: 12px;
-}
-
-.dev-panel-section:last-child {
   margin-bottom: 0;
 }
 

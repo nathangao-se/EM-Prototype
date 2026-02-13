@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,7 +19,9 @@
   <link rel="stylesheet" href="styles/goals.css">
   <link rel="stylesheet" href="styles/dashboard.css">
   <link rel="stylesheet" href="styles/visualization.css">
+  <link rel="stylesheet" href="styles/modal.css">
   <link rel="stylesheet" href="styles/dev-panel.css">
+  <link rel="stylesheet" href="styles/wizard.css">
 </head>
 <body>
   <div class="app-container">
@@ -139,15 +141,72 @@
 
   </div>
 
+  <!-- ========== MODAL ========== -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-header-title"></span>
+        <button class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-list-pane">
+          <div class="modal-list-scroll"></div>
+        </div>
+        <div class="modal-detail-pane">
+          <div class="modal-detail-placeholder">Select an item to view details</div>
+          <div class="modal-detail-content">
+            <div>
+              <h3 class="modal-detail-title"></h3>
+              <div class="modal-detail-header-meta"></div>
+            </div>
+            <p class="modal-detail-description"></p>
+            <div class="modal-history"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== WIZARD OVERLAY (Activity Setup) ========== -->
+  <div id="wizard-overlay" class="wizard-overlay">
+    <div class="wizard">
+      <div class="wizard-header">
+        <span class="wizard-header-title"></span>
+        <button class="wizard-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="wizard-body"></div>
+      <div class="wizard-footer"></div>
+    </div>
+  </div>
+
+  <!-- ========== INVENTORY WIZARD OVERLAY ========== -->
+  <div id="inv-wizard-overlay" class="wizard-overlay">
+    <div class="wizard inv-wizard">
+      <div class="wizard-header">
+        <span class="wizard-header-title"></span>
+        <button class="wizard-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="wizard-body"></div>
+      <div class="wizard-footer"></div>
+    </div>
+  </div>
+
   <!-- ========== DEV PANEL ========== -->
-  <div id="dev-panel" class="dev-panel">
-    <button id="dev-panel-toggle" class="dev-panel-toggle">☰ Dev</button>
+  <div id="dev-panel" class="dev-panel dev-panel--expanded">
+    <button id="dev-panel-toggle" class="dev-panel-toggle">× Dev</button>
     <div class="dev-panel-content">
       <div class="dev-panel-section">
         <div class="dev-panel-label">Perspective</div>
         <div class="dev-panel-options">
           <button class="dev-panel-option dev-panel-option--active" data-config="global-oversight">Global Admin</button>
           <button class="dev-panel-option" data-config="site-manager">Site Manager</button>
+        </div>
+      </div>
+      <div class="dev-panel-section">
+        <div class="dev-panel-label">Wizards</div>
+        <div class="dev-panel-options">
+          <button class="dev-panel-option" id="dev-open-wizard">Activity Setup</button>
+          <button class="dev-panel-option" id="dev-open-inventory-wizard">Create Inventory</button>
         </div>
       </div>
     </div>
@@ -157,9 +216,12 @@
   <script src="js/utils.js"></script>
   <script src="js/config-global-oversight.js"></script>
   <script src="js/config-site-manager.js"></script>
+  <script src="js/modal.js"></script>
   <script src="js/goals.js"></script>
   <script src="js/visualization.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="js/wizard.js"></script>
+  <script src="js/inventory-wizard.js"></script>
   <script src="js/dev-panel.js"></script>
 </body>
 </html>
