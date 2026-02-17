@@ -1,0 +1,85 @@
+/* ========================================
+   PAGE TRANSITION — non-modal/sidebar transitions
+   ======================================== */
+
+/* Phase 1: Main content (goals, dashboard) fades out */
+.pt-fade-target {
+  transition: opacity 300ms ease;
+}
+.pt-fade-target.pt-fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Header left (header-main) moves up and out when card morphs */
+.pt-header-push {
+  transition: transform 400ms ease;
+}
+.pt-header-push.pt-header-up {
+  transform: translateY(-100%);
+}
+
+/* Morphing card clone: fixed, animated via inline transform */
+.pt-card-clone {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100px;
+  height: 100px;
+  transform-origin: 0 0;
+  z-index: 9000;
+  pointer-events: none;
+  transition: transform 400ms ease;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  box-shadow: 0 3px 6px rgba(9, 11, 12, 0.12);
+}
+
+/* Page view container: full viewport, centered content, fade/zoom in */
+.pt-page-view {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.pt-page-view.pt-page-visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+.pt-page-view .pt-page-content {
+  width: 100%;
+  max-width: 1400px;
+  max-height: 100%;
+  overflow: auto;
+  transform: scale(0.96);
+  transition: transform 300ms ease;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+}
+.pt-page-view.pt-page-visible .pt-page-content {
+  transform: scale(1);
+}
+
+.pt-page-view .pt-page-inner.rec-modal {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Project bar: hide during transition so only the morphing clone is visible */
+.pt-project-bar-hidden .project-bar {
+  visibility: hidden;
+}

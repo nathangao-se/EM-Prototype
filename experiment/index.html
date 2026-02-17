@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Table Selection Experiment</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>CSV Table Selection Experiment</h1>
+
+        <div class="instructions">
+            <strong>How to use:</strong>
+            1. Upload a CSV file or load sample data<br>
+            2. Click any data cell to select it; click + drag to select a range<br>
+            3. Click a <b>row number</b> to select a row; drag across row numbers for multiple rows<br>
+            4. Click a <b>column header</b> to select a column; drag across headers for multiple columns<br>
+            5. Hold <b>Shift</b> and click to extend any selection<br>
+            6. Use <b>Save Block</b> to capture the selection, or select an entire row and use <b>Save with Header</b> to use it as a header with all continuous rows below as the body
+        </div>
+
+        <div class="upload-section">
+            <span>Upload CSV:</span>
+            <input type="file" id="csvFile" accept=".csv,.txt,.tsv">
+            <span>or</span>
+            <button class="btn btn-secondary" id="loadSample">Load Sample Data</button>
+        </div>
+
+        <div id="tableContainer" class="hidden">
+            <div class="toolbar">
+                <div id="status"></div>
+                <div class="toolbar-right">
+                    <button class="btn btn-success" id="saveBlockBtn" disabled>Save Block</button>
+                    <button class="btn btn-success" id="saveHeaderBlockBtn" disabled>Save with Header</button>
+                    <button class="btn btn-secondary" id="clearBtnTop">Clear Selection</button>
+                </div>
+            </div>
+            <div class="table-wrapper" id="tableWrapper"></div>
+            <div id="pagination" class="pagination hidden">
+                <button class="btn btn-secondary btn-sm" id="prevPage">Previous</button>
+                <span id="pageInfo"></span>
+                <button class="btn btn-secondary btn-sm" id="nextPage">Next</button>
+            </div>
+        </div>
+
+        <div id="formSection" class="form-section hidden">
+            <h2>Selected Data Preview</h2>
+            <div class="selection-info">
+                <strong>Selection:</strong> <span id="selectionRange">None</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="clearBtn">Clear Selection</button>
+            <div class="preview-table-wrap" id="previewContainer"></div>
+        </div>
+
+        <div id="blocksSection" class="blocks-section hidden">
+            <h2>Saved Blocks</h2>
+            <div id="blocksContainer"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="blockModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Block</h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-table-wrap" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
