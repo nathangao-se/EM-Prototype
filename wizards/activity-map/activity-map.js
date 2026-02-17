@@ -57,19 +57,49 @@
 
     var html = '<div class="dm-layout">';
 
-    // ---------- LEFT COLUMN ----------
-    html += '<div class="dm-left">';
+    // ---------- TOP ROW: two cards using same structure as goals section ----------
+    html += '<div class="dm-top-row">';
+    html += '<div class="goals-card">';
+    html += '<h2 class="goals-title">Active campaigns</h2>';
+    html += '<div class="goals-card-content">';
+    html += '<div class="goals-metric">';
+    html += '<span class="goals-metric-value">3 Active 5% past due</span>';
+    html += '</div>';
+    html += '<p class="goals-subtitle">19,832 records requested, 992 past due</p>';
+    html += '<div class="goals-progress">';
+    html += '<div class="goals-progress-track"></div>';
+    html += '<div class="goals-progress-segment goals-progress-pending" style="width:5%"></div>';
+    html += '</div>';
+    html += '<div class="goals-actions">';
+    html += '<button class="btn btn-outline btn-small">Review campaigns</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
 
-    html += '<div class="dm-card">';
-    html += '<div class="dm-card-heading">Active campaigns</div>';
-    html += '<div class="dm-kpi-row">';
-    html += '<span class="dm-kpi-value">3 Active 5% past due</span>';
-    html += '<i class="fa-solid fa-arrow-trend-up dm-kpi-trend"></i>';
+    html += '<div class="goals-card">';
+    html += '<h2 class="goals-title">All activity records</h2>';
+    html += '<div class="goals-card-content">';
+    html += '<div class="goals-metric">';
+    html += '<span class="goals-metric-value">86%</span>';
+    html += '<span class="goals-metric-label">Activities normalized</span>';
     html += '</div>';
-    html += '<div class="dm-sub">19,832 records requested, 992 past due</div>';
-    html += '<div class="dm-progress"><div class="dm-progress-fill" style="width:5%"></div><div class="dm-progress-bg"></div></div>';
-    html += '<button class="dm-btn dm-btn-outline">Review campaigns</button>';
+    html += '<p class="goals-subtitle">12 files uploaded, 8,923 records, 45/90 normalized</p>';
+    html += '<div class="goals-progress">';
+    html += '<div class="goals-progress-track"></div>';
+    html += '<div class="goals-progress-segment goals-progress-pending" style="width:86%"></div>';
     html += '</div>';
+    html += '<div class="goals-actions">';
+    html += '<button class="btn btn-primary btn-small">+ Add files/data</button>';
+    html += '<button class="btn btn-outline btn-small">Create campaign</button>';
+    html += '<button class="btn btn-outline btn-small">Rules library</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // ---------- BOTTOM: left sidebar + table ----------
+    html += '<div class="dm-bottom">';
+    html += '<div class="dm-left">';
 
     html += '<div class="dm-block">';
     html += '<div class="dm-block-title">Category overview</div>';
@@ -99,24 +129,7 @@
 
     html += '</div>';
 
-    // ---------- RIGHT COLUMN ----------
     html += '<div class="dm-right">';
-
-    html += '<div class="dm-card dm-card-main">';
-    html += '<div class="dm-card-heading">All activity records</div>';
-    html += '<div class="dm-kpi-row">';
-    html += '<span class="dm-kpi-value">86% Activities normalized</span>';
-    html += '<i class="fa-solid fa-arrow-trend-up dm-kpi-trend"></i>';
-    html += '</div>';
-    html += '<div class="dm-sub">12 files uploaded, 8,923 records, 45/90 normalized</div>';
-    html += '<div class="dm-progress"><div class="dm-progress-fill" style="width:86%"></div><div class="dm-progress-bg"></div></div>';
-    html += '<div class="dm-actions">';
-    html += '<button class="dm-btn dm-btn-green">+ Add files/data</button>';
-    html += '<button class="dm-btn dm-btn-outline">Create campaign</button>';
-    html += '<button class="dm-btn dm-btn-outline">Rules library</button>';
-    html += '</div>';
-    html += '</div>';
-
     html += '<div class="dm-table-wrap">';
     html += '<div class="dm-toolbar">';
     html += '<input type="text" class="dm-search" placeholder="Search">';
@@ -144,6 +157,7 @@
       html += '</tr>';
     });
     html += '</tbody></table>';
+    html += '</div>';
     html += '</div>';
     html += '</div>';
 
