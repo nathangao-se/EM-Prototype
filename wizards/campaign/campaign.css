@@ -1,0 +1,266 @@
+/* =============================================
+   CAMPAIGN WIZARD (dcc-) SPECIFIC STYLES
+   ============================================= */
+
+/* ---------- Body gap override for campaign wizard ---------- */
+.dcc-wizard .wizard-body {
+  gap: 12px;
+}
+
+/* ---------- Textarea ---------- */
+.dcc-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.dcc-textarea:focus {
+  border-color: #008029;
+}
+
+/* ---------- Checkbox ---------- */
+.dcc-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 0;
+}
+.dcc-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #008029;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.dcc-checkbox--small {
+  width: 14px;
+  height: 14px;
+}
+.dcc-checkbox-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+/* ---------- Template list ---------- */
+.dcc-template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.dcc-template-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #d5dde0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+}
+.dcc-template-item:last-child {
+  border-bottom: none;
+}
+.dcc-template-name {
+  flex: 1;
+  color: #1d201f;
+  font-weight: 400;
+}
+.dcc-template-preview {
+  font-size: 12px;
+  color: #008029;
+  text-decoration: none;
+  font-weight: 600;
+}
+.dcc-template-preview:hover {
+  text-decoration: underline;
+}
+.dcc-template-meta {
+  font-size: 12px;
+  color: #676f73;
+  white-space: nowrap;
+}
+.dcc-template-sort {
+  background: none;
+  border: none;
+  cursor: grab;
+  padding: 0 4px;
+}
+
+/* ---------- Segmented control ---------- */
+.dcc-segment-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0;
+}
+.dcc-segment-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+  white-space: nowrap;
+}
+.dcc-segmented {
+  display: flex;
+  border: 1px solid #d5dde0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.dcc-seg-btn {
+  background: #ffffff;
+  border: none;
+  padding: 6px 16px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #676f73;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-right: 1px solid #d5dde0;
+}
+.dcc-seg-btn:last-child {
+  border-right: none;
+}
+.dcc-seg-btn--active {
+  background: #008029;
+  color: #ffffff;
+}
+
+/* ---------- Split view (Step 2) ---------- */
+.dcc-split-view {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  min-height: 460px;
+}
+.dcc-split-left {
+  width: 300px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid #d5dde0;
+}
+.dcc-split-divider {
+  display: none;
+}
+.dcc-split-right {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* ---------- Activity list items ---------- */
+.dcc-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.dcc-activity-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eef2f4;
+  transition: background 0.12s;
+}
+.dcc-activity-item:hover {
+  background: #f5f8fa;
+}
+.dcc-activity-item--active {
+  background: #eef8f0;
+  border-left: 3px solid #008029;
+}
+.dcc-activity-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dcc-activity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dcc-activity-item-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+  flex: 1;
+}
+.dcc-customize-link {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  color: #008029;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dcc-customize-link:hover {
+  text-decoration: underline;
+}
+.dcc-activity-item-meta {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  color: #676f73;
+  margin-top: 4px;
+  padding-left: 18px;
+}
+
+/* ---------- Detail panel heading ---------- */
+.dcc-detail-panel {
+  padding: 12px 16px;
+}
+.dcc-detail-header {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  margin-bottom: 8px;
+}
+
+/* ---------- Collaborator tags ---------- */
+.wizard-collab-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.wizard-collab-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #eef8f0;
+  border: 1px solid #c1e6cc;
+  border-radius: 12px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #1d201f;
+}
+.wizard-collab-tag-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  color: #676f73;
+  font-size: 10px;
+}
+.wizard-collab-tag-remove:hover {
+  color: #1d201f;
+}
+
+

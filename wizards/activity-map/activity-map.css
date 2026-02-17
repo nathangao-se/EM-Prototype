@@ -1,0 +1,340 @@
+/* =============================================
+   RECONCILE SOURCE DATA MODAL (rec-)
+   ============================================= */
+
+/* ---------- Overlay ---------- */
+.rec-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.rec-overlay--open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---------- Modal shell ---------- */
+.rec-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 92vw;
+  max-width: 1400px;
+  height: 78vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+/* ---------- Header (close-only) ---------- */
+.rec-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px 0 24px;
+  flex-shrink: 0;
+}
+.rec-header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+}
+.rec-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #676f73;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.rec-close-btn:hover {
+  background: #f5f8fa;
+  color: #1d201f;
+}
+
+/* ---------- Body ---------- */
+.rec-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px 24px 24px;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* ---------- KPI filter bar ---------- */
+.rec-filter-bar {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.rec-kpi-card {
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 15px 20px;
+  background: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-width: 160px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.rec-kpi-card:hover {
+  background: #f5f8fa;
+}
+.rec-kpi-card--active {
+  background: #eef8f0;
+  border-color: #008029;
+}
+.rec-kpi-title {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.rec-kpi-main {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 28px;
+  white-space: nowrap;
+}
+.rec-kpi-suffix {
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 28px;
+}
+.rec-kpi-sub {
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  margin-top: 8px;
+  white-space: nowrap;
+}
+
+/* ---------- Divider ---------- */
+.rec-divider {
+  height: 1px;
+  background: #d5dde0;
+  flex-shrink: 0;
+}
+
+/* ---------- Summary line ---------- */
+.rec-summary-line {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-shrink: 0;
+}
+.rec-summary-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  white-space: nowrap;
+}
+
+/* ---------- Auto-map button ---------- */
+.rec-btn-auto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  background: #008029;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.rec-btn-auto:hover {
+  background: #006b22;
+}
+
+/* ---------- Split panel ---------- */
+.rec-split {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+}
+
+/* Left: scrollable activity list */
+.rec-split-left {
+  width: 440px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 16px;
+  border-right: 1px solid #d5dde0;
+}
+
+/* Right: scrollable match panel */
+.rec-split-right {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- Activity items (left) ---------- */
+.rec-activity {
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 16px;
+  background: #ffffff;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.12s, border-color 0.12s;
+}
+.rec-activity:hover {
+  background: #f5f8fa;
+}
+.rec-activity--selected {
+  background: #f5f8fa;
+  border-color: #abb3b8;
+}
+.rec-activity--completed {
+  background: #dfe7eb;
+  border-color: #d5dde0;
+}
+.rec-activity-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 20px;
+}
+.rec-activity-meta {
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  margin-top: 12px;
+}
+
+/* ---------- Chips ---------- */
+.rec-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.rec-chip--completed {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #dfe7eb;
+  border: 1px solid #abb3b8;
+  color: #1d201f;
+}
+.rec-chip--match-high {
+  background: #008029;
+  color: #ffffff;
+}
+.rec-chip--match-med {
+  background: #e3f8e7;
+  border: 1px solid #3dcd58;
+  color: #008029;
+}
+.rec-chip--match-low {
+  background: #fff7ed;
+  border: 1px solid #f59e0b;
+  color: #804700;
+}
+
+/* ---------- Match cards (right) ---------- */
+.rec-match-card {
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 16px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rec-match-card--high {
+  background: #e3f8e7;
+}
+.rec-match-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rec-match-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 28px;
+}
+.rec-match-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+}
+.rec-match-sep {
+  width: 1px;
+  height: 16px;
+  background: #676f73;
+  flex-shrink: 0;
+}
+.rec-match-date {
+  margin-left: auto;
+  font-size: 12px;
+  color: #676f73;
+}
+.rec-match-divider {
+  height: 1px;
+  background: #d5dde0;
+}
+.rec-match-logic {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rec-match-logic-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+}
+.rec-match-logic-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+}
+.rec-btn-auto--card {
+  align-self: flex-start;
+}
+.rec-empty {
+  font-size: 14px;
+  color: #676f73;
+  padding: 24px;
+  text-align: center;
+}

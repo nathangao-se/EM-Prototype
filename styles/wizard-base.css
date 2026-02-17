@@ -1,0 +1,759 @@
+/* ========================================
+   WIZARD — Activity Collection Setup
+   ======================================== */
+
+/* Overlay */
+.wizard-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.wizard-overlay--open {
+  display: flex;
+}
+
+/* Container */
+.wizard {
+  width: 800px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 3px 6px 0 rgba(9, 11, 12, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.wizard-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px 0 24px;
+  flex-shrink: 0;
+}
+
+.wizard-header-title {
+  flex: 1;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  line-height: 28px;
+}
+
+.wizard-close-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #1d201f;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.wizard-close-btn:hover {
+  background: #f1f5f9;
+}
+
+/* ========================================
+   BODY — scrollable content area
+   ======================================== */
+.wizard-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.wizard-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-top: none;
+  flex-shrink: 0;
+}
+
+.wizard-footer-spacer {
+  flex: 1;
+}
+
+.wizard-btn-discard {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #cc1300;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-discard i {
+  font-size: 18px;
+}
+
+.wizard-btn-discard:hover {
+  opacity: 0.8;
+}
+
+.wizard-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 80px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  color: #1d201f;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-outline:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.wizard-btn-green {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 200px;
+  padding: 0 8px;
+  background: #008029;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-green:hover {
+  background: #006622;
+}
+
+.wizard-btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 80px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  color: #1d201f;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.wizard-btn-cancel:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ========================================
+   STEP 0 — INTRO (Selection Cards)
+   ======================================== */
+.wizard-intro-cards {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+}
+
+.wizard-intro-divider-v {
+  width: 1px;
+  height: 184px;
+  background: #d5dde0;
+  flex-shrink: 0;
+}
+
+.wizard-selection-card {
+  width: 200px;
+  height: 200px;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wizard-selection-card:hover {
+  border-color: #008029;
+  box-shadow: 0 2px 8px rgba(0, 128, 41, 0.12);
+}
+
+.wizard-selection-card--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wizard-selection-card--disabled:hover {
+  border-color: #d5dde0;
+  box-shadow: none;
+}
+
+.wizard-selection-card-icon {
+  font-size: 48px;
+  color: #1d201f;
+  line-height: 1;
+}
+
+.wizard-selection-card-divider {
+  width: 100%;
+  height: 1px;
+  background: #d5dde0;
+}
+
+.wizard-selection-card-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  text-align: center;
+  line-height: 25px;
+}
+
+.wizard-intro-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.5;
+}
+
+/* Center footer for intro */
+.wizard-footer--center {
+  justify-content: center;
+}
+
+/* ========================================
+   STEPPER
+   ======================================== */
+.wizard-stepper {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.wizard-stepper-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wizard-stepper-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wizard-stepper-item--active .wizard-stepper-label {
+  color: #1d201f;
+}
+
+.wizard-stepper-item--complete .wizard-stepper-label {
+  color: #008029;
+}
+
+.wizard-stepper-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  background: #008029;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 7px;
+  line-height: 1;
+}
+
+.wizard-stepper-bar {
+  height: 4px;
+  background: #d5dde0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.wizard-stepper-bar-fill {
+  height: 100%;
+  border-radius: 16px;
+  width: 0;
+  transition: width 0.3s ease;
+}
+
+.wizard-stepper-item--active .wizard-stepper-bar-fill {
+  background: #008029;
+  width: 100%;
+}
+
+.wizard-stepper-item--complete .wizard-stepper-bar-fill {
+  background: #003310;
+  width: 100%;
+}
+
+/* ========================================
+   INSTRUCTION TEXT
+   ======================================== */
+.wizard-instruction {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.5;
+}
+
+.wizard-instruction a {
+  color: #1d201f;
+  text-decoration: underline;
+}
+
+/* ========================================
+   UPLOAD AREA
+   ======================================== */
+.wizard-upload-area {
+  width: 100%;
+  height: 180px;
+  border: 1px dashed #676f73;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.wizard-upload-area:hover {
+  border-color: #008029;
+  background: rgba(0, 128, 41, 0.02);
+}
+
+.wizard-upload-icon {
+  width: 40px;
+  height: 40px;
+  background: #008029;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.wizard-upload-text {
+  text-align: center;
+}
+
+.wizard-upload-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  margin-bottom: 12px;
+}
+
+.wizard-upload-title-browse {
+  color: #008029;
+  cursor: pointer;
+}
+
+.wizard-upload-meta {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.6;
+}
+
+/* OR + checkbox */
+.wizard-or-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.wizard-or-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  text-align: center;
+}
+
+.wizard-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.wizard-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.wizard-checkbox:checked {
+  background: #008029;
+  border-color: #008029;
+}
+
+.wizard-checkbox:checked::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.wizard-checkbox-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+/* ========================================
+   FILE LIST
+   ======================================== */
+.wizard-file-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wizard-file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  height: 36px;
+  border-bottom: 1px solid #f1f5f9;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+.wizard-file-item:last-child {
+  border-bottom: none;
+}
+
+.wizard-file-icon {
+  color: #676f73;
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.wizard-file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wizard-file-size {
+  color: #676f73;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.wizard-file-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #676f73;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.wizard-file-status {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.wizard-file-status--ok {
+  color: #008029;
+}
+
+.wizard-file-status--processing {
+  color: #a16207;
+}
+
+/* ========================================
+   BANNER (info)
+   ======================================== */
+.wizard-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: #edfaff;
+  border: 1px solid #42caff;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.wizard-banner-icon {
+  font-size: 28px;
+  color: #009edb;
+  flex-shrink: 0;
+}
+
+.wizard-banner-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.5;
+}
+
+/* ========================================
+   COLUMN MAPPING CARD
+   ======================================== */
+.wizard-mapping-card {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  background: #ffffff;
+  width: 100%;
+}
+
+.wizard-mapping-column-name {
+  width: 160px;
+  flex-shrink: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 20px;
+}
+
+.wizard-mapping-divider {
+  width: 1px;
+  background: #d5dde0;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+.wizard-mapping-options {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wizard-mapping-section-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.wizard-mapping-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.wizard-radio {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #676f73;
+  border-radius: 999px;
+  background: #ffffff;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.wizard-radio:checked {
+  border-color: #008029;
+  border-width: 5px;
+}
+
+.wizard-mapping-option-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  min-width: 100px;
+}
+
+.wizard-mapping-option-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.wizard-mapping-hr {
+  width: 100%;
+  height: 1px;
+  background: #d5dde0;
+  border: none;
+  margin: 0;
+}
+
+/* ========================================
+   REVIEW STEP — Collaborators
+   ======================================== */
+.wizard-section-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 25px;
+}
+
+.wizard-collab-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.wizard-collab-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  color: #1d201f;
+  outline: none;
+}
+
+.wizard-collab-input:focus {
+  border-color: #008029;
+}
+
+.wizard-collab-tags {
+  display: flex;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.wizard-collab-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #1d201f;
+  border-radius: 2px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  background: transparent;
+}
+
+.wizard-collab-tag-remove {
+  font-size: 12px;
+  color: #1d201f;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.wizard-review-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wizard-review-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 25px;
+}
+
+/* ========================================
+   STEP VISIBILITY
+   ======================================== */
+.wizard-step {
+  display: none;
+  flex-direction: column;
+}
+
+.wizard-step--active {
+  display: flex;
+}
+
