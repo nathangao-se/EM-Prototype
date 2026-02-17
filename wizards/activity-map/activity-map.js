@@ -52,9 +52,8 @@
     { normalizedName: 'Waste management', originalName: 'Waste disposal', entity: 'Phoenix office', scope: 3, scopeLabel: 'Scope 3', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'E. Harris', updated: '5/1/2026' }
   ];
 
-  function render() {
-    headerTitle.textContent = 'Project name / Data management';
-
+  /** Returns the body HTML string (dm-layout) for reuse in modal and transition. */
+  function getBodyHTML() {
     var html = '<div class="dm-layout">';
 
     // ---------- TOP ROW: two cards using same structure as goals section ----------
@@ -100,33 +99,58 @@
     // ---------- BOTTOM: left sidebar + table ----------
     html += '<div class="dm-bottom">';
     html += '<div class="dm-left">';
+    html += '<div class="dm-filter-card">';
 
-    html += '<div class="dm-block">';
-    html += '<div class="dm-block-title">Category overview</div>';
-    html += '<div class="dm-block-meta">8,923 records</div>';
+    // Row 1: Category overview
+    html += '<div class="dm-filter-row">';
+    html += '<div class="dm-filter-content">';
+    html += '<div class="dm-filter-title">Category overview</div>';
+    html += '<div class="dm-filter-meta">8,923 records</div>';
+    html += '</div>';
     html += '</div>';
 
-    html += '<div class="dm-block">';
-    html += '<div class="dm-block-title">All data list</div>';
-    html += '<div class="dm-block-meta">8,923 records, 184 missing</div>';
+    // Row 2: All data list
+    html += '<div class="dm-filter-row">';
+    html += '<div class="dm-filter-content">';
+    html += '<div class="dm-filter-title">All data list</div>';
+    html += '<div class="dm-filter-meta">8,923 records, 184 missing</div>';
+    html += '</div>';
     html += '</div>';
 
-    html += '<div class="dm-card dm-card-warn">';
-    html += '<i class="fa-solid fa-triangle-exclamation dm-warn-icon"></i>';
-    html += '<div class="dm-warn-text">6 instances</div>';
-    html += '<a href="#" class="dm-link">Normalize &gt;</a>';
+    // Row 3: Unnormalized Columns
+    html += '<div class="dm-filter-row">';
+    html += '<div class="dm-filter-content">';
+    html += '<div class="dm-filter-title-row">';
+    html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
+    html += '<span class="dm-filter-title">Unnormalized Columns</span>';
     html += '</div>';
-    html += '<div class="dm-card-label">Unnormalized Columns</div>';
-
-    html += '<div class="dm-card dm-card-warn">';
-    html += '<i class="fa-solid fa-triangle-exclamation dm-warn-icon"></i>';
-    html += '<div class="dm-warn-text">1,249 records</div>';
-    html += '<a href="#" class="dm-link">Normalize &gt;</a>';
+    html += '<div class="dm-filter-meta">6 instances</div>';
     html += '</div>';
-    html += '<div class="dm-card-label">Unnormalized data</div>';
+    html += '<div class="dm-filter-action">';
+    html += '<a href="#" class="dm-filter-link">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
+    html += '</div>';
+    html += '</div>';
 
-    html += '<button class="dm-btn dm-btn-outline dm-btn-block"><i class="fa-solid fa-list-check"></i> Rules library</button>';
+    // Row 4: Unnormalized data
+    html += '<div class="dm-filter-row">';
+    html += '<div class="dm-filter-content">';
+    html += '<div class="dm-filter-title-row">';
+    html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
+    html += '<span class="dm-filter-title">Unnormalized data</span>';
+    html += '</div>';
+    html += '<div class="dm-filter-meta">1,249 records</div>';
+    html += '</div>';
+    html += '<div class="dm-filter-action">';
+    html += '<a href="#" class="dm-filter-link">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
+    html += '</div>';
+    html += '</div>';
 
+    // Rules library button
+    html += '<div class="dm-filter-footer">';
+    html += '<button class="dm-filter-btn"><i class="fa-solid fa-book"></i> Rules library</button>';
+    html += '</div>';
+
+    html += '</div>';
     html += '</div>';
 
     html += '<div class="dm-right">';
@@ -164,8 +188,24 @@
     html += '</div>';
     html += '</div>';
 
-    bodyEl.innerHTML = html;
+    return html;
   }
+
+  function render() {
+    headerTitle.textContent = 'Project name / Data management';
+    bodyEl.innerHTML = getBodyHTML();
+  }
+
+  /**
+   * Build a DOM tree for the Activity Map page (for use in page transition).
+   * Returns just the body content — no header, no modal wrapper.
+   */
+  window.getActivityMapPageContent = function () {
+    var wrap = document.createElement('div');
+    wrap.className = 'dm-page';
+    wrap.innerHTML = getBodyHTML();
+    return wrap;
+  };
 
   render();
 })();

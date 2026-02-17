@@ -118,10 +118,15 @@
     container.classList.remove('project-bar--hidden');
 
     var activityMapBtn = container.querySelector('[data-action-id="open-activity-map"]');
-    if (activityMapBtn && typeof window.openReconcileModal === 'function') {
+    if (activityMapBtn) {
       activityMapBtn.addEventListener('click', function () {
         if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
-        window.openReconcileModal();
+        if (typeof window.runPageTransition === 'function' && typeof window.getActivityMapPageContent === 'function') {
+          var pageContent = window.getActivityMapPageContent();
+          window.runPageTransition({ triggerEl: activityMapBtn, pageContent: pageContent, title: 'Activity mapping', onExit: function () {} });
+        } else if (typeof window.openReconcileModal === 'function') {
+          window.openReconcileModal();
+        }
       });
     }
   };

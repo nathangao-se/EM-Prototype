@@ -1,185 +1,277 @@
 /* ========================================
-   PAGE TRANSITION — generic non-modal/sidebar transitions
-   Use for: Activity Map and any other full-page transition from a card.
+   PAGE TRANSITION — overlapping staggered dissolve
 
-   Flow (forward):
-     1. Goals + dashboard fade out (300ms)
-     2. Source card morphs to header-left size and moves up; header-left moves up (400ms)
-     3. Page content fades/zooms in (300ms)
+   All phases trigger in order but overlap smoothly:
+     Background fade starts → items begin fading partway through →
+     header flip begins while last items are still fading.
 
-   Flow (reverse): same steps in reverse.
+   Forward:
+     t=0        Background dissolves
+     t=80ms     Items start stagger-fading (random order, ~45ms apart)
+     t=lastItem Header flip begins (overlaps tail of items)
+     t=flip end Sections hidden, new page fades in
+
+   Reverse:
+     t=0        Page fades out
+     t=150ms    Header flip begins (overlaps page fade tail)
+     t=flip end Sections restored, bg fades in, items stagger in
    ======================================== */
 
 (function () {
   'use strict';
 
-  var DURATION_FADE = 300;
-  var DURATION_MORPH = 400;
+  var BG_HEAD_START = 0;
+  var ITEM_DELAY = 40;
+  var ITEM_STAGGER = 22;
+  var ITEM_DURATION = 160;
+  var FLIP_HALF = 125;
+  var PAGE_FADE = 175;
 
-  var appContainer = document.querySelector('.app-container');
+  var header = document.querySelector('.header');
   var headerMain = document.querySelector('.header-main');
+  var headerTitle = document.querySelector('.header-title');
+  var headerActions = document.querySelector('.header-actions');
   var goalsSection = document.querySelector('.goals');
   var dashboardSection = document.querySelector('.dashboard');
   var projectBar = document.querySelector('.project-bar');
+  var appContainer = document.querySelector('.app-container');
 
-  var pageViewEl = null;
-  var cardClone = null;
+  var pageSection = null;
   var currentState = null;
 
-  function getPageView() {
-    if (!pageViewEl) {
-      pageViewEl = document.getElementById('page-transition-view');
-    }
-    return pageViewEl;
+  function getParentCardColor(triggerEl) {
+    var card = triggerEl && triggerEl.closest('.project-bar__card');
+    if (!card) return null;
+    var style = window.getComputedStyle(card);
+    var bg = style.backgroundColor;
+    if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return bg;
+    var section = triggerEl && triggerEl.closest('.project-bar');
+    if (section) return window.getComputedStyle(section).backgroundColor;
+    return '#eaf5ef';
   }
 
-  /** Returns the element into which page content should be appended (e.g. for Activity Map). */
-  window.getTransitionMountPoint = function () {
-    var view = ensurePageViewContainer();
-    return view.querySelector('.pt-page-content');
-  };
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+    return arr;
+  }
 
-  function ensurePageViewContainer() {
-    var view = getPageView();
-    if (view) return view;
-    view = document.createElement('div');
-    view.id = 'page-transition-view';
-    view.className = 'pt-page-view';
-    var inner = document.createElement('div');
-    inner.className = 'pt-page-content';
-    view.appendChild(inner);
-    document.body.appendChild(view);
-    return view;
+  function collectItems() {
+    var items = [];
+    if (goalsSection) {
+      goalsSection.querySelectorAll('.goals-card').forEach(function (el) { items.push(el); });
+      goalsSection.querySelectorAll('.alert-group').forEach(function (el) { items.push(el); });
+    }
+    if (projectBar) {
+      var pbTitle = projectBar.querySelector('.project-bar__title');
+      if (pbTitle) items.push(pbTitle);
+      projectBar.querySelectorAll('.project-bar__card').forEach(function (el) { items.push(el); });
+    }
+    if (dashboardSection) {
+      var tabs = dashboardSection.querySelector('.dashboard-tabs');
+      if (tabs) items.push(tabs);
+      var controlCard = dashboardSection.querySelector('.dashboard-control-card');
+      if (controlCard) items.push(controlCard);
+      var hierarchyCard = dashboardSection.querySelector('.dashboard-hierarchy-card');
+      if (hierarchyCard) items.push(hierarchyCard);
+      var divider = dashboardSection.querySelector('.dashboard-divider');
+      if (divider) items.push(divider);
+      var detailNav = dashboardSection.querySelector('.dashboard-detail-nav');
+      if (detailNav) items.push(detailNav);
+      var detailExpanded = dashboardSection.querySelector('.dashboard-detail-expanded');
+      if (detailExpanded) items.push(detailExpanded);
+    }
+    return items;
+  }
+
+  function getBgSections() {
+    var sections = [];
+    if (goalsSection) sections.push(goalsSection);
+    if (projectBar && !projectBar.classList.contains('project-bar--hidden')) sections.push(projectBar);
+    return sections;
+  }
+
+  function flipHeader(midCallback, doneCallback) {
+    if (!headerMain || !header) {
+      midCallback();
+      doneCallback();
+      return;
+    }
+    header.classList.add('pt-header-perspective');
+    headerMain.classList.remove('pt-header-flip-half', 'pt-header-flip-back');
+    headerMain.classList.add('pt-header-animating');
+    void headerMain.offsetWidth;
+    headerMain.classList.add('pt-header-flip-half');
+
+    setTimeout(function () {
+      midCallback();
+      headerMain.classList.remove('pt-header-animating', 'pt-header-flip-half');
+      headerMain.style.transform = 'rotateX(-90deg)';
+      void headerMain.offsetWidth;
+      headerMain.classList.add('pt-header-flip-back');
+
+      setTimeout(function () {
+        headerMain.classList.remove('pt-header-flip-back');
+        headerMain.style.transform = '';
+        header.classList.remove('pt-header-perspective');
+        doneCallback();
+      }, FLIP_HALF);
+    }, FLIP_HALF);
   }
 
   /**
-   * Run the forward transition to show a page.
-   * @param {Object} options
-   * @param {HTMLElement} options.triggerEl - Button or element that was clicked (will find containing .project-bar__card)
-   * @param {HTMLElement} options.pageContent - The DOM element to show as the page (will be moved into transition view)
-   * @param {function} [options.onExit] - Called when user exits (after reverse transition)
+   * Kick off stagger. Returns the timestamp (ms from now) when the
+   * last item's fade will be fully complete.
    */
+  function staggerItems(items, direction) {
+    if (items.length === 0) return 0;
+    var shuffled = shuffle(items.slice());
+    shuffled.forEach(function (el, i) {
+      setTimeout(function () {
+        if (direction === 'out') {
+          el.classList.add('pt-item', 'pt-item--out');
+        } else {
+          el.classList.add('pt-item');
+          void el.offsetWidth;
+          el.classList.remove('pt-item--out');
+        }
+      }, i * ITEM_STAGGER);
+    });
+    return (shuffled.length - 1) * ITEM_STAGGER + ITEM_DURATION;
+  }
+
+  // ============================
+  // FORWARD
+  // ============================
   window.runPageTransition = function (options) {
     var triggerEl = options.triggerEl;
     var pageContent = options.pageContent;
+    var title = options.title || 'Activity mapping';
     var onExit = options.onExit || function () {};
 
-    var card = triggerEl && triggerEl.closest('.project-bar__card');
-    if (!card || !headerMain || !pageContent) {
-      if (pageContent && pageContent.parentNode) {
-        var view = ensurePageViewContainer();
-        var wrap = view.querySelector('.pt-page-content');
-        wrap.innerHTML = '';
-        wrap.appendChild(pageContent);
-        view.classList.add('pt-page-visible');
-      }
-      return;
-    }
+    if (!appContainer || !pageContent) return;
 
-    var view = ensurePageViewContainer();
-    var wrap = view.querySelector('.pt-page-content');
-    wrap.innerHTML = '';
-    wrap.appendChild(pageContent);
+    var savedBg = headerMain ? (headerMain.style.backgroundColor || '') : '';
+    var savedTitle = headerTitle ? headerTitle.textContent : '';
+    var savedActionsHTML = headerActions ? headerActions.innerHTML : '';
+    var cardColor = getParentCardColor(triggerEl);
 
-    var cardRect = card.getBoundingClientRect();
-    var headerRect = headerMain.getBoundingClientRect();
+    pageSection = document.createElement('section');
+    pageSection.className = 'pt-page-section';
+    pageSection.appendChild(pageContent);
+    appContainer.appendChild(pageSection);
 
     currentState = {
-      card: card,
-      cardRect: cardRect,
-      headerRect: headerRect,
       onExit: onExit,
-      view: view,
-      wrap: wrap,
-      pageContent: pageContent
+      savedBg: savedBg,
+      savedTitle: savedTitle,
+      savedActionsHTML: savedActionsHTML
     };
 
-    // Step 1: Fade goals and dashboard
-    if (appContainer) appContainer.classList.add('pt-project-bar-hidden');
-    if (goalsSection) { goalsSection.classList.add('pt-fade-target', 'pt-fade-out'); }
-    if (dashboardSection) { dashboardSection.classList.add('pt-fade-target', 'pt-fade-out'); }
+    var bgSections = getBgSections();
+    var items = collectItems();
 
+    // t=0: backgrounds start dissolving
+    bgSections.forEach(function (el) {
+      el.classList.add('pt-bg-fade', 'pt-bg-fade--out');
+    });
+
+    // t=ITEM_DELAY: items start stagger-fading (overlaps bg fade)
     setTimeout(function () {
-      // Step 2: Clone card as skeleton only (no inner content), morph; push header up
-      cardClone = card.cloneNode(true);
-      cardClone.innerHTML = '';
-      cardClone.className = cardClone.className + ' pt-card-clone';
-      cardClone.style.width = cardRect.width + 'px';
-      cardClone.style.height = cardRect.height + 'px';
-      cardClone.style.transform =
-        'translate(' + cardRect.left + 'px, ' + cardRect.top + 'px) scale(1)';
-      document.body.appendChild(cardClone);
+      var totalItemTime = staggerItems(items, 'out');
 
-      headerMain.classList.add('pt-header-push', 'pt-header-up');
-
-      var scaleX = headerRect.width / cardRect.width;
-      var scaleY = headerRect.height / cardRect.height;
-      cardClone.style.transform =
-        'translate(' + headerRect.left + 'px, ' + headerRect.top + 'px) scale(' + scaleX + ', ' + scaleY + ')';
-
+      // Header flip starts when ~75% of items have begun fading
+      // (overlaps with the tail end of item fades)
+      var flipDelay = Math.max(0, totalItemTime - ITEM_DURATION - FLIP_HALF * 0.5);
       setTimeout(function () {
-        // Step 3: Show page view
-        view.classList.add('pt-page-visible');
-        if (cardClone && cardClone.parentNode) {
-          cardClone.parentNode.removeChild(cardClone);
-          cardClone = null;
-        }
-      }, DURATION_MORPH);
-    }, DURATION_FADE);
+        flipHeader(
+          function () {
+            if (headerMain && cardColor) headerMain.style.backgroundColor = cardColor;
+            if (headerTitle) headerTitle.textContent = title;
+            if (headerActions) {
+              headerActions.innerHTML =
+                '<button class="btn btn-outline pt-back-btn">' +
+                  '<i class="fa-solid fa-arrow-left"></i>' +
+                  '<span>Back</span>' +
+                '</button>';
+              var backBtn = headerActions.querySelector('.pt-back-btn');
+              if (backBtn) {
+                backBtn.addEventListener('click', function () {
+                  window.exitPageTransition();
+                });
+              }
+            }
+          },
+          function () {
+            [goalsSection, projectBar, dashboardSection].forEach(function (el) {
+              if (el) el.classList.add('pt-hidden');
+            });
+            requestAnimationFrame(function () {
+              pageSection.classList.add('pt-page-section--visible');
+            });
+          }
+        );
+      }, flipDelay);
+    }, ITEM_DELAY);
   };
 
-  /**
-   * Run the reverse transition and return to main screen.
-   */
+  // ============================
+  // REVERSE
+  // ============================
   window.exitPageTransition = function () {
-    if (!currentState) return;
+    if (!currentState || !pageSection) return;
     var state = currentState;
-    var view = state.view;
-    var wrap = state.wrap;
-    var pageContent = state.pageContent;
-    var onExit = state.onExit;
 
-    view.classList.remove('pt-page-visible');
+    // Step 1: page starts fading out
+    pageSection.classList.remove('pt-page-section--visible');
 
+    // Step 2: header flip begins partway through page fade (overlaps)
     setTimeout(function () {
-      var card = state.card;
-      var cardRect = state.cardRect;
-      var headerRect = state.headerRect;
+      flipHeader(
+        function () {
+          if (headerMain) headerMain.style.backgroundColor = state.savedBg;
+          if (headerTitle) headerTitle.textContent = state.savedTitle;
+          if (headerActions) headerActions.innerHTML = state.savedActionsHTML;
+        },
+        function () {
+          // Unhide sections
+          [goalsSection, projectBar, dashboardSection].forEach(function (el) {
+            if (el) el.classList.remove('pt-hidden');
+          });
 
-      headerMain.classList.remove('pt-header-up');
+          // Restore backgrounds (overlaps with item fade-in)
+          var bgSections = getBgSections();
+          bgSections.forEach(function (el) {
+            void el.offsetWidth;
+            el.classList.remove('pt-bg-fade--out');
+          });
 
-      cardClone = card.cloneNode(true);
-      cardClone.innerHTML = '';
-      cardClone.className = cardClone.className + ' pt-card-clone';
-      cardClone.style.width = cardRect.width + 'px';
-      cardClone.style.height = cardRect.height + 'px';
-      var scaleX = headerRect.width / cardRect.width;
-      var scaleY = headerRect.height / cardRect.height;
-      cardClone.style.transform =
-        'translate(' + headerRect.left + 'px, ' + headerRect.top + 'px) scale(' + scaleX + ', ' + scaleY + ')';
-      document.body.appendChild(cardClone);
+          // Items stagger in (overlaps bg restore)
+          var items = collectItems();
+          requestAnimationFrame(function () {
+            var totalItemTime = staggerItems(items, 'in');
 
-      requestAnimationFrame(function () {
-        cardClone.style.transition = 'transform 400ms ease';
-        cardClone.style.transform =
-          'translate(' + cardRect.left + 'px, ' + cardRect.top + 'px) scale(1)';
-      });
-
-      setTimeout(function () {
-        if (cardClone && cardClone.parentNode) {
-          cardClone.parentNode.removeChild(cardClone);
-          cardClone = null;
+            setTimeout(function () {
+              items.forEach(function (el) {
+                el.classList.remove('pt-item', 'pt-item--out');
+              });
+              bgSections.forEach(function (el) {
+                el.classList.remove('pt-bg-fade', 'pt-bg-fade--out');
+              });
+              if (pageSection && pageSection.parentNode) {
+                pageSection.parentNode.removeChild(pageSection);
+              }
+              pageSection = null;
+              currentState = null;
+              state.onExit();
+            }, totalItemTime + 25);
+          });
         }
-        if (appContainer) appContainer.classList.remove('pt-project-bar-hidden');
-        if (goalsSection) { goalsSection.classList.remove('pt-fade-target', 'pt-fade-out'); }
-        if (dashboardSection) { dashboardSection.classList.remove('pt-fade-target', 'pt-fade-out'); }
-
-        wrap.innerHTML = '';
-        if (pageContent && pageContent.parentNode) pageContent.parentNode.removeChild(pageContent);
-        currentState = null;
-        onExit();
-      }, DURATION_MORPH);
-    }, DURATION_FADE);
+      );
+    }, 75);
   };
-
 })();
