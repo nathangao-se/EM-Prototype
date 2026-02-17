@@ -1,0 +1,26 @@
+# Modals and Wizards — Folder Structure
+
+## Rule
+
+**Keep all modals and wizards in separate folders.** Do not add new modal or wizard logic into the root `js/` or a single shared file.
+
+## Current structure
+
+- **Wizards** live under `wizards/<name>/`:
+  - `wizards/inventory/` — Create Inventory wizard (`inventory.js`, `inventory.css`)
+  - `wizards/campaign/` — Data Collection wizard (`campaign.js`, `campaign.css`)
+  - `wizards/activity-map/` — Activity Map / Reconcile modal (`activity-map.js`, `activity-map.css`)
+
+- **Shared wizard styles** (overlay, header, body, footer, buttons, stepper) live in `styles/wizard-base.css`.
+
+- **Script loading:** Each wizard is loaded in `index.html` from its folder, e.g. `wizards/inventory/inventory.js`.
+
+## Adding a new modal or wizard
+
+1. Create a folder: `wizards/<name>/` or `modals/<name>/` (use `wizards/` for multi-step flows, `modals/` for simple dialogs if we introduce that convention).
+2. Put **one JS file** and **one CSS file** in that folder (e.g. `wizard-name.js`, `wizard-name.css`).
+3. Add the CSS link and script tag in `index.html` pointing to the new paths.
+4. Use shared base styles from `styles/wizard-base.css` where applicable; add wizard-specific classes and styles only in the wizard’s own CSS file.
+5. Expose `window.openXxx` and `window.closeXxx` so `dev-panel.js` (and `closeAllOverlays`) can open/close it.
+
+Do not add new modal/wizard code into `js/modal.js`, `js/wizard.js`, or a single monolithic wizard CSS file.
