@@ -2273,7 +2273,8 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       progress: 50,
       actions: [
         { label: 'Add files', icon: 'fa-solid fa-plus' },
-        { label: 'Create campaign', icon: 'fa-solid fa-plus' }
+        { label: 'Create campaign', icon: 'fa-solid fa-plus' },
+        { label: 'Activity Map', icon: 'fa-solid fa-map', actionId: 'open-activity-map' }
       ]
     },
     {

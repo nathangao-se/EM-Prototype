@@ -79,8 +79,9 @@
     if (card.actions && card.actions.length) {
       html += '<div class="project-bar__actions">';
       card.actions.forEach(function (a) {
+        var attrs = a.actionId ? ' data-action-id="' + esc(a.actionId) + '"' : '';
         html +=
-          '<button class="project-bar__btn">' +
+          '<button class="project-bar__btn"' + attrs + '>' +
             (a.icon ? '<i class="' + esc(a.icon) + '"></i>' : '') +
             '<span>' + esc(a.label) + '</span>' +
           '</button>';
@@ -115,6 +116,14 @@
 
     container.innerHTML = html;
     container.classList.remove('project-bar--hidden');
+
+    var activityMapBtn = container.querySelector('[data-action-id="open-activity-map"]');
+    if (activityMapBtn && typeof window.openReconcileModal === 'function') {
+      activityMapBtn.addEventListener('click', function () {
+        if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
+        window.openReconcileModal();
+      });
+    }
   };
 
   window.hideProjectBar = function () {
