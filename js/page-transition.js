@@ -109,6 +109,8 @@
   function collectPageItems(container) {
     if (!container) return [];
     var items = [];
+
+    // Activity-map specific selectors (legacy)
     container.querySelectorAll('.dm-top-row > .goals-card').forEach(function (el) { items.push(el); });
     container.querySelectorAll('.dm-filter-row').forEach(function (el) { items.push(el); });
     var filterFooter = container.querySelector('.dm-filter-footer');
@@ -117,6 +119,10 @@
     if (toolbar) items.push(toolbar);
     var tableScroll = container.querySelector('.dm-table-scroll');
     if (tableScroll) items.push(tableScroll);
+
+    // Generic: any page can mark children with .pt-stagger-item
+    container.querySelectorAll('.pt-stagger-item').forEach(function (el) { items.push(el); });
+
     return items;
   }
 

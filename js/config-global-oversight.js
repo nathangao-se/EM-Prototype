@@ -2302,7 +2302,9 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
         label: 'See inventory',
         icon: 'fa-solid fa-book-open',
         items: [
-          { label: '2024 GHG Inventory', actionId: 'open-inventory-2024' }
+          { label: 'Q4 2025 Corporate Inventory', meta: '1,061.9 tCO\u2082e', badge: 'Calculated', badgeType: 'success', actionId: 'open-ghg-inventory' },
+          { label: 'Q3 2025 Corporate Inventory', meta: '987.3 tCO\u2082e', badge: 'Locked', badgeType: 'success', actionId: 'open-ghg-inventory' },
+          { label: 'FY 2025 Annual Report', meta: 'Not calculated', badge: 'Draft', badgeType: 'warning', actionId: 'open-ghg-inventory' }
         ]
       }
     }

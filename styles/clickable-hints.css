@@ -1,0 +1,25 @@
+/* ============================================
+   CLICKABLE HINTS — animated purple rings
+   Marks interactive controls that open a modal
+   or navigate to another page.
+
+   TO REMOVE: delete these two lines from index.html —
+     <link rel="stylesheet" href="styles/clickable-hints.css">
+     <script src="js/clickable-hints.js"></script>
+   ============================================ */
+
+.clickable-hint {
+  animation: hint-pulse 1s ease-in-out infinite;
+  border-radius: 8px;
+  outline: 4px solid rgba(168, 85, 247, 0.7);
+  outline-offset: 8px;
+}
+
+a.clickable-hint {
+  display: inline-block;
+}
+
+@keyframes hint-pulse {
+  0%, 100% { outline-color: rgba(168, 85, 247, 0.7); }
+  50%      { outline-color: rgba(168, 85, 247, 0.25); }
+}

@@ -207,7 +207,6 @@
     html += '</div>';
 
     html += '<div class="dm-filter-footer">';
-    html += '<button class="dm-filter-btn"><i class="fa-solid fa-book"></i> Rules library</button>';
     html += '</div>';
 
     html += '</div>';
@@ -320,7 +319,7 @@
     html += '<div class="goals-progress-segment goals-progress-pending" style="width:86%"></div>';
     html += '</div>';
     html += '<div class="goals-actions">';
-    html += '<button class="btn btn-primary btn-small" data-action="open-activity-data-setup">+ Add files/data</button>';
+    html += '<button class="btn btn-outline btn-small" data-action="open-activity-data-setup">+ Add files/data</button>';
     html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-book"></i> Rules library</button>';
     html += '</div>';
     html += '</div>';

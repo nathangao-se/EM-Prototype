@@ -386,17 +386,16 @@
    TABS
    ======================================== */
 .ghg-tabs-container {
-  background: #ffffff;
-  border: 1px solid #d5dde0;
-  border-radius: 12px;
-  overflow: hidden;
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 
 .ghg-tabs {
   display: flex;
   gap: 0;
   border-bottom: 1px solid #d5dde0;
-  padding: 0 16px;
+  padding: 0;
 }
 
 .ghg-tab {
@@ -430,7 +429,7 @@
 
 .ghg-tab-content {
   display: none;
-  padding: 20px;
+  padding: 20px 0;
 }
 
 .ghg-tab-content--active { display: block; }

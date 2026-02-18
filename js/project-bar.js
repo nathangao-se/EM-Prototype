@@ -99,7 +99,18 @@
         html += '<div class="project-bar__dropdown-menu">';
         card.dropdown.items.forEach(function (item) {
           var attrs = item.actionId ? ' data-action-id="' + esc(item.actionId) + '"' : '';
-          html += '<button class="project-bar__dropdown-item"' + attrs + '>' + esc(item.label) + '</button>';
+          html += '<button class="project-bar__dropdown-item"' + attrs + '>';
+          html += '<span class="project-bar__dropdown-item-label">' + esc(item.label) + '</span>';
+          if (item.meta || item.badge) {
+            html += '<span class="project-bar__dropdown-item-row">';
+            if (item.meta) html += '<span class="project-bar__dropdown-item-meta">' + esc(item.meta) + '</span>';
+            if (item.badge) {
+              var badgeCls = item.badgeType ? ' project-bar__dropdown-badge--' + esc(item.badgeType) : '';
+              html += '<span class="project-bar__dropdown-badge' + badgeCls + '">' + esc(item.badge) + '</span>';
+            }
+            html += '</span>';
+          }
+          html += '</button>';
         });
         html += '</div>';
         html += '</div>';
@@ -156,16 +167,16 @@
       });
     }
 
-    var inventoryBtn = container.querySelector('[data-action-id="open-inventory-2024"]');
-    if (inventoryBtn) {
-      inventoryBtn.addEventListener('click', function () {
+    container.querySelectorAll('[data-action-id="open-ghg-inventory"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
         if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
         if (typeof window.runPageTransition === 'function' && typeof window.getGhgEnginePageContent === 'function') {
-          var pageContent = window.getGhgEnginePageContent();
-          window.runPageTransition({ triggerEl: inventoryBtn, pageContent: pageContent, title: '2024 GHG Inventory', onExit: function () {} });
+          var pageContent = window.getGhgEnginePageContent({ skipList: true });
+          var title = btn.querySelector('.project-bar__dropdown-item-label');
+          window.runPageTransition({ triggerEl: btn, pageContent: pageContent, title: title ? title.textContent : 'GHG Inventory', onExit: function () {} });
         }
       });
-    }
+    });
 
     // Dropdown toggles
     container.querySelectorAll('.project-bar__dropdown-toggle').forEach(function (btn) {

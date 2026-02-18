@@ -229,27 +229,34 @@
      getGhgEnginePageContent() — for page transition
      ============================================== */
 
-  window.getGhgEnginePageContent = function () {
+  window.getGhgEnginePageContent = function (options) {
+    options = options || {};
     var wrap = document.createElement('div');
     wrap.className = 'ghg-page ghg-page--embedded';
     wrap.innerHTML = document.querySelector('.ghg-page') ?
       document.querySelector('.ghg-page').innerHTML :
       getGhgHTML();
     bindGhgEngine(wrap);
+    if (options.skipList) {
+      var listView = wrap.querySelector('#ghg-view-list');
+      if (listView) listView.remove();
+      var resultsView = wrap.querySelector('#ghg-view-results');
+      if (resultsView) resultsView.classList.add('ghg-view--active');
+    }
     return wrap;
   };
 
   function getGhgHTML() {
     return '' +
     '<div id="ghg-view-list" class="ghg-view ghg-view--active">' +
-      '<div class="ghg-page-header"><div class="ghg-page-header-left">' +
+      '<div class="ghg-page-header pt-stagger-item"><div class="ghg-page-header-left">' +
         '<div class="ghg-breadcrumb"><a href="#">Monitor</a> <i class="fa-solid fa-chevron-right"></i> <span>GHG Inventories</span></div>' +
         '<h1 class="ghg-page-title">GHG Inventories</h1>' +
         '<p class="ghg-page-subtitle">Create, calculate, and manage your emissions inventories</p>' +
       '</div><div class="ghg-page-header-actions"><button class="btn btn-primary btn-small"><i class="fa-solid fa-plus"></i> Create Inventory</button></div></div>' +
-      '<div class="ghg-search-bar"><div class="ghg-search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" class="ghg-search-input" placeholder="Search inventories..."></div>' +
+      '<div class="ghg-search-bar pt-stagger-item"><div class="ghg-search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" class="ghg-search-input" placeholder="Search inventories..."></div>' +
       '<button class="btn btn-outline btn-small"><i class="fa-solid fa-filter"></i> Filter</button></div>' +
-      '<div class="ghg-inventory-list">' +
+      '<div class="ghg-inventory-list pt-stagger-item">' +
         '<div class="ghg-inv-card" data-inv="q4-2025"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--calc"><i class="fa-solid fa-calculator"></i></div><div><h3 class="ghg-inv-title">Q4 2025 Corporate Inventory</h3><div class="ghg-inv-meta">Oct 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">1,061.9</div><div class="ghg-inv-stat-label">tCO\u2082e Total</div></div><span class="ghg-badge ghg-badge--success"><i class="fa-solid fa-circle-check"></i> Calculated</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
         '<div class="ghg-inv-card" data-inv="q3-2025"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--locked"><i class="fa-solid fa-lock"></i></div><div><h3 class="ghg-inv-title">Q3 2025 Corporate Inventory</h3><div class="ghg-inv-meta">Jul 1 \u2013 Sep 30, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">987.3</div><div class="ghg-inv-stat-label">tCO\u2082e Total</div></div><span class="ghg-badge ghg-badge--success"><i class="fa-solid fa-lock"></i> Locked</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
         '<div class="ghg-inv-card" data-inv="draft"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--draft"><i class="fa-solid fa-pencil"></i></div><div><h3 class="ghg-inv-title">FY 2025 Annual Report</h3><div class="ghg-inv-meta">Jan 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">\u2014</div><div class="ghg-inv-stat-label">Not calculated</div></div><span class="ghg-badge ghg-badge--warning"><i class="fa-solid fa-clock"></i> Draft</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
@@ -257,18 +264,18 @@
     '</div>' +
     '<div id="ghg-view-results" class="ghg-view">' +
       '<div class="ghg-stats-grid">' +
-        '<div class="ghg-stat-card"><div class="ghg-stat-label">Total Emissions</div><div class="ghg-stat-value">1,061.9<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change ghg-stat-change--down"><i class="fa-solid fa-arrow-down"></i> 5.4% from Q3 2025</div></div>' +
-        '<div class="ghg-stat-card"><div class="ghg-stat-label">Scope 1 \u2013 Direct</div><div class="ghg-stat-value">124.6<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">11.7% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +5.3%</span></div></div>' +
-        '<div class="ghg-stat-card"><div class="ghg-stat-label">Scope 2 \u2013 Indirect (Energy)</div><div class="ghg-stat-value">45.2<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">4.3% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +4.9%</span></div></div>' +
-        '<div class="ghg-stat-card"><div class="ghg-stat-label">Scope 3 \u2013 Value Chain</div><div class="ghg-stat-value">892.1<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">84.0% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +5.3%</span></div></div>' +
+        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Total Emissions</div><div class="ghg-stat-value">1,061.9<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change ghg-stat-change--down"><i class="fa-solid fa-arrow-down"></i> 5.4% from Q3 2025</div></div>' +
+        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Scope 1 \u2013 Direct</div><div class="ghg-stat-value">124.6<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">11.7% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +5.3%</span></div></div>' +
+        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Scope 2 \u2013 Indirect (Energy)</div><div class="ghg-stat-value">45.2<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">4.3% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +4.9%</span></div></div>' +
+        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Scope 3 \u2013 Value Chain</div><div class="ghg-stat-value">892.1<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">84.0% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +5.3%</span></div></div>' +
       '</div>' +
-      '<div class="ghg-tabs-container"><div class="ghg-tabs">' +
+      '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
         '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">Overview</button>' +
         '<button class="ghg-tab" data-ghg-tab="breakdown">Detailed Breakdown</button>' +
         '<button class="ghg-tab" data-ghg-tab="lineage">Calculation Lineage</button>' +
         '<button class="ghg-tab" data-ghg-tab="ef-selection">EF Selection &amp; Review</button></div>' +
       '<div class="ghg-tab-content ghg-tab-content--active" id="ghg-tab-overview">' +
-        '<div class="ghg-overview-meta"><div class="ghg-status-meta">' +
+        '<div class="ghg-overview-meta pt-stagger-item"><div class="ghg-status-meta">' +
           '<span><i class="fa-regular fa-calendar"></i> Oct 1 \u2013 Dec 31, 2025</span>' +
           '<span><i class="fa-solid fa-book"></i> GHG Protocol Corporate Standard</span>' +
           '<span><i class="fa-solid fa-sitemap"></i> Financial Control</span>' +
@@ -276,7 +283,7 @@
         '<div class="ghg-status-right"><label class="ghg-compare-label">Compare with:</label>' +
           '<select class="ghg-select"><option>No Comparison</option><option selected>Q3 2025 (Previous)</option><option>Q4 2024 (YoY)</option></select>' +
           '<span class="ghg-badge ghg-badge--success ghg-badge--lg"><i class="fa-solid fa-circle-check"></i> Calculation Complete</span></div></div>' +
-        '<div class="ghg-quality-card"><div class="ghg-quality-score"><div class="ghg-quality-score-val">87</div><div class="ghg-quality-score-label">out of 100</div></div>' +
+        '<div class="ghg-quality-card pt-stagger-item"><div class="ghg-quality-score"><div class="ghg-quality-score-val">87</div><div class="ghg-quality-score-label">out of 100</div></div>' +
           '<div class="ghg-quality-body"><h3 class="ghg-quality-title"><i class="fa-solid fa-shield-check"></i> Data Quality Score</h3>' +
           '<p class="ghg-quality-sub">Based on data completeness, source quality, and validation status</p>' +
           '<div class="ghg-quality-details">' +
@@ -285,10 +292,10 @@
             '<div class="ghg-quality-detail-item"><i class="fa-solid fa-triangle-exclamation warn-icon"></i> 156 records using spend-based estimates (17%)</div>' +
             '<div class="ghg-quality-detail-item"><i class="fa-solid fa-triangle-exclamation warn-icon"></i> 28 high-emission records pending review</div>' +
           '</div></div></div>' +
-        '<h3 class="ghg-section-title ghg-section-title--spaced">Scope 2 Dual Reporting</h3>' +
+        '<div class="ghg-section-group pt-stagger-item"><h3 class="ghg-section-title ghg-section-title--spaced">Scope 2 Dual Reporting</h3>' +
         '<div class="ghg-dual-scope"><div class="ghg-dual-scope-item"><div class="ghg-dual-scope-label">Location-Based</div><div class="ghg-dual-scope-value">45.2 tCO\u2082e</div><div class="ghg-dual-scope-note">Uses grid-average emission factors</div></div>' +
-        '<div class="ghg-dual-scope-item"><div class="ghg-dual-scope-label">Market-Based</div><div class="ghg-dual-scope-value">38.1 tCO\u2082e</div><div class="ghg-dual-scope-note">Accounts for RECs and supplier contracts</div></div></div>' +
-        '<h3 class="ghg-section-title ghg-section-title--spaced">Emissions Summary by Scope &amp; Category</h3>' +
+        '<div class="ghg-dual-scope-item"><div class="ghg-dual-scope-label">Market-Based</div><div class="ghg-dual-scope-value">38.1 tCO\u2082e</div><div class="ghg-dual-scope-note">Accounts for RECs and supplier contracts</div></div></div></div>' +
+        '<div class="ghg-section-group pt-stagger-item"><h3 class="ghg-section-title ghg-section-title--spaced">Emissions Summary by Scope &amp; Category</h3>' +
         '<div class="ghg-scope-bar"><div class="ghg-scope-seg ghg-scope-seg--s1" style="width:11.7%"></div><div class="ghg-scope-seg ghg-scope-seg--s2" style="width:4.3%"></div><div class="ghg-scope-seg ghg-scope-seg--s3" style="width:84%"></div></div>' +
         '<div class="ghg-scope-legend"><div class="ghg-scope-legend-item"><div class="ghg-scope-dot ghg-scope-dot--s1"></div> Scope 1: 124.6 tCO\u2082e (11.7%)</div><div class="ghg-scope-legend-item"><div class="ghg-scope-dot ghg-scope-dot--s2"></div> Scope 2: 45.2 tCO\u2082e (4.3%)</div><div class="ghg-scope-legend-item"><div class="ghg-scope-dot ghg-scope-dot--s3"></div> Scope 3: 892.1 tCO\u2082e (84.0%)</div></div>' +
         '<table class="ghg-table" style="margin-top:16px"><thead><tr><th>Scope</th><th>Category</th><th class="num">Emissions (tCO\u2082e)</th><th class="num">% of Total</th><th class="num">Records</th></tr></thead><tbody>' +
@@ -303,7 +310,7 @@
           '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Upstream Transport &amp; Distribution</td><td class="num">134.2</td><td class="num">12.6%</td><td class="num">96</td></tr>' +
           '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Waste Generated in Operations</td><td class="num">52.7</td><td class="num">5.0%</td><td class="num">48</td></tr>' +
           '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Fuel- and Energy-Related Activities</td><td class="num">46.7</td><td class="num">4.4%</td><td class="num">42</td></tr>' +
-        '</tbody></table></div>' +
+        '</tbody></table></div></div>' +
       '<div class="ghg-tab-content" id="ghg-tab-breakdown">' +
         '<h3 class="ghg-section-title">Emissions by Entity &amp; Scope</h3>' +
         '<table class="ghg-table"><thead><tr><th>Entity / Category</th><th class="num">Scope 1</th><th class="num">Scope 2</th><th class="num">Scope 3</th><th class="num">Total (tCO\u2082e)</th><th class="num">% of Total</th></tr></thead>' +
