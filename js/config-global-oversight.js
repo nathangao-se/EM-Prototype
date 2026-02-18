@@ -2272,9 +2272,8 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       subtitle: '5 files uploaded, 45/90 normalized',
       progress: 50,
       actions: [
-        { label: 'Add files', icon: 'fa-solid fa-plus' },
-        { label: 'Create campaign', icon: 'fa-solid fa-plus' },
-        { label: 'Activity Map', icon: 'fa-solid fa-map', actionId: 'open-activity-map' }
+        { label: 'Add files', icon: 'fa-solid fa-plus', actionId: 'open-activity-data-setup' },
+        { label: 'Review activity data', icon: 'fa-solid fa-map', actionId: 'open-activity-map' }
       ]
     },
     {

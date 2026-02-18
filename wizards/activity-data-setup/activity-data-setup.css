@@ -1,0 +1,158 @@
+/* ========================================
+   ACTIVITY DATA SETUP — Upload flow entry modal
+   ======================================== */
+
+.activity-data-setup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.activity-data-setup-overlay--open {
+  display: flex;
+}
+
+.activity-data-setup-modal {
+  width: 90vw;
+  max-width: 720px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+/* Header: title, description, close */
+.activity-data-setup-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 0 24px;
+}
+
+.activity-data-setup-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-data-setup-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #41494d;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+}
+
+.activity-data-setup-description {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.activity-data-setup-close {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  color: #676f73;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.activity-data-setup-close:hover {
+  background: #f5f8fa;
+  color: #41494d;
+}
+
+/* Body: three cards in a row */
+.activity-data-setup-body {
+  padding: 24px 24px 20px 24px;
+}
+
+.activity-data-setup-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.activity-data-setup-card {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+
+.activity-data-setup-card:hover {
+  border-color: #008029;
+  box-shadow: 0 4px 12px rgba(0, 128, 41, 0.12);
+  background: #f8fcf9;
+}
+
+.activity-data-setup-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f4f8;
+  border-radius: 12px;
+  color: #008029;
+  font-size: 22px;
+}
+
+.activity-data-setup-card-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #41494d;
+  text-align: center;
+  line-height: 1.35;
+}
+
+/* Footer: text + Cancel */
+.activity-data-setup-footer {
+  padding: 0 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.activity-data-setup-footer-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #676f73;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 520px;
+}
+
+.activity-data-setup-cancel {
+  min-width: 120px;
+}

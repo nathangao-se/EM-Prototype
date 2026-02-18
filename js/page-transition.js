@@ -1,33 +1,27 @@
 /* ========================================
-   PAGE TRANSITION — overlapping staggered dissolve
+   PAGE TRANSITION — unified staggered dissolve
 
-   All phases trigger in order but overlap smoothly:
-     Background fade starts → items begin fading partway through →
-     header flip begins while last items are still fading.
+   Every stage uses the same effect: items fade+zoom in random
+   order, with header pinned last (out) / first (in).
 
    Forward:
-     t=0        Background dissolves
-     t=80ms     Items start stagger-fading (random order, ~45ms apart)
-     t=lastItem Header flip begins (overlaps tail of items)
-     t=flip end Sections hidden, new page fades in
+     Stage 1 — main out:   all main items stagger out (header last)
+     [swap header content while invisible]
+     Stage 2 — page in:    all page items stagger in (header first)
 
    Reverse:
-     t=0        Page fades out
-     t=150ms    Header flip begins (overlaps page fade tail)
-     t=flip end Sections restored, bg fades in, items stagger in
+     Stage 3 — page out:   all page items stagger out (header last)
+     [restore header content while invisible]
+     Stage 4 — main in:    all main items stagger in (header first)
    ======================================== */
 
 (function () {
   'use strict';
 
-  var BG_HEAD_START = 0;
-  var ITEM_DELAY = 40;
   var ITEM_STAGGER = 22;
   var ITEM_DURATION = 160;
-  var FLIP_HALF = 125;
-  var PAGE_FADE = 175;
+  var BETWEEN_STAGES = 40;
 
-  var header = document.querySelector('.header');
   var headerMain = document.querySelector('.header-main');
   var headerTitle = document.querySelector('.header-title');
   var headerActions = document.querySelector('.header-actions');
@@ -60,13 +54,17 @@
     return arr;
   }
 
-  function collectItems() {
+  // ------------------------------------------------------------------
+  // Item collectors
+  // ------------------------------------------------------------------
+
+  function collectMainItems() {
     var items = [];
     if (goalsSection) {
       goalsSection.querySelectorAll('.goals-card').forEach(function (el) { items.push(el); });
       goalsSection.querySelectorAll('.alert-group').forEach(function (el) { items.push(el); });
     }
-    if (projectBar) {
+    if (projectBar && !projectBar.classList.contains('project-bar--hidden')) {
       var pbTitle = projectBar.querySelector('.project-bar__title');
       if (pbTitle) items.push(pbTitle);
       projectBar.querySelectorAll('.project-bar__card').forEach(function (el) { items.push(el); });
@@ -88,69 +86,81 @@
     return items;
   }
 
-  function getBgSections() {
-    var sections = [];
-    if (goalsSection) sections.push(goalsSection);
-    if (projectBar && !projectBar.classList.contains('project-bar--hidden')) sections.push(projectBar);
-    return sections;
+  function collectPageItems(container) {
+    if (!container) return [];
+    var items = [];
+    container.querySelectorAll('.dm-top-row > .goals-card').forEach(function (el) { items.push(el); });
+    container.querySelectorAll('.dm-filter-row').forEach(function (el) { items.push(el); });
+    var filterFooter = container.querySelector('.dm-filter-footer');
+    if (filterFooter) items.push(filterFooter);
+    var toolbar = container.querySelector('.dm-toolbar');
+    if (toolbar) items.push(toolbar);
+    var tableScroll = container.querySelector('.dm-table-scroll');
+    if (tableScroll) items.push(tableScroll);
+    return items;
   }
 
-  function flipHeader(midCallback, doneCallback) {
-    if (!headerMain || !header) {
-      midCallback();
-      doneCallback();
-      return;
+  // ------------------------------------------------------------------
+  // Build ordered list: shuffle freely, pin header last (out) or first (in)
+  // ------------------------------------------------------------------
+
+  function buildOrder(items, direction) {
+    var others = items.filter(function (el) { return el !== headerMain; });
+    shuffle(others);
+    if (direction === 'out') {
+      others.push(headerMain);
+    } else {
+      others.unshift(headerMain);
     }
-    header.classList.add('pt-header-perspective');
-    headerMain.classList.remove('pt-header-flip-half', 'pt-header-flip-back');
-    headerMain.classList.add('pt-header-animating');
-    void headerMain.offsetWidth;
-    headerMain.classList.add('pt-header-flip-half');
-
-    setTimeout(function () {
-      midCallback();
-      headerMain.classList.remove('pt-header-animating', 'pt-header-flip-half');
-      headerMain.style.transform = 'rotateX(-90deg)';
-      void headerMain.offsetWidth;
-      headerMain.classList.add('pt-header-flip-back');
-
-      setTimeout(function () {
-        headerMain.classList.remove('pt-header-flip-back');
-        headerMain.style.transform = '';
-        header.classList.remove('pt-header-perspective');
-        doneCallback();
-      }, FLIP_HALF);
-    }, FLIP_HALF);
+    return others;
   }
 
-  /**
-   * Kick off stagger. Returns the timestamp (ms from now) when the
-   * last item's fade will be fully complete.
-   */
-  function staggerItems(items, direction) {
-    if (items.length === 0) return 0;
-    var shuffled = shuffle(items.slice());
-    shuffled.forEach(function (el, i) {
+  // ------------------------------------------------------------------
+  // Stagger engine — applies the same fade+zoom to every item
+  // ------------------------------------------------------------------
+
+  function staggerOut(ordered, done) {
+    ordered.forEach(function (el, i) {
       setTimeout(function () {
-        if (direction === 'out') {
-          el.classList.add('pt-item', 'pt-item--out');
-        } else {
-          el.classList.add('pt-item');
-          void el.offsetWidth;
-          el.classList.remove('pt-item--out');
-        }
+        el.classList.add('pt-item', 'pt-item--out');
       }, i * ITEM_STAGGER);
     });
-    return (shuffled.length - 1) * ITEM_STAGGER + ITEM_DURATION;
+    var total = (ordered.length - 1) * ITEM_STAGGER + ITEM_DURATION;
+    setTimeout(done, total);
   }
 
-  // ============================
-  // FORWARD
-  // ============================
+  function staggerIn(ordered, done) {
+    ordered.forEach(function (el, i) {
+      setTimeout(function () {
+        el.classList.add('pt-item', 'pt-item--in-start');
+        void el.offsetWidth;
+        el.classList.remove('pt-item--out', 'pt-item--in-start');
+      }, i * ITEM_STAGGER);
+    });
+    var total = (ordered.length - 1) * ITEM_STAGGER + ITEM_DURATION;
+    setTimeout(done, total);
+  }
+
+  function hideInstantly(items) {
+    items.forEach(function (el) {
+      el.classList.add('pt-item', 'pt-item--out');
+    });
+  }
+
+  function cleanAll(items) {
+    items.forEach(function (el) {
+      el.classList.remove('pt-item', 'pt-item--out', 'pt-item--in-start');
+    });
+  }
+
+  // ------------------------------------------------------------------
+  // FORWARD  (main → other page)
+  // ------------------------------------------------------------------
+
   window.runPageTransition = function (options) {
     var triggerEl = options.triggerEl;
     var pageContent = options.pageContent;
-    var title = options.title || 'Activity mapping';
+    var title = options.title || 'Activity Data';
     var onExit = options.onExit || function () {};
 
     if (!appContainer || !pageContent) return;
@@ -172,106 +182,100 @@
       savedActionsHTML: savedActionsHTML
     };
 
-    var bgSections = getBgSections();
-    var items = collectItems();
+    var mainItems = collectMainItems();
+    var newPageItems = collectPageItems(pageSection);
 
-    // t=0: backgrounds start dissolving
-    bgSections.forEach(function (el) {
-      el.classList.add('pt-bg-fade', 'pt-bg-fade--out');
-    });
+    // Pre-hide all new page items + header (for stage 2)
+    hideInstantly(newPageItems);
 
-    // t=ITEM_DELAY: items start stagger-fading (overlaps bg fade)
-    setTimeout(function () {
-      var totalItemTime = staggerItems(items, 'out');
+    // --- Stage 1: stagger OUT main items (header last) ---
+    var outOrder = buildOrder(mainItems, 'out');
+    staggerOut(outOrder, function () {
 
-      // Header flip starts when ~75% of items have begun fading
-      // (overlaps with the tail end of item fades)
-      var flipDelay = Math.max(0, totalItemTime - ITEM_DURATION - FLIP_HALF * 0.5);
+      // --- Between stages: swap header content while invisible ---
+      if (headerMain && cardColor) headerMain.style.backgroundColor = cardColor;
+      if (headerTitle) headerTitle.textContent = title;
+      if (headerActions) headerActions.style.display = 'none';
+      var backBtn = document.createElement('button');
+      backBtn.className = 'btn btn-outline pt-back-btn';
+      backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i><span>Back</span>';
+      backBtn.addEventListener('click', function () {
+        window.exitPageTransition();
+      });
+      if (headerMain && headerTitle) {
+        headerMain.insertBefore(backBtn, headerTitle);
+      }
+
+      // Hide main sections
+      [goalsSection, projectBar, dashboardSection].forEach(function (el) {
+        if (el) el.classList.add('pt-hidden');
+      });
+
+      // Clean out classes from main items
+      cleanAll(mainItems);
+
+      // --- Stage 2: stagger IN page items (header first) ---
       setTimeout(function () {
-        flipHeader(
-          function () {
-            if (headerMain && cardColor) headerMain.style.backgroundColor = cardColor;
-            if (headerTitle) headerTitle.textContent = title;
-            if (headerActions) {
-              headerActions.innerHTML =
-                '<button class="btn btn-outline pt-back-btn">' +
-                  '<i class="fa-solid fa-arrow-left"></i>' +
-                  '<span>Back</span>' +
-                '</button>';
-              var backBtn = headerActions.querySelector('.pt-back-btn');
-              if (backBtn) {
-                backBtn.addEventListener('click', function () {
-                  window.exitPageTransition();
-                });
-              }
-            }
-          },
-          function () {
-            [goalsSection, projectBar, dashboardSection].forEach(function (el) {
-              if (el) el.classList.add('pt-hidden');
-            });
-            requestAnimationFrame(function () {
-              pageSection.classList.add('pt-page-section--visible');
-            });
-          }
-        );
-      }, flipDelay);
-    }, ITEM_DELAY);
+        var inOrder = buildOrder(newPageItems, 'in');
+        staggerIn(inOrder, function () {
+          cleanAll(newPageItems);
+          if (headerMain) headerMain.classList.remove('pt-item', 'pt-item--out', 'pt-item--in-start');
+        });
+      }, BETWEEN_STAGES);
+    });
   };
 
-  // ============================
-  // REVERSE
-  // ============================
+  // ------------------------------------------------------------------
+  // REVERSE  (other page → main)
+  // ------------------------------------------------------------------
+
   window.exitPageTransition = function () {
     if (!currentState || !pageSection) return;
     var state = currentState;
 
-    // Step 1: page starts fading out
-    pageSection.classList.remove('pt-page-section--visible');
+    var pageItems = collectPageItems(pageSection);
+    var mainItems = collectMainItems();
 
-    // Step 2: header flip begins partway through page fade (overlaps)
-    setTimeout(function () {
-      flipHeader(
-        function () {
-          if (headerMain) headerMain.style.backgroundColor = state.savedBg;
-          if (headerTitle) headerTitle.textContent = state.savedTitle;
-          if (headerActions) headerActions.innerHTML = state.savedActionsHTML;
-        },
-        function () {
-          // Unhide sections
-          [goalsSection, projectBar, dashboardSection].forEach(function (el) {
-            if (el) el.classList.remove('pt-hidden');
-          });
+    // Pre-hide all main items + header (for stage 4)
+    hideInstantly(mainItems);
 
-          // Restore backgrounds (overlaps with item fade-in)
-          var bgSections = getBgSections();
-          bgSections.forEach(function (el) {
-            void el.offsetWidth;
-            el.classList.remove('pt-bg-fade--out');
-          });
+    // --- Stage 3: stagger OUT page items (header last) ---
+    var outOrder = buildOrder(pageItems, 'out');
+    staggerOut(outOrder, function () {
 
-          // Items stagger in (overlaps bg restore)
-          var items = collectItems();
-          requestAnimationFrame(function () {
-            var totalItemTime = staggerItems(items, 'in');
+      // --- Between stages: restore header content while invisible ---
+      if (headerMain) headerMain.style.backgroundColor = state.savedBg;
+      if (headerTitle) headerTitle.textContent = state.savedTitle;
+      var oldBack = headerMain && headerMain.querySelector('.pt-back-btn');
+      if (oldBack) oldBack.parentNode.removeChild(oldBack);
+      if (headerActions) {
+        headerActions.innerHTML = state.savedActionsHTML;
+        headerActions.style.display = '';
+      }
 
-            setTimeout(function () {
-              items.forEach(function (el) {
-                el.classList.remove('pt-item', 'pt-item--out');
-              });
-              bgSections.forEach(function (el) {
-                el.classList.remove('pt-bg-fade', 'pt-bg-fade--out');
-              });
-              if (pageSection && pageSection.parentNode) {
-                pageSection.parentNode.removeChild(pageSection);
-              }
-              pageSection = null;
-              currentState = null;
-              state.onExit();
-            }, totalItemTime + 25);
-          });
-        }
-      );
-    }, 75);
+      // Remove page, unhide main sections
+      if (pageSection && pageSection.parentNode) {
+        pageSection.parentNode.removeChild(pageSection);
+      }
+      pageSection = null;
+
+      [goalsSection, projectBar, dashboardSection].forEach(function (el) {
+        if (el) el.classList.remove('pt-hidden');
+      });
+
+      // Clean out classes from page items
+      cleanAll(pageItems);
+
+      // --- Stage 4: stagger IN main items (header first) ---
+      setTimeout(function () {
+        var inOrder = buildOrder(mainItems, 'in');
+        staggerIn(inOrder, function () {
+          cleanAll(mainItems);
+          if (headerMain) headerMain.classList.remove('pt-item', 'pt-item--out', 'pt-item--in-start');
+          currentState = null;
+          state.onExit();
+        });
+      }, BETWEEN_STAGES);
+    });
   };
 })();

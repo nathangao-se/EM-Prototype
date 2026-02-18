@@ -27,6 +27,8 @@
   <link rel="stylesheet" href="wizards/inventory/inventory.css">
   <link rel="stylesheet" href="wizards/campaign/campaign.css">
   <link rel="stylesheet" href="wizards/activity-map/activity-map.css">
+  <link rel="stylesheet" href="wizards/normalize-activities/normalize-activities.css">
+  <link rel="stylesheet" href="wizards/activity-data-setup/activity-data-setup.css">
 </head>
 <body>
   <div class="app-container">
@@ -175,18 +177,6 @@
     </div>
   </div>
 
-  <!-- ========== WIZARD OVERLAY (Activity Setup) ========== -->
-  <div id="wizard-overlay" class="wizard-overlay">
-    <div class="wizard">
-      <div class="wizard-header">
-        <span class="wizard-header-title"></span>
-        <button class="wizard-close-btn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="wizard-body"></div>
-      <div class="wizard-footer"></div>
-    </div>
-  </div>
-
   <!-- ========== INVENTORY WIZARD OVERLAY ========== -->
   <div id="inv-wizard-overlay" class="wizard-overlay">
     <div class="wizard inv-wizard">
@@ -211,37 +201,60 @@
     </div>
   </div>
 
-  <!-- ========== RECONCILE SOURCE DATA OVERLAY (same chrome as main page) ========== -->
-  <div id="rec-overlay" class="rec-overlay">
-    <div class="rec-modal">
-      <header class="header">
-        <div class="header-main">
-          <div class="header-logo">
-            <i class="fa-solid fa-leaf" style="font-size: 28px; color: #008029;"></i>
-          </div>
-          <h1 class="header-title rec-header-title">Activity mapping</h1>
-          <nav class="header-actions">
-            <button class="btn btn-outline">
-              <i class="fa-solid fa-database"></i>
-              <span>Libraries/data</span>
-            </button>
-            <button class="btn btn-outline">
-              <i class="fa-regular fa-envelope"></i>
-              <span>org settings</span>
-            </button>
-          </nav>
+  <!-- ========== NORMALIZE ACTIVITIES MODAL ========== -->
+  <div id="normalize-overlay" class="normalize-overlay">
+    <div class="normalize-modal">
+      <div class="normalize-header">
+        <h2 class="normalize-title">Normalize activities</h2>
+        <button type="button" class="normalize-close-btn" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="normalize-body">
+        <div class="normalize-cards-row"></div>
+        <div class="normalize-main">
+          <div class="normalize-left"></div>
+          <div class="normalize-right"></div>
         </div>
-        <div class="header-user">
-          <button class="rec-close-btn" type="button" title="Close"><i class="fa-solid fa-xmark"></i></button>
-          <div class="header-notification">
-            <i class="fa-solid fa-bell" style="font-size: 18px; color: #676f73;"></i>
+      </div>
+      <div class="normalize-footer">
+        <a href="#" class="normalize-discard"><i class="fa-solid fa-trash"></i> Discard setup</a>
+        <div class="normalize-footer-actions">
+          <button type="button" class="btn btn-outline normalize-back">Back</button>
+          <button type="button" class="btn btn-primary normalize-next">Next: add emissions files</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ACTIVITY DATA SETUP (upload flow entry) ========== -->
+  <div id="activity-data-setup-overlay" class="activity-data-setup-overlay">
+    <div class="activity-data-setup-modal">
+      <div class="activity-data-setup-header">
+        <div class="activity-data-setup-header-text">
+          <h2 class="activity-data-setup-title">Set up and add your activity data</h2>
+          <p class="activity-data-setup-description">Here you can add your organization's activity data, which is the foundation on which all your calculations will be based.</p>
+        </div>
+        <button type="button" class="activity-data-setup-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="activity-data-setup-body">
+        <div class="activity-data-setup-cards">
+          <div class="activity-data-setup-card" data-option="upload">
+            <div class="activity-data-setup-card-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
+            <span class="activity-data-setup-card-label">Add/upload/migrate activity data</span>
           </div>
-          <div class="header-avatar">
-            <i class="fa-solid fa-circle-user" style="font-size: 32px; color: #676f73;"></i>
+          <div class="activity-data-setup-card" data-option="api">
+            <div class="activity-data-setup-card-icon"><i class="fa-solid fa-plug"></i></div>
+            <span class="activity-data-setup-card-label">Import via API</span>
+          </div>
+          <div class="activity-data-setup-card" data-option="campaign">
+            <div class="activity-data-setup-card-icon"><i class="fa-solid fa-keyboard"></i></div>
+            <span class="activity-data-setup-card-label">Data request campaign</span>
           </div>
         </div>
-      </header>
-      <div class="rec-body"></div>
+      </div>
+      <div class="activity-data-setup-footer">
+        <p class="activity-data-setup-footer-text">By the end of this setup, you'll have provided clean data that we can then analyze for deeper standardization.</p>
+        <button type="button" class="btn btn-outline activity-data-setup-cancel">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -257,11 +270,12 @@
         </div>
       </div>
       <div class="dev-panel-section">
-        <div class="dev-panel-label">Wizards</div>
+        <div class="dev-panel-label">Screens &amp; flows</div>
         <div class="dev-panel-options">
-          <button class="dev-panel-option" id="dev-open-inventory-wizard">Create Inventory</button>
-          <button class="dev-panel-option" id="dev-open-campaign-wizard">Data Collection</button>
-          <button class="dev-panel-option" id="dev-open-reconcile">Activity Map</button>
+          <span class="dev-panel-hint" data-hint="No UI trigger yet &mdash; will be wired to goal card action">Create Inventory</span>
+          <span class="dev-panel-hint" data-hint="No UI trigger yet &mdash; will be wired to goal card action">Data Collection</span>
+          <span class="dev-panel-hint" data-hint="Data management page &rarr; left column &ldquo;Normalize&rdquo; links">Normalize activities</span>
+          <span class="dev-panel-hint" data-hint="Project bar &rarr; &ldquo;Add files&rdquo;, or Data management &rarr; &ldquo;+ Add files/data&rdquo;">Activity data setup</span>
         </div>
       </div>
     </div>
@@ -277,10 +291,11 @@
   <script src="js/page-transition.js"></script>
   <script src="js/visualization.js"></script>
   <script src="js/dashboard.js"></script>
-  <script src="js/wizard.js"></script>
   <script src="wizards/inventory/inventory.js"></script>
   <script src="wizards/campaign/campaign.js"></script>
   <script src="wizards/activity-map/activity-map.js"></script>
+  <script src="wizards/normalize-activities/normalize-activities.js"></script>
+  <script src="wizards/activity-data-setup/activity-data-setup.js"></script>
   <script src="js/dev-panel.js"></script>
 </body>
 </html>

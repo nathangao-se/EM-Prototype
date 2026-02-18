@@ -1,53 +1,29 @@
 /* ========================================
-   PAGE TRANSITION — staggered dissolve
+   PAGE TRANSITION — unified staggered dissolve
+   Every element uses the same fade + zoom effect.
    ======================================== */
 
-/* ---- Background fade (sections with colored backgrounds) ---- */
-.pt-bg-fade {
-  transition: background-color 175ms ease-out, border-color 175ms ease-out;
-}
-.pt-bg-fade--out {
-  background-color: transparent !important;
-  border-color: transparent !important;
-}
-
-/* ---- Individual item fade ---- */
+/* ---- Item fade + subtle zoom ---- */
 .pt-item {
-  transition: opacity 160ms ease-out;
+  transition: opacity 160ms ease-in, transform 160ms ease-in;
 }
+/* Fading OUT → slight zoom out (shrink) */
 .pt-item--out {
   opacity: 0 !important;
+  transform: scale(0.97);
   pointer-events: none;
 }
+/* Fading IN → starts slightly enlarged, animates to normal */
+.pt-item--in-start {
+  transform: scale(1.03);
+}
 
-/* Fully hide sections after everything has faded */
+/* Fully hide sections so they release layout space */
 .pt-hidden {
   display: none !important;
 }
 
-/* ---- Header flip on X axis ---- */
-.header.pt-header-perspective {
-  perspective: 800px;
-}
-
-.header-main.pt-header-animating {
-  transition: transform 125ms ease-in, background-color 0ms;
-}
-
-.header-main.pt-header-flip-half {
-  transform: rotateX(90deg);
-}
-
-.header-main.pt-header-flip-back {
-  transition: transform 125ms ease-out, background-color 0ms;
-  transform: rotateX(0deg);
-}
-
-/* ---- Inline page section (new page content) ---- */
+/* Page section wrapper (no opacity — items handle visibility) */
 .pt-page-section {
-  opacity: 0;
-  transition: opacity 175ms ease-out;
-}
-.pt-page-section--visible {
-  opacity: 1;
+  /* structural only */
 }

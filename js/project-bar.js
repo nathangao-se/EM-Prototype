@@ -123,9 +123,17 @@
         if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
         if (typeof window.runPageTransition === 'function' && typeof window.getActivityMapPageContent === 'function') {
           var pageContent = window.getActivityMapPageContent();
-          window.runPageTransition({ triggerEl: activityMapBtn, pageContent: pageContent, title: 'Activity mapping', onExit: function () {} });
-        } else if (typeof window.openReconcileModal === 'function') {
-          window.openReconcileModal();
+          window.runPageTransition({ triggerEl: activityMapBtn, pageContent: pageContent, title: 'Activity Data', onExit: function () {} });
+        }
+      });
+    }
+
+    var addFilesBtn = container.querySelector('[data-action-id="open-activity-data-setup"]');
+    if (addFilesBtn) {
+      addFilesBtn.addEventListener('click', function () {
+        if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
+        if (typeof window.openActivityDataSetupModal === 'function') {
+          window.openActivityDataSetupModal();
         }
       });
     }
