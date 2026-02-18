@@ -49,7 +49,8 @@
     card.addEventListener('click', function () {
       var option = card.getAttribute('data-option');
       if (option === 'upload') {
-        // TODO: start upload flow (e.g. file picker, drag-drop, next step modal)
+        closeModal();
+        if (typeof window.openUploadWizard === 'function') window.openUploadWizard();
       } else if (option === 'api') {
         // TODO: import via API flow
       } else if (option === 'campaign') {

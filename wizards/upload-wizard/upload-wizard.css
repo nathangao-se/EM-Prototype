@@ -1,0 +1,347 @@
+/* ========================================
+   UPLOAD WIZARD — Add activity files flow
+   ======================================== */
+
+.upload-wiz-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9100;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.upload-wiz-overlay--open {
+  display: flex;
+}
+
+.upload-wiz {
+  width: 95vw;
+  max-width: 680px;
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.upload-wiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0 24px;
+  flex-shrink: 0;
+}
+
+.upload-wiz-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d201f;
+  margin: 0;
+}
+
+.upload-wiz-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #676f73;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.upload-wiz-close:hover {
+  background: #f5f8fa;
+  color: #1d201f;
+}
+
+/* Step tabs */
+.upload-wiz-steps {
+  display: flex;
+  gap: 0;
+  padding: 16px 24px 0 24px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.upload-wiz-step {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 16px 12px 16px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  cursor: pointer;
+}
+
+.upload-wiz-step:hover {
+  color: #41494d;
+}
+
+.upload-wiz-step--active {
+  color: #1d201f;
+  font-weight: 600;
+  border-bottom-color: #1d201f;
+}
+
+/* Body */
+.upload-wiz-body {
+  flex: 1;
+  overflow: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.upload-wiz-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.upload-wiz-desc a {
+  color: #008029;
+  text-decoration: underline;
+}
+
+.upload-wiz-hint {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Section headers */
+.upload-wiz-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.upload-wiz-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.upload-wiz-section-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.upload-wiz-section-actions a {
+  font-size: 13px;
+  color: #008029;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.upload-wiz-section-actions a:hover {
+  text-decoration: underline;
+}
+
+/* Drag and drop zone */
+.upload-wiz-dropzone {
+  border: 2px dashed #d5dde0;
+  border-radius: 12px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.upload-wiz-dropzone:hover,
+.upload-wiz-dropzone--active {
+  border-color: #008029;
+  background: #f8fcf9;
+}
+
+.upload-wiz-dropzone-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8f4ec;
+  border-radius: 50%;
+  color: #008029;
+  font-size: 20px;
+}
+
+.upload-wiz-dropzone-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+}
+
+.upload-wiz-dropzone-text a {
+  color: #008029;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.upload-wiz-dropzone-meta {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  color: #676f73;
+  line-height: 1.4;
+}
+
+/* File list */
+.upload-wiz-file-list {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.upload-wiz-file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+}
+
+.upload-wiz-file-row:last-child {
+  border-bottom: none;
+}
+
+.upload-wiz-file-name {
+  flex: 1;
+  min-width: 0;
+  color: #1d201f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-wiz-file-size {
+  color: #676f73;
+  flex-shrink: 0;
+  width: 65px;
+  text-align: right;
+}
+
+.upload-wiz-file-type {
+  flex-shrink: 0;
+}
+
+.upload-wiz-file-type select {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid #d5dde0;
+  border-radius: 6px;
+  background: #fff;
+  color: #41494d;
+  cursor: pointer;
+}
+
+.upload-wiz-file-menu {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: #676f73;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
+.upload-wiz-file-menu:hover {
+  color: #1d201f;
+}
+
+/* Empty row */
+.upload-wiz-empty-row {
+  padding: 12px 14px;
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #676f73;
+}
+
+/* From other projects toggle */
+.upload-wiz-import-toggle {
+  font-size: 13px;
+  color: #008029;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.upload-wiz-import-toggle:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.upload-wiz-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.upload-wiz-discard {
+  font-size: 13px;
+  color: #c53030;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upload-wiz-discard:hover {
+  text-decoration: underline;
+}
+
+.upload-wiz-footer-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Placeholder for steps 2 and 3 */
+.upload-wiz-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  padding: 60px 20px;
+  text-align: center;
+}

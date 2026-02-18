@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="wizards/activity-map/activity-map.css">
   <link rel="stylesheet" href="wizards/normalize-activities/normalize-activities.css">
   <link rel="stylesheet" href="wizards/activity-data-setup/activity-data-setup.css">
+  <link rel="stylesheet" href="wizards/upload-wizard/upload-wizard.css">
 </head>
 <body>
   <div class="app-container">
@@ -258,6 +259,29 @@
     </div>
   </div>
 
+  <!-- ========== UPLOAD WIZARD (upload flow step 1+) ========== -->
+  <div id="upload-wizard-overlay" class="upload-wiz-overlay">
+    <div class="upload-wiz">
+      <div class="upload-wiz-header">
+        <h2 class="upload-wiz-title">Set up and add your files</h2>
+        <button type="button" class="upload-wiz-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="upload-wiz-steps">
+        <button class="upload-wiz-step upload-wiz-step--active" data-step="0">1. Add activity files</button>
+        <button class="upload-wiz-step" data-step="1">2. Initial cleanup</button>
+        <button class="upload-wiz-step" data-step="2">3. Review / collaborate</button>
+      </div>
+      <div class="upload-wiz-body"></div>
+      <div class="upload-wiz-footer">
+        <a href="#" class="upload-wiz-discard"><i class="fa-solid fa-trash"></i> Discard setup</a>
+        <div class="upload-wiz-footer-actions">
+          <button type="button" class="btn btn-outline upload-wiz-back">Back</button>
+          <button type="button" class="btn btn-primary upload-wiz-next">Next: add emissions files</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ========== DEV PANEL ========== -->
   <div id="dev-panel" class="dev-panel dev-panel--expanded">
     <button id="dev-panel-toggle" class="dev-panel-toggle">× Dev</button>
@@ -296,6 +320,7 @@
   <script src="wizards/activity-map/activity-map.js"></script>
   <script src="wizards/normalize-activities/normalize-activities.js"></script>
   <script src="wizards/activity-data-setup/activity-data-setup.js"></script>
+  <script src="wizards/upload-wizard/upload-wizard.js"></script>
   <script src="js/dev-panel.js"></script>
 </body>
 </html>

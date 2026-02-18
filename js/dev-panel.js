@@ -50,6 +50,7 @@
     if (typeof window.closeCampaignWizard === 'function') window.closeCampaignWizard();
     if (typeof window.closeNormalizeModal === 'function') window.closeNormalizeModal();
     if (typeof window.closeActivityDataSetupModal === 'function') window.closeActivityDataSetupModal();
+    if (typeof window.closeUploadWizard === 'function') window.closeUploadWizard();
     if (typeof window.closeCategoryModal === 'function') window.closeCategoryModal();
   };
 
