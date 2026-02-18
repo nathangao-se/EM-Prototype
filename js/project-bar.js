@@ -156,6 +156,17 @@
       });
     }
 
+    var inventoryBtn = container.querySelector('[data-action-id="open-inventory-2024"]');
+    if (inventoryBtn) {
+      inventoryBtn.addEventListener('click', function () {
+        if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
+        if (typeof window.runPageTransition === 'function' && typeof window.getGhgEnginePageContent === 'function') {
+          var pageContent = window.getGhgEnginePageContent();
+          window.runPageTransition({ triggerEl: inventoryBtn, pageContent: pageContent, title: '2024 GHG Inventory', onExit: function () {} });
+        }
+      });
+    }
+
     // Dropdown toggles
     container.querySelectorAll('.project-bar__dropdown-toggle').forEach(function (btn) {
       btn.addEventListener('click', function (e) {

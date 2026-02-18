@@ -15,6 +15,12 @@
   gap: 16px;
 }
 
+.ghg-page--embedded {
+  min-height: 0;
+  max-width: none;
+  padding: 0;
+}
+
 /* ---------- view switching ---------- */
 .ghg-view { display: none; }
 .ghg-view.ghg-view--active { display: flex; flex-direction: column; gap: 16px; }
