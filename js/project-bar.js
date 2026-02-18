@@ -167,6 +167,16 @@
       });
     }
 
+    var inventoryWizBtn = container.querySelector('[data-action-id="open-inventory-wizard"]');
+    if (inventoryWizBtn) {
+      inventoryWizBtn.addEventListener('click', function () {
+        if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
+        if (typeof window.openInventoryWizard === 'function') {
+          window.openInventoryWizard();
+        }
+      });
+    }
+
     container.querySelectorAll('[data-action-id="open-ghg-inventory"]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();

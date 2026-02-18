@@ -2296,7 +2296,7 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       subtitle: '3 inventories projections waiting',
       progress: 43,
       actions: [
-        { label: 'Create projections', icon: 'fa-solid fa-chart-simple' }
+        { label: 'Create projections', icon: 'fa-solid fa-chart-simple', actionId: 'open-inventory-wizard' }
       ],
       dropdown: {
         label: 'See inventory',
