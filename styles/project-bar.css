@@ -217,3 +217,85 @@
 .project-bar__btn i {
   font-size: 14px;
 }
+
+/* ----------------------------------------
+   DROPDOWN BUTTON
+   ---------------------------------------- */
+.project-bar__dropdown {
+  position: relative;
+}
+
+.project-bar__dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  background: #fff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease;
+}
+
+.project-bar__dropdown-toggle:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.project-bar__dropdown-toggle i:not(.project-bar__dropdown-chevron) {
+  font-size: 14px;
+}
+
+.project-bar__dropdown-chevron {
+  font-size: 10px;
+  color: #676f73;
+  margin-left: 2px;
+  transition: transform 0.15s ease;
+}
+
+.project-bar__dropdown--open .project-bar__dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+.project-bar__dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  background: #fff;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.project-bar__dropdown--open .project-bar__dropdown-menu {
+  display: block;
+}
+
+.project-bar__dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: #fff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s ease;
+}
+
+.project-bar__dropdown-item:hover {
+  background: #f5f8fa;
+}

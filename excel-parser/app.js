@@ -374,6 +374,9 @@ window.ExcelParser = (function () {
         block.rows.push(rowSlice);
         r++;
       }
+      var lastDataRow = r - 1;
+      if (lastDataRow < headerRow) lastDataRow = headerRow;
+      block.rangeLabel = colLabels[selMinCol] + headerRow + ':' + colLabels[selMaxCol] + lastDataRow;
     } else {
       for (var rr = selMinRow; rr <= selMaxRow; rr++) {
         var rrd = dataForDisplayRow(rr);
@@ -402,7 +405,13 @@ window.ExcelParser = (function () {
     saveBlockWithHeader: function () { return saveBlock(true); },
     clearSelection: clearSelection,
     hasSelection: function () { return selMinRow >= 0; },
-    canSaveWithHeader: function () { return isFullRowSelected(); },
+    canSaveWithHeader: function () { return selMinRow >= 0 && selMinRow === selMaxRow && isFullRowSelected(); },
+    setSelection: function (rMin, rMax, cMin, cMax) {
+      if (rMin >= 0 && cMin >= 0) {
+        anchorRow = rMin; anchorCol = cMin;
+        applyRange(rMin, rMax, cMin, cMax);
+      }
+    },
     destroy: function () { if (container) container.innerHTML = ""; container = null; }
   };
 })();

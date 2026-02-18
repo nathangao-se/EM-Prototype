@@ -75,17 +75,35 @@
         '</div>';
     }
 
-    // Action buttons
-    if (card.actions && card.actions.length) {
+    // Action buttons (and optional dropdown)
+    var hasActions = (card.actions && card.actions.length) || card.dropdown;
+    if (hasActions) {
       html += '<div class="project-bar__actions">';
-      card.actions.forEach(function (a) {
-        var attrs = a.actionId ? ' data-action-id="' + esc(a.actionId) + '"' : '';
-        html +=
-          '<button class="project-bar__btn"' + attrs + '>' +
-            (a.icon ? '<i class="' + esc(a.icon) + '"></i>' : '') +
-            '<span>' + esc(a.label) + '</span>' +
-          '</button>';
-      });
+      if (card.actions) {
+        card.actions.forEach(function (a) {
+          var attrs = a.actionId ? ' data-action-id="' + esc(a.actionId) + '"' : '';
+          html +=
+            '<button class="project-bar__btn"' + attrs + '>' +
+              (a.icon ? '<i class="' + esc(a.icon) + '"></i>' : '') +
+              '<span>' + esc(a.label) + '</span>' +
+            '</button>';
+        });
+      }
+      if (card.dropdown) {
+        html += '<div class="project-bar__dropdown">';
+        html += '<button class="project-bar__dropdown-toggle">';
+        if (card.dropdown.icon) html += '<i class="' + esc(card.dropdown.icon) + '"></i>';
+        html += '<span>' + esc(card.dropdown.label) + '</span>';
+        html += '<i class="fa-solid fa-chevron-down project-bar__dropdown-chevron"></i>';
+        html += '</button>';
+        html += '<div class="project-bar__dropdown-menu">';
+        card.dropdown.items.forEach(function (item) {
+          var attrs = item.actionId ? ' data-action-id="' + esc(item.actionId) + '"' : '';
+          html += '<button class="project-bar__dropdown-item"' + attrs + '>' + esc(item.label) + '</button>';
+        });
+        html += '</div>';
+        html += '</div>';
+      }
       html += '</div>';
     }
 
@@ -137,6 +155,22 @@
         }
       });
     }
+
+    // Dropdown toggles
+    container.querySelectorAll('.project-bar__dropdown-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var dd = btn.closest('.project-bar__dropdown');
+        dd.classList.toggle('project-bar__dropdown--open');
+      });
+    });
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function () {
+      container.querySelectorAll('.project-bar__dropdown--open').forEach(function (dd) {
+        dd.classList.remove('project-bar__dropdown--open');
+      });
+    });
   };
 
   window.hideProjectBar = function () {

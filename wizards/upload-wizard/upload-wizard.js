@@ -13,7 +13,6 @@
   var backBtn = overlay.querySelector('.upload-wiz-back');
   var nextBtn = overlay.querySelector('.upload-wiz-next');
   var discardLink = overlay.querySelector('.upload-wiz-discard');
-  var stepBtns = overlay.querySelectorAll('.upload-wiz-step');
 
   var currentStep = 0;
 
@@ -37,29 +36,193 @@
     { range: 'P1:R15' }
   ];
 
-  var SAMPLE_COLUMNS = [
-    {
-      name: 'Date',
-      bestMatches: [
-        { value: 'final-date', label: 'Final date', desc: 'Date on which the campaign is deemed complete' }
-      ],
-      otherOptions: [
-        { value: 'report-date', label: 'Report date', desc: 'Date when the final report is due' },
-        { value: 'start-date', label: 'Start date', desc: 'Date on which the campaign is executed' }
-      ],
-      selected: ''
-    },
-    {
-      name: 'Diesl',
-      bestMatches: [
-        { value: 'diesel-fuel', label: 'Diesel fuel', desc: 'Fuels that work with no-spark Diesel engines' }
-      ],
-      otherOptions: [
-        { value: 'biodiesel', label: 'Biodiesel', desc: 'Diesel fuel derived from biological sources, often fats' }
-      ],
-      selected: ''
-    }
+  // Step 3 (review / collaborate) state
+  var collaborators = [
+    { name: 'E. Honnig' },
+    { name: 'J. Lee' }
   ];
+
+  var SAMPLE_HISTORICAL = [
+    { name: 'Legacy Emissions data 2000-2019', size: '999.5mb' },
+    { name: 'Legacy emissions dat 2021-2023', size: '999.5mb' }
+  ];
+
+  var normalizeAfterComplete = false;
+
+  // Standard columns loaded from CSV
+  var standardColumns = [
+    { label: 'Business entity', desc: 'Business Entity name as appears in Resource Advisor+.' },
+    { label: 'Start date', desc: 'Start Date of Activity.' },
+    { label: 'End date', desc: 'End Date of Activity.' },
+    { label: 'Estimation method', desc: 'Method used to estimate emissions.' },
+    { label: 'Description', desc: 'Description of the Activity.' },
+    { label: 'Record type', desc: 'Select one of the drop-down Record Types.' },
+    { label: 'Category', desc: 'Select one of the drop-down Categories.' },
+    { label: 'Fuel type/refrigerant', desc: 'Select the fuel type or refrigerant for the activity.' },
+    { label: 'Is renewable', desc: 'Indicates if Fuel Type/Power is Renewable.' },
+    { label: 'Is generation owned by client', desc: 'Indicates if RE Generator is owned by the client. This field is required when Category is On-Site Energy Generation and Is Renewable is true.' },
+    { label: 'Is renewable power used on-site', desc: 'Indicates if renewable power is used on-site. This field is required if Category is On-Site Energy Generation and Is Renewable is true.' },
+    { label: 'Are EACs retained by client', desc: 'Indicates if EACs are retained by the client. This field is required when Category is On-Site Energy Generation and Is Renewable is true.' },
+    { label: 'Usage value', desc: 'Usage quantity. This field is required when Category is Stationary Combustion or Onsite Energy Generation or Refrigerants.' },
+    { label: 'Usage UOM', desc: 'Usage Unit of Measure. This field is required when Category is Stationary Combustion or Onsite Energy Generation or Refrigerants.' },
+    { label: 'Distance value', desc: 'Distance traveled for Mobile Combustion. For Mobile Combustion, either Usage value/UOM or Distance value/UOM is required.' },
+    { label: 'Distance UOM', desc: 'Distance Unit of Measure for Mobile Combustion. For Mobile Combustion, either Usage value/UOM or Distance value/UOM is required.' },
+    { label: 'Spend value', desc: 'The amount spent on the Activity.' },
+    { label: 'Spend UOM', desc: 'The unit of measurement (UoM) used for the amount spent on the Activity.' },
+    { label: 'Vehicle type', desc: 'Type of vehicle driven. This field is required when Category is Mobile Combustion.' },
+    { label: 'Energy type', desc: 'Select the energy type for the activity.' },
+    { label: 'Energy attribute type', desc: 'Select one of the drop-down Energy Attribute Types. This field is required if the Category is Off-Site Purchased Energy.' },
+    { label: 'Suborganization', desc: 'Suborganization involved in the Activity.' },
+    { label: 'Industry', desc: 'Industry related to the Activity.' },
+    { label: 'Sectors', desc: 'Sectors involved in the Activity.' },
+    { label: 'Products and services', desc: 'Products and services related to the activity.' },
+    { label: 'Vendor name', desc: 'Name of the Vendor.' },
+    { label: 'Raw material', desc: 'Raw used for the Activity.' },
+    { label: 'Item description', desc: 'Description of the item.' },
+    { label: 'Is metallic', desc: 'Indicates if the raw material is metallic.' },
+    { label: 'Region', desc: 'Region where the Activity took place.' },
+    { label: 'Activity type', desc: 'Select one of the drop-down Activity Types.' },
+    { label: 'Segment', desc: 'Segment of Activity.' },
+    { label: 'Fuel type', desc: 'Select one of the drop-down Fuel Types. This field is required for Storage and Retail Facility activity types. This field is also required when Usage Value and Usage UOM are provided.' },
+    { label: 'Origin', desc: 'Starting location of the transport or activity (e.g., city, facility, or site).' },
+    { label: 'Destination', desc: 'Ending location of the transport or activity (e.g., city, facility, or site).' },
+    { label: 'Is hazardous', desc: 'Indicates whether the Material type is hazardous.' },
+    { label: 'Disposal method', desc: 'Select one of the drop-down Disposal Methods.' },
+    { label: 'em_template_8e5f6789a0b1c2d3e4f56789a12b3c4d', desc: '' },
+    { label: 'Cabin class', desc: 'Select Cabin Class (First Class, Business, etc.) used for Air travel. This field is required when Activity type is \'Air\'.' },
+    { label: 'Car type', desc: 'Select Type of Car used for Automobile Travel. This field is required when Activity type is \'Automobile\'.' },
+    { label: 'Rail type', desc: 'Select type of Rail used for Rail travel. This field is required when Acitivity type is \'Rail\'.' },
+    { label: 'Bus type', desc: 'Select Type of Bus used for Bus travel. This field is required if Activity type is \'Bus\'.' },
+    { label: 'Ferry passenger type', desc: 'Select the Type of Ferry travel. This field is required when Activity type is \'Water\'.' },
+    { label: 'Room nights', desc: 'Total number of nights for all rooms booked for the Activity.' },
+    { label: 'em_template_9f6789a0b1c2d3e4f56789a12b3c4d5e', desc: '' },
+    { label: 'Employee ID', desc: 'Identification of the employee as determined by the organization. Only for informational purposes. This field is required if Number of employees is 1.' },
+    { label: 'Average distance', desc: 'Average one-way commute distance traveled, either by individual or across all employees.' },
+    { label: 'Average distance UOM', desc: 'Unit of measurement (UoM) for Average distance.' },
+    { label: 'Days in office per week', desc: 'Average number of days the employee commuted to the office in any given week.' },
+    { label: 'Number of weeks', desc: 'Number of weeks commuting.' },
+    { label: 'Mode of transportation details', desc: 'Further details of the mode of transport(s) used. i.e. hybrid vehicle, subway train, etc.' },
+    { label: 'Number of employees', desc: 'Number of employees. This field is required.' },
+    { label: 'em_template_a06789a0b1c2d3e4f56789a12b3c4d5f', desc: '' },
+    { label: 'Postal code', desc: 'Postal Code where the Activity took place.' },
+    { label: 'em_template_b1789a0b1c2d3e4f56789a12b3c4d5f6', desc: '' },
+    { label: 'em_template_c289a0b1c2d3e4f56789a12b3c4d5f67', desc: '' },
+    { label: 'Product category', desc: 'The category of the product.' },
+    { label: 'Product name', desc: 'The name of the product.' },
+    { label: 'Number of uses per lifetime (required)', desc: 'Number of uses during the product\'s lifetime.' },
+    { label: 'Quantity sold', desc: 'Number of products products sold.' },
+    { label: 'Processing source', desc: 'Select one of the drop-down Processing Sources.' },
+    { label: 'Processing usage per unit sold', desc: 'Processing consumed per unit per use. Processing usage per unit per use/UOM is required.' },
+    { label: 'Processing usage UOM per unit sold', desc: 'The amount of processing used per unit per use of the product.' },
+    { label: 'em_template_d39a0b1c2d3e4f56789a12b3c4d5f678', desc: '' },
+    { label: 'Energy per unit per use', desc: 'The amount of energy used per unit per use of the product.' },
+    { label: 'Energy use UOM', desc: 'The unit of measure for the energy use.' },
+    { label: 'Energy source', desc: 'Select one of the drop-down Energy Sources.' },
+    { label: 'em_template_e4a0b1c2d3e4f56789a12b3c4d5f6789', desc: '' },
+    { label: 'Revenue value', desc: 'Revenue-based value (not activity) of the activity.' },
+    { label: 'Revenue UOM', desc: 'Revenue-based unit of measure (UOM) for the activity value (i.e. USD, EUR, etc)' },
+    { label: 'em_template_f5b1c2d3e4f56789a12b3c4d5f6789a0', desc: '' },
+    { label: 'em_template_06c2d3e4f56789a12b3c4d5f6789a0b1', desc: '' },
+    { label: 'em_template_17d3e4f56789a12b3c4d5f6789a0b1c2', desc: '' },
+    { label: 'Investment type', desc: 'Type of investment.' },
+    { label: 'Total asset value amount', desc: 'Total value of the investment. This field is required if Equity Share is not given.' },
+    { label: 'Total amount invested', desc: 'Total amount invested in the investment. This field is required if Equity Share is not given.' },
+    { label: 'Equity share', desc: 'Percent ownership of the investment.' },
+    { label: 'Industry of investment', desc: 'Industry of investment.' },
+    { label: 'Building type', desc: 'Building type of the investment.' },
+    { label: 'Is initial sponsor or lender', desc: 'Indicates if the client is an initial sponsor or lender of the investment. This field is required if Investment Type is Debt Investment or Project Finance.' },
+    { label: 'Is proceeds use known', desc: 'Indicates if the use of the proceeds generated by the investment is known. This field is required if Investment Type is Debt Investment.' },
+    { label: 'Total debt amount', desc: 'Total debt amount held in the investment. This field is required if "Is the use of the proceeds known?" is No.' },
+    { label: 'Total asset revenue', desc: 'Annual asset revenue. This field is required if "Is the client an initial sponsor or lender of the investment?" is Yes.' },
+    { label: 'Asset status', desc: 'Status of the asset. This field is required if "Is the client an initial sponsor or lender of the investment?" is Yes.' },
+    { label: 'Total asset cost', desc: 'Total asset cost. This field is required if Investment Type is Debt Investment.' },
+    { label: 'Annual asset cost', desc: 'Annual asset cost. This field is required if Investment Type is Debt Investment.' },
+    { label: 'Projected annual emissions', desc: 'Projected annual emissions of the investment. This field is required if Investment Type is Debt Investment.' },
+    { label: 'Projected lifetime in years', desc: 'Projected lifetime in years of the investment. This field is required if Investment Type is Debt Investment.' },
+    { label: 'em_template_a3e2c1d45b6f4a8e9c2d7f1b3e4a5c6d', desc: '' },
+    { label: 'Emissions of the investment', desc: 'Emissions of the investment. Required for emissions calculations.' },
+    { label: 'Emissions UoM', desc: 'Unit of measure for the investment emissions.' },
+    { label: 'em_template_e7a2c8b14f3d4e2a9b7c2d1f8a6c5b4e', desc: '' }
+  ];
+  var unrecognizedNames = ['Date', 'method', 'UOM', 'Total', 'Revenue', 'descrkption'];
+  var columnMatches = [];
+
+  function levenshtein(s, t) {
+    var m = s.length, n = t.length;
+    var d = [];
+    for (var i = 0; i <= m; i++) { d[i] = [i]; }
+    for (var j = 0; j <= n; j++) { d[0][j] = j; }
+    for (var i2 = 1; i2 <= m; i2++) {
+      for (var j2 = 1; j2 <= n; j2++) {
+        var cost = s[i2 - 1] === t[j2 - 1] ? 0 : 1;
+        d[i2][j2] = Math.min(d[i2 - 1][j2] + 1, d[i2][j2 - 1] + 1, d[i2 - 1][j2 - 1] + cost);
+      }
+    }
+    return d[m][n];
+  }
+
+  function correctTypo(input, vocabulary) {
+    var lower = input.toLowerCase();
+    var bestWord = lower;
+    var bestDist = Infinity;
+    for (var i = 0; i < vocabulary.length; i++) {
+      var w = vocabulary[i].toLowerCase();
+      if (w === lower) return lower;
+      var d = levenshtein(lower, w);
+      if (d < bestDist && d <= Math.ceil(lower.length * 0.4)) {
+        bestDist = d;
+        bestWord = w;
+      }
+    }
+    return bestWord;
+  }
+
+  function buildColumnMatches() {
+    var vocabSet = {};
+    standardColumns.forEach(function (col) {
+      col.label.split(/[\s\/\-(),]+/).forEach(function (w) {
+        var lw = w.toLowerCase();
+        if (lw.length > 1) vocabSet[lw] = true;
+      });
+    });
+    var vocabulary = Object.keys(vocabSet);
+
+    columnMatches = unrecognizedNames.map(function (name) {
+      var corrected = correctTypo(name, vocabulary);
+
+      var matches = [];
+      standardColumns.forEach(function (col) {
+        var words = col.label.toLowerCase().split(/[\s\/\-(),]+/);
+        var found = false;
+        for (var i = 0; i < words.length; i++) {
+          if (words[i] === corrected) { found = true; break; }
+        }
+        if (!found && col.label.toLowerCase().indexOf(corrected) >= 0) found = true;
+        if (found) {
+          matches.push({
+            label: col.label,
+            desc: col.desc,
+            value: col.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+          });
+        }
+      });
+
+      var seen = {};
+      var unique = [];
+      matches.forEach(function (m) {
+        if (!seen[m.label]) { seen[m.label] = true; unique.push(m); }
+      });
+
+      var best = unique.slice(0, 1);
+      var other = unique.slice(1, 6);
+
+      return { name: name, bestMatches: best, otherOptions: other, selected: '' };
+    });
+
+    if (currentStep === 1 && step1Tab === 'columns') renderStep1();
+  }
+
+  buildColumnMatches();
 
   function esc(str) {
     if (!str) return '';
@@ -74,7 +237,7 @@
     importedFiles = [];
     step1Tab = 'layouts';
     savedSections = [];
-    SAMPLE_COLUMNS.forEach(function (c) { c.selected = ''; });
+    columnMatches.forEach(function (c) { c.selected = ''; });
     render();
     overlay.classList.add('upload-wiz-overlay--open');
     document.body.style.overflow = 'hidden';
@@ -113,37 +276,70 @@
   });
 
   nextBtn.addEventListener('click', function () {
-    if (currentStep < 2) {
+    if (currentStep === 2) {
+      closeWizard();
+    } else if (currentStep < 2) {
       currentStep++;
       render();
     }
   });
 
-  stepBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var s = parseInt(btn.getAttribute('data-step'), 10);
-      if (!isNaN(s) && s >= 0 && s <= 2) {
-        currentStep = s;
-        render();
-      }
-    });
-  });
-
   function updateStepTabs() {
-    stepBtns.forEach(function (btn) {
-      var s = parseInt(btn.getAttribute('data-step'), 10);
-      btn.classList.toggle('upload-wiz-step--active', s === currentStep);
+    var stepsContainer = overlay.querySelector('.upload-wiz-steps');
+    if (!stepsContainer) return;
+
+    var stepData = [
+      { num: 1, label: 'Add activity files' },
+      { num: 2, label: 'Columns cleanup' },
+      { num: 3, label: 'Review / collaborate' }
+    ];
+
+    var html = '';
+    stepData.forEach(function (s, i) {
+      var isComplete = i < currentStep;
+      var isActive = i === currentStep;
+      var cls = 'upload-wiz-stepper-item';
+      if (isComplete) cls += ' upload-wiz-stepper--complete';
+      else if (isActive) cls += ' upload-wiz-stepper--active';
+
+      html += '<div class="' + cls + '" data-step="' + i + '">';
+      html += '<div class="upload-wiz-stepper-label">';
+      html += '<span>' + s.num + '. ' + s.label + '</span>';
+      if (isComplete) html += ' <i class="fa-solid fa-circle-check upload-wiz-stepper-check"></i>';
+      html += '</div>';
+      html += '<div class="upload-wiz-stepper-bar"><div class="upload-wiz-stepper-bar-fill"></div></div>';
+      html += '</div>';
+    });
+
+    stepsContainer.innerHTML = html;
+
+    stepsContainer.querySelectorAll('.upload-wiz-stepper-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var s = parseInt(item.getAttribute('data-step'), 10);
+        if (!isNaN(s) && s >= 0 && s <= 2) {
+          currentStep = s;
+          render();
+        }
+      });
     });
   }
 
   function updateFooter() {
     backBtn.textContent = 'Back';
     if (currentStep === 2) {
-      nextBtn.textContent = 'Finish';
-    } else if (currentStep === 1) {
-      nextBtn.textContent = 'Review';
+      nextBtn.textContent = 'Complete and exit';
     } else {
-      nextBtn.textContent = 'Next: add emissions files';
+      if (currentStep === 1) {
+        nextBtn.textContent = 'Review';
+      } else {
+        nextBtn.textContent = 'Next: add emissions files';
+      }
+    }
+
+    // Toggle the normalize checkbox row
+    var checkRow = overlay.querySelector('.uw-s2-check-row');
+    if (checkRow) {
+      checkRow.style.display = currentStep === 2 ? 'flex' : 'none';
     }
   }
 
@@ -308,8 +504,8 @@
     html += '</div>';
 
     html += '<div class="uw-s1-tabs">';
-    html += '<button type="button" class="uw-s1-tab' + (step1Tab === 'layouts' ? ' uw-s1-tab--active' : '') + '" data-s1tab="layouts"><i class="fa-light fa-table-layout"></i> Unrecognized column layouts</button>';
-    html += '<button type="button" class="uw-s1-tab' + (step1Tab === 'columns' ? ' uw-s1-tab--active' : '') + '" data-s1tab="columns"><i class="fa-light fa-table-columns"></i> Columns</button>';
+    html += '<button type="button" class="uw-s1-tab' + (step1Tab === 'layouts' ? ' uw-s1-tab--active' : '') + '" data-s1tab="layouts"><i class="fa-solid fa-table"></i> Unrecognized column layouts</button>';
+    html += '<button type="button" class="uw-s1-tab' + (step1Tab === 'columns' ? ' uw-s1-tab--active' : '') + '" data-s1tab="columns"><i class="fa-solid fa-table-columns"></i> Columns</button>';
     html += '</div>';
 
     if (step1Tab === 'layouts') {
@@ -335,15 +531,15 @@
       savedSections.forEach(function (s, i) {
         html += '<div class="uw-s1-section-item" data-idx="' + i + '">';
         html += '<span class="uw-s1-section-range">' + esc(s.range) + '</span>';
-        html += '<button type="button" class="uw-s1-section-remove" data-idx="' + i + '" title="Remove"><i class="fa-light fa-trash-can"></i></button>';
+        html += '<button type="button" class="uw-s1-section-remove" data-idx="' + i + '" title="Remove"><i class="fa-solid fa-trash"></i></button>';
         html += '</div>';
       });
       html += '</div>';
     }
 
     html += '<div class="uw-s1-save-actions">';
-    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-block" disabled><i class="fa-light fa-floppy-disk"></i> Save block</button>';
-    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-light fa-floppy-disk"></i> Save with headers</button>';
+    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Save block</button>';
+    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Use row as header</button>';
     html += '</div>';
 
     html += '</div>';
@@ -360,30 +556,41 @@
     var html = '';
     html += '<div class="uw-s1-columns">';
 
-    SAMPLE_COLUMNS.forEach(function (col, ci) {
+    columnMatches.forEach(function (col, ci) {
       html += '<div class="uw-s1-col-card">';
-      html += '<div class="uw-s1-col-name">' + esc(col.name) + '</div>';
-      html += '<div class="uw-s1-col-options">';
+      html += '<div class="uw-s1-col-card-name">' + esc(col.name) + '</div>';
+      html += '<div class="uw-s1-col-card-divider"></div>';
+      html += '<div class="uw-s1-col-card-body">';
 
-      html += '<div class="uw-s1-col-group-label">Best matches in our standard data</div>';
-      col.bestMatches.forEach(function (opt) {
-        var checked = col.selected === opt.value ? ' checked' : '';
-        html += '<label class="uw-s1-col-option">';
-        html += '<input type="radio" name="col-' + ci + '"' + checked + ' value="' + esc(opt.value) + '" data-col="' + ci + '">';
-        html += '<span class="uw-s1-col-option-label">' + esc(opt.label) + '</span>';
-        html += '<span class="uw-s1-col-option-desc">' + esc(opt.desc) + '</span>';
-        html += '</label>';
-      });
+      // Best matches group
+      html += '<div class="uw-s1-col-group">';
+      if (col.bestMatches.length === 0) {
+        html += '<div class="uw-s1-col-group-label">No results found</div>';
+      } else {
+        html += '<div class="uw-s1-col-group-label">Best matches in our standard data</div>';
+        col.bestMatches.forEach(function (opt) {
+          var checked = col.selected === opt.value ? ' checked' : '';
+          html += '<div class="uw-s1-col-row">';
+          html += '<label class="uw-s1-col-radio"><input type="radio" name="col-' + ci + '"' + checked + ' value="' + esc(opt.value) + '" data-col="' + ci + '"><span>' + esc(opt.label) + '</span></label>';
+          html += '<span class="uw-s1-col-row-desc">' + esc(opt.desc) + '</span>';
+          html += '</div>';
+        });
+      }
+      html += '</div>';
 
-      html += '<div class="uw-s1-col-group-label uw-s1-col-group-label--other">Other options</div>';
-      col.otherOptions.forEach(function (opt) {
-        var checked = col.selected === opt.value ? ' checked' : '';
-        html += '<label class="uw-s1-col-option">';
-        html += '<input type="radio" name="col-' + ci + '"' + checked + ' value="' + esc(opt.value) + '" data-col="' + ci + '">';
-        html += '<span class="uw-s1-col-option-label">' + esc(opt.label) + '</span>';
-        html += '<span class="uw-s1-col-option-desc">' + esc(opt.desc) + '</span>';
-        html += '</label>';
-      });
+      if (col.otherOptions.length > 0) {
+        html += '<div class="uw-s1-col-separator"></div>';
+        html += '<div class="uw-s1-col-group">';
+        html += '<div class="uw-s1-col-group-label">Other options</div>';
+        col.otherOptions.forEach(function (opt) {
+          var checked = col.selected === opt.value ? ' checked' : '';
+          html += '<div class="uw-s1-col-row">';
+          html += '<label class="uw-s1-col-radio"><input type="radio" name="col-' + ci + '"' + checked + ' value="' + esc(opt.value) + '" data-col="' + ci + '"><span>' + esc(opt.label) + '</span></label>';
+          html += '<span class="uw-s1-col-row-desc">' + esc(opt.desc) + '</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
 
       html += '</div>';
       html += '</div>';
@@ -402,10 +609,21 @@
     });
 
     bodyEl.querySelectorAll('.uw-s1-section-remove').forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
         var idx = parseInt(btn.getAttribute('data-idx'), 10);
         savedSections.splice(idx, 1);
         renderStep1();
+      });
+    });
+
+    bodyEl.querySelectorAll('.uw-s1-section-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var idx = parseInt(item.getAttribute('data-idx'), 10);
+        var section = savedSections[idx];
+        if (section && section.sel && window.ExcelParser) {
+          window.ExcelParser.setSelection(section.sel.minRow, section.sel.maxRow, section.sel.minCol, section.sel.maxCol);
+        }
       });
     });
 
@@ -413,9 +631,10 @@
     if (saveBlockBtn) {
       saveBlockBtn.addEventListener('click', function () {
         if (window.ExcelParser && window.ExcelParser.hasSelection()) {
+          var sel = window.ExcelParser.getSelection();
           var block = window.ExcelParser.saveBlock();
-          if (block) {
-            savedSections.push({ range: block.rangeLabel, block: block });
+          if (block && sel) {
+            savedSections.push({ range: block.rangeLabel, sel: sel, block: block });
             renderStep1();
           }
         }
@@ -426,9 +645,15 @@
     if (saveHeadersBtn) {
       saveHeadersBtn.addEventListener('click', function () {
         if (window.ExcelParser && window.ExcelParser.canSaveWithHeader()) {
+          var sel = window.ExcelParser.getSelection();
           var block = window.ExcelParser.saveBlockWithHeader();
           if (block) {
-            savedSections.push({ range: block.rangeLabel, block: block });
+            var endRow = sel.minRow + (block.rows ? block.rows.length : 0);
+            savedSections.push({
+              range: block.rangeLabel,
+              sel: { minRow: sel.minRow, maxRow: endRow, minCol: sel.minCol, maxCol: sel.maxCol },
+              block: block
+            });
             renderStep1();
           }
         }
@@ -438,7 +663,7 @@
     bodyEl.querySelectorAll('input[type="radio"][data-col]').forEach(function (radio) {
       radio.addEventListener('change', function () {
         var ci = parseInt(radio.getAttribute('data-col'), 10);
-        SAMPLE_COLUMNS[ci].selected = radio.value;
+        columnMatches[ci].selected = radio.value;
       });
     });
 
@@ -470,7 +695,81 @@
   // ========================================
 
   function renderStep2() {
-    bodyEl.innerHTML = '<div class="upload-wiz-placeholder">Review / collaborate \u2014 coming soon</div>';
+    var html = '';
+
+    // Collaborator selector
+    html += '<div class="uw-s2-section">';
+    html += '<div class="uw-s2-label">Select collaborators from your organization</div>';
+    html += '<div class="uw-s2-collab-field">';
+    html += '<div class="uw-s2-collab-tags">';
+    collaborators.forEach(function (c, i) {
+      html += '<button type="button" class="uw-s2-tag" data-collab-idx="' + i + '">' + esc(c.name) + ' <i class="fa-solid fa-xmark"></i></button>';
+    });
+    html += '<input type="text" class="uw-s2-collab-input" placeholder="" />';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // Activities data
+    html += '<div class="uw-s2-section">';
+    html += '<div class="uw-s2-label">Activities data</div>';
+    html += '<div class="uw-s2-file-group">';
+
+    var actFiles = uploadedFiles.length > 0 ? uploadedFiles : [
+      { name: 'Southern Europe Measure Data Point Data 1', size: '999.5mb', type: 'Mixed activities' },
+      { name: 'Asia Measure Data Point Data 1', size: '999.5mb', type: 'Mixed activities' },
+      { name: 'North America Measure Data Point Data 1', size: '999.5mb', type: 'Electricity only' },
+      { name: 'East Africa Measure Data Point Data 1', size: '999.5mb', type: 'Mixed activities' }
+    ];
+
+    actFiles.forEach(function (f, i) {
+      var typeOptions = '';
+      ACTIVITY_TYPES.forEach(function (t) {
+        typeOptions += '<option' + (f.type === t ? ' selected' : '') + '>' + esc(t) + '</option>';
+      });
+      html += '<div class="uw-s2-file-row">';
+      html += '<span class="uw-s2-file-name">' + esc(f.name) + '</span>';
+      html += '<span class="uw-s2-file-size">' + esc(f.size) + '</span>';
+      html += '<span class="uw-s2-file-type"><div class="uw-s2-type-btn">';
+      if (f.type === 'Electricity only') {
+        html += '<i class="fa-solid fa-bolt"></i> ';
+      }
+      html += esc(f.type) + ' <i class="fa-solid fa-chevron-down uw-s2-chevron"></i></div></span>';
+      html += '<button type="button" class="uw-s2-file-menu"><i class="fa-solid fa-ellipsis-vertical"></i></button>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+    html += '</div>';
+
+    // Historical emissions data
+    html += '<div class="uw-s2-section">';
+    html += '<div class="uw-s2-label">Historical emissions data</div>';
+    html += '<div class="uw-s2-file-group">';
+
+    SAMPLE_HISTORICAL.forEach(function (f) {
+      html += '<div class="uw-s2-file-row">';
+      html += '<span class="uw-s2-file-name">' + esc(f.name) + '</span>';
+      html += '<span class="uw-s2-file-size">' + esc(f.size) + '</span>';
+      html += '<button type="button" class="uw-s2-file-menu"><i class="fa-solid fa-ellipsis-vertical"></i></button>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+    html += '</div>';
+
+    bodyEl.innerHTML = html;
+    bindStep2Events();
+  }
+
+  function bindStep2Events() {
+    bodyEl.querySelectorAll('.uw-s2-tag').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-collab-idx'), 10);
+        collaborators.splice(idx, 1);
+        renderStep2();
+      });
+    });
   }
 
   // ========================================

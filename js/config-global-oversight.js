@@ -2296,8 +2296,15 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       subtitle: '3 inventories projections waiting',
       progress: 43,
       actions: [
-        { label: 'Create inventory projections', icon: 'fa-solid fa-chart-simple' }
-      ]
+        { label: 'Create projections', icon: 'fa-solid fa-chart-simple' }
+      ],
+      dropdown: {
+        label: 'See inventory',
+        icon: 'fa-solid fa-book-open',
+        items: [
+          { label: '2024 GHG Inventory', actionId: 'open-inventory-2024' }
+        ]
+      }
     }
   ]
 };

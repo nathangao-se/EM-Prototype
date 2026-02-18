@@ -55,6 +55,7 @@ body {
 
 .btn-outline {
   height: 32px;
+  min-width: 120px;
   background: transparent;
   border: 1px solid #1d201f;
   border-radius: 4px;
@@ -62,8 +63,14 @@ body {
   padding: 0 8px;
 }
 
-.btn-outline:hover {
+.btn-outline:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.04);
+}
+
+.btn-outline:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .btn-outline i {
@@ -71,18 +78,25 @@ body {
 }
 
 .btn-primary {
-  height: 28px;
+  height: 32px;
+  min-width: 200px;
   background: #008029;
   border: none;
   border-radius: 4px;
   color: #ffffff;
   padding: 0 8px;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: #006622;
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .btn-primary i {
