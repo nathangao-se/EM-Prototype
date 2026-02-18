@@ -251,6 +251,16 @@
   window.openUploadWizard = openWizard;
   window.closeUploadWizard = closeWizard;
 
+  window.getColumnsTabHTML = function () { return renderColumnsTab(); };
+  window.bindColumnsTabEvents = function (container) {
+    container.querySelectorAll('input[type="radio"][data-col]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        var ci = parseInt(radio.getAttribute('data-col'), 10);
+        columnMatches[ci].selected = radio.value;
+      });
+    });
+  };
+
   closeBtn.addEventListener('click', closeWizard);
   overlay.addEventListener('click', function (e) {
     if (e.target === overlay) closeWizard();

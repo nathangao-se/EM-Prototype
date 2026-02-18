@@ -1,25 +1,32 @@
 /* ========================================
    PAGE TRANSITION — unified staggered dissolve
 
-   Every stage uses the same effect: items fade+zoom in random
-   order, with header pinned last (out) / first (in).
+   Ordering rules (always apply unless explicitly retracted):
+     RULE 1 — Header is always LAST out and FIRST in.
+     RULE 2 — Section backgrounds (goals, project areas) always
+              transition out BEFORE their cards and in AFTER them,
+              using a slightly slower background-only fade.
+     RULE 3 — All remaining items follow left-to-right screen order.
+     RULE 4 — OUT uses bottom-to-top vertical order; IN uses top-to-bottom.
 
    Forward:
-     Stage 1 — main out:   all main items stagger out (header last)
+     Stage 1 — main out:   section bgs → cards L→R B→T → others L→R B→T → header
      [swap header content while invisible]
-     Stage 2 — page in:    all page items stagger in (header first)
+     Stage 2 — page in:    header → cards L→R T→B → others L→R T→B
 
    Reverse:
-     Stage 3 — page out:   all page items stagger out (header last)
+     Stage 3 — page out:   cards L→R B→T → others L→R B→T → header
      [restore header content while invisible]
-     Stage 4 — main in:    all main items stagger in (header first)
+     Stage 4 — main in:    header → cards L→R T→B → others L→R T→B → section bgs
    ======================================== */
 
 (function () {
   'use strict';
 
-  var ITEM_STAGGER = 22;
-  var ITEM_DURATION = 160;
+  // --- Timing ---------------------------------------------------------------
+  var ITEM_STAGGER   = 22;
+  var ITEM_DURATION  = 160;
+  var BG_DURATION    = 220;   // section backgrounds: slightly slower (RULE 2)
   var BETWEEN_STAGES = 40;
 
   var headerMain = document.querySelector('.header-main');
@@ -44,13 +51,24 @@
     return '#eaf5ef';
   }
 
-  function shuffle(arr) {
-    for (var i = arr.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = tmp;
-    }
+  // --- Ordering rule helpers (RULE 1 / RULE 2) ---
+
+  function isBgSection(el) {
+    return el === goalsSection || el === projectBar;
+  }
+
+  function isGoalOrPbCard(el) {
+    if (isBgSection(el)) return false;
+    return !!el.closest('.goals') || !!el.closest('.project-bar');
+  }
+
+  function sortByPosition(arr, bottomToTop) {
+    arr.sort(function (a, b) {
+      var rA = a.getBoundingClientRect();
+      var rB = b.getBoundingClientRect();
+      if (rA.left !== rB.left) return rA.left - rB.left;
+      return bottomToTop ? rB.top - rA.top : rA.top - rB.top;
+    });
     return arr;
   }
 
@@ -61,10 +79,12 @@
   function collectMainItems() {
     var items = [];
     if (goalsSection) {
+      items.push(goalsSection);
       goalsSection.querySelectorAll('.goals-card').forEach(function (el) { items.push(el); });
       goalsSection.querySelectorAll('.alert-group').forEach(function (el) { items.push(el); });
     }
     if (projectBar && !projectBar.classList.contains('project-bar--hidden')) {
+      items.push(projectBar);
       var pbTitle = projectBar.querySelector('.project-bar__title');
       if (pbTitle) items.push(pbTitle);
       projectBar.querySelectorAll('.project-bar__card').forEach(function (el) { items.push(el); });
@@ -101,55 +121,94 @@
   }
 
   // ------------------------------------------------------------------
-  // Build ordered list: shuffle freely, pin header last (out) or first (in)
+  // Build ordered list  (RULE 1 + RULE 2 + RULE 3 + RULE 4)
+  //   OUT:  section bgs → cards L→R B→T → others L→R B→T → header
+  //   IN:   header → cards L→R T→B → others L→R T→B → section bgs
   // ------------------------------------------------------------------
 
   function buildOrder(items, direction) {
-    var others = items.filter(function (el) { return el !== headerMain; });
-    shuffle(others);
+    var bgSections   = [];
+    var goalPbCards  = [];
+    var otherItems   = [];
+    var btt = direction === 'out';
+
+    items.forEach(function (el) {
+      if (el === headerMain) return;
+      if (isBgSection(el))      bgSections.push(el);
+      else if (isGoalOrPbCard(el)) goalPbCards.push(el);
+      else                         otherItems.push(el);
+    });
+
+    sortByPosition(bgSections, btt);
+    sortByPosition(goalPbCards, btt);
+    sortByPosition(otherItems, btt);
+
     if (direction === 'out') {
-      others.push(headerMain);
-    } else {
-      others.unshift(headerMain);
+      return bgSections.concat(goalPbCards, otherItems, [headerMain]);
     }
-    return others;
+    return [headerMain].concat(goalPbCards, otherItems, bgSections);
   }
 
   // ------------------------------------------------------------------
-  // Stagger engine — applies the same fade+zoom to every item
+  // Stagger engine — cards use fade+zoom, bg sections use bg fade
   // ------------------------------------------------------------------
 
   function staggerOut(ordered, done) {
+    var maxEnd = 0;
     ordered.forEach(function (el, i) {
+      var bg  = isBgSection(el);
+      var dur = bg ? BG_DURATION : ITEM_DURATION;
       setTimeout(function () {
-        el.classList.add('pt-item', 'pt-item--out');
+        if (bg) {
+          el.classList.add('pt-bg-item', 'pt-bg-item--out');
+        } else {
+          el.classList.add('pt-item', 'pt-item--out');
+        }
       }, i * ITEM_STAGGER);
+      var end = i * ITEM_STAGGER + dur;
+      if (end > maxEnd) maxEnd = end;
     });
-    var total = (ordered.length - 1) * ITEM_STAGGER + ITEM_DURATION;
-    setTimeout(done, total);
+    setTimeout(done, maxEnd);
   }
 
   function staggerIn(ordered, done) {
+    var maxEnd = 0;
     ordered.forEach(function (el, i) {
+      var bg  = isBgSection(el);
+      var dur = bg ? BG_DURATION : ITEM_DURATION;
       setTimeout(function () {
-        el.classList.add('pt-item', 'pt-item--in-start');
-        void el.offsetWidth;
-        el.classList.remove('pt-item--out', 'pt-item--in-start');
+        if (bg) {
+          el.classList.add('pt-bg-item', 'pt-bg-item--in-start');
+          void el.offsetWidth;
+          el.classList.remove('pt-bg-item--out', 'pt-bg-item--in-start');
+        } else {
+          el.classList.add('pt-item', 'pt-item--in-start');
+          void el.offsetWidth;
+          el.classList.remove('pt-item--out', 'pt-item--in-start');
+        }
       }, i * ITEM_STAGGER);
+      var end = i * ITEM_STAGGER + dur;
+      if (end > maxEnd) maxEnd = end;
     });
-    var total = (ordered.length - 1) * ITEM_STAGGER + ITEM_DURATION;
-    setTimeout(done, total);
+    setTimeout(done, maxEnd);
   }
 
   function hideInstantly(items) {
     items.forEach(function (el) {
-      el.classList.add('pt-item', 'pt-item--out');
+      if (isBgSection(el)) {
+        el.classList.add('pt-bg-item', 'pt-bg-item--out');
+      } else {
+        el.classList.add('pt-item', 'pt-item--out');
+      }
     });
   }
 
   function cleanAll(items) {
     items.forEach(function (el) {
-      el.classList.remove('pt-item', 'pt-item--out', 'pt-item--in-start');
+      el.classList.remove(
+        'pt-item', 'pt-item--out', 'pt-item--in-start',
+        'pt-bg-item', 'pt-bg-item--out', 'pt-bg-item--in-start'
+      );
     });
   }
 
@@ -219,7 +278,7 @@
         var inOrder = buildOrder(newPageItems, 'in');
         staggerIn(inOrder, function () {
           cleanAll(newPageItems);
-          if (headerMain) headerMain.classList.remove('pt-item', 'pt-item--out', 'pt-item--in-start');
+          if (headerMain) cleanAll([headerMain]);
         });
       }, BETWEEN_STAGES);
     });
@@ -271,7 +330,7 @@
         var inOrder = buildOrder(mainItems, 'in');
         staggerIn(inOrder, function () {
           cleanAll(mainItems);
-          if (headerMain) headerMain.classList.remove('pt-item', 'pt-item--out', 'pt-item--in-start');
+          if (headerMain) cleanAll([headerMain]);
           currentState = null;
           state.onExit();
         });

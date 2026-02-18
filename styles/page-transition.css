@@ -1,21 +1,31 @@
 /* ========================================
    PAGE TRANSITION — unified staggered dissolve
-   Every element uses the same fade + zoom effect.
    ======================================== */
 
 /* ---- Item fade + subtle zoom ---- */
 .pt-item {
   transition: opacity 160ms ease-in, transform 160ms ease-in;
 }
-/* Fading OUT → slight zoom out (shrink) */
 .pt-item--out {
   opacity: 0 !important;
   transform: scale(0.97);
   pointer-events: none;
 }
-/* Fading IN → starts slightly enlarged, animates to normal */
 .pt-item--in-start {
   transform: scale(1.03);
+}
+
+/* ---- Section background fade (slightly slower, bg + border only) ---- */
+.pt-bg-item {
+  transition: background-color 220ms ease-in, border-color 220ms ease-in;
+}
+.pt-bg-item--out {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+.pt-bg-item--in-start {
+  background-color: transparent !important;
+  border-color: transparent !important;
 }
 
 /* Fully hide sections so they release layout space */

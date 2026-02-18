@@ -202,6 +202,31 @@
     </div>
   </div>
 
+  <!-- ========== COLUMNS NORMALIZE MODAL ========== -->
+  <div id="columns-normalize-overlay" class="normalize-overlay">
+    <div class="normalize-modal">
+      <div class="normalize-header">
+        <h2 class="normalize-title">Normalize columns</h2>
+        <button type="button" class="columns-normalize-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="normalize-body">
+        <div class="uw-s1-banner">
+          <div class="uw-s1-banner-icon"><i class="fa-light fa-circle-info"></i></div>
+          <div class="uw-s1-banner-text">
+            <p>For accurate calculations, your data columns need to conform to our standard data set. We found unclear columns in your data that don't match our standard set, please reconcile the items below.</p>
+          </div>
+        </div>
+        <div id="columns-normalize-content"></div>
+      </div>
+      <div class="normalize-footer">
+        <a href="#" class="columns-normalize-discard"><i class="fa-solid fa-trash"></i> Discard</a>
+        <div class="normalize-footer-actions">
+          <button type="button" class="btn btn-primary columns-normalize-save">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ========== NORMALIZE ACTIVITIES MODAL ========== -->
   <div id="normalize-overlay" class="normalize-overlay">
     <div class="normalize-modal">
@@ -328,6 +353,39 @@
   <script src="wizards/activity-data-setup/activity-data-setup.js"></script>
   <script src="excel-parser/app.js"></script>
   <script src="wizards/upload-wizard/upload-wizard.js"></script>
+  <script>
+  (function () {
+    var overlay = document.getElementById('columns-normalize-overlay');
+    if (!overlay) return;
+    var contentEl = document.getElementById('columns-normalize-content');
+    var closeBtn = overlay.querySelector('.columns-normalize-close');
+    var discardBtn = overlay.querySelector('.columns-normalize-discard');
+    var saveBtn = overlay.querySelector('.columns-normalize-save');
+
+    function open() {
+      if (window.getColumnsTabHTML) {
+        contentEl.innerHTML = window.getColumnsTabHTML();
+        if (window.bindColumnsTabEvents) window.bindColumnsTabEvents(contentEl);
+      }
+      overlay.classList.add('normalize-overlay--open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      overlay.classList.remove('normalize-overlay--open');
+      document.body.style.overflow = '';
+    }
+
+    window.openColumnsNormalizeModal = open;
+    closeBtn.addEventListener('click', close);
+    discardBtn.addEventListener('click', function (e) { e.preventDefault(); close(); });
+    saveBtn.addEventListener('click', close);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('normalize-overlay--open')) close();
+    });
+  })();
+  </script>
   <script src="js/dev-panel.js"></script>
 </body>
 </html>

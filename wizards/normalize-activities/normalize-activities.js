@@ -127,12 +127,8 @@
   }
 
   function getNextPendingIndex(currentIndex) {
-    var i = (currentIndex + 1) % activitiesList.length;
-    var count = 0;
-    while (count < activitiesList.length) {
+    for (var i = currentIndex + 1; i < activitiesList.length; i++) {
       if (!activitiesList[i].done) return i;
-      i = (i + 1) % activitiesList.length;
-      count++;
     }
     return -1;
   }
@@ -150,28 +146,27 @@
   }
 
   function renderLeftList() {
-    var pending = activitiesList.filter(function (a) { return !a.done; });
-    var done = activitiesList.filter(function (a) { return a.done; });
     var listHtml =
       '<div class="normalize-list-header">' +
         '<span class="normalize-list-title">Unnormalized activities:</span>' +
         '<span class="normalize-list-meta">' + activitiesList.length + ' instances</span>' +
       '</div>' +
       '<div class="normalize-list">';
-    pending.forEach(function (item) {
-      var cls = 'normalize-list-item' + (item.selected ? ' normalize-list-item--selected' : '');
-      listHtml +=
-        '<div class="' + cls + '" data-name="' + esc(item.name) + '" data-action="select-activity">' +
-          '<div class="normalize-list-item-name">' + esc(item.name) + '</div>' +
-          '<div class="normalize-list-item-meta">' + esc(item.meta) + '</div>' +
-        '</div>';
-    });
-    done.forEach(function (item) {
-      listHtml +=
-        '<div class="normalize-list-item normalize-list-item--done" data-name="' + esc(item.name) + '">' +
-          '<div class="normalize-list-item-name">' + esc(item.name) + ' <i class="fa-solid fa-check normalize-done-icon"></i></div>' +
-          '<div class="normalize-list-item-meta">' + esc(item.meta) + '</div>' +
-        '</div>';
+    activitiesList.forEach(function (item) {
+      if (item.done) {
+        listHtml +=
+          '<div class="normalize-list-item normalize-list-item--done" data-name="' + esc(item.name) + '">' +
+            '<div class="normalize-list-item-name">' + esc(item.name) + ' <i class="fa-solid fa-check normalize-done-icon"></i></div>' +
+            '<div class="normalize-list-item-meta">' + esc(item.meta) + '</div>' +
+          '</div>';
+      } else {
+        var cls = 'normalize-list-item' + (item.selected ? ' normalize-list-item--selected' : '');
+        listHtml +=
+          '<div class="' + cls + '" data-name="' + esc(item.name) + '" data-action="select-activity">' +
+            '<div class="normalize-list-item-name">' + esc(item.name) + '</div>' +
+            '<div class="normalize-list-item-meta">' + esc(item.meta) + '</div>' +
+          '</div>';
+      }
     });
     listHtml += '</div>';
     leftCol.innerHTML = listHtml;
@@ -215,19 +210,22 @@
     console.log('[NM] Using recommendations for:', selected.name, '- panels:', matchPanels.length);
     
     var panelsHtml = 
-      '<div class="normalize-panels-title">Activity data:</div>' +
-      '<div class="normalize-source-value">Source value: <strong>' + esc(selected.name) + '</strong></div>';
+      '<div class="normalize-panels-title">Best matching normalized activities for <strong>' + esc(selected.name) + '</strong></div>';
     
     matchPanels.forEach(function (p, panelIndex) {
       var scoreClass = p.score >= 90 ? 'normalize-score--high' : p.score >= 70 ? 'normalize-score--mid' : 'normalize-score--low';
+      var panelClass = 'normalize-panel' + (p.isBest ? ' normalize-panel--best' : '');
+      var btnClass = p.isBest ? 'btn btn-primary btn-small normalize-accept-btn' : 'btn btn-outline btn-small normalize-accept-btn';
       panelsHtml +=
-        '<div class="normalize-panel" data-panel-index="' + panelIndex + '">' +
+        '<div class="' + panelClass + '" data-panel-index="' + panelIndex + '">' +
           '<div class="normalize-panel-header">' +
             '<span class="normalize-score ' + scoreClass + '">' + p.score + '% <i class="fa-solid fa-check"></i></span>' +
             '<span class="normalize-panel-label">' + esc(p.label) + '</span>' +
           '</div>' +
-          '<button type="button" class="btn btn-primary btn-small normalize-accept-btn">Accept and go to next option <i class="fa-solid fa-arrow-right"></i></button>' +
-          (p.score < 100 ? '<a href="#" class="normalize-create-rule">Create rule</a>' : '') +
+          '<div class="normalize-panel-actions">' +
+            '<button type="button" class="' + btnClass + '"><i class="fa-solid fa-share"></i> Accept and go to next option</button>' +
+            (p.isBest ? '' : '<a href="#" class="normalize-create-rule">Create rule</a>') +
+          '</div>' +
           '<div class="normalize-underlying">Underlying logic</div>' +
           '<div class="normalize-underlying-desc">This reason over another</div>' +
         '</div>';
