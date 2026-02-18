@@ -21,7 +21,7 @@
 .upload-wiz {
   width: 95vw;
   max-width: 680px;
-  max-height: 90vh;
+  max-height: 85vh;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
@@ -135,6 +135,7 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
 .upload-wiz-section-title {
@@ -344,4 +345,421 @@
   color: #676f73;
   padding: 60px 20px;
   text-align: center;
+}
+
+/* ========================================
+   STEP 2 — Columns cleanup
+   ======================================== */
+
+/* Wider modal on step 2 */
+.upload-wiz--wide {
+  max-width: 1200px;
+}
+
+/* Info banner */
+.uw-s1-banner {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 20px 24px;
+  background: #edfaff;
+  border: 1px solid #42caff;
+  border-radius: 12px;
+}
+
+.uw-s1-banner-icon {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: #009edb;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.uw-s1-banner-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  line-height: 1.55;
+}
+
+.uw-s1-banner-text p {
+  margin: 0 0 8px 0;
+}
+
+.uw-s1-banner-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Sub-tabs */
+.uw-s1-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #abb3b8;
+}
+
+.uw-s1-tab {
+  background: none;
+  border: none;
+  border-bottom: 4px solid transparent;
+  padding: 12px 16px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.uw-s1-tab:hover {
+  color: #41494d;
+}
+
+.uw-s1-tab--active {
+  color: #090b0c;
+  font-weight: 700;
+  border-bottom-color: #008029;
+}
+
+.uw-s1-tab i {
+  font-size: 18px;
+}
+
+/* Split layout (layouts tab) */
+.uw-s1-split {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.uw-s1-left {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.uw-s1-left-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.uw-s1-select-field {
+  background: #f9fbfc;
+  border: 1px solid #cbcbcb;
+  border-radius: 12px;
+  padding: 10px 16px;
+}
+
+.uw-s1-select-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+}
+
+/* Section list */
+.uw-s1-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.uw-s1-section-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-bottom: none;
+  background: #fff;
+}
+
+.uw-s1-section-item:first-child {
+  border-radius: 10px 10px 0 0;
+}
+
+.uw-s1-section-item:last-child {
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 0 0 10px 10px;
+}
+
+.uw-s1-section-item:only-child {
+  border-radius: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.uw-s1-section-range {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+}
+
+.uw-s1-section-remove {
+  background: none;
+  border: none;
+  color: #cc1300;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  opacity: 0.7;
+}
+
+.uw-s1-section-remove:hover {
+  opacity: 1;
+}
+
+/* Save actions */
+.uw-s1-save-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.uw-s1-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d201f;
+  background: #fff;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.uw-s1-save-btn:hover {
+  background: #f5f8fa;
+}
+
+.uw-s1-save-btn i {
+  font-size: 13px;
+}
+
+/* Right panel — parser placeholder */
+.uw-s1-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.uw-s1-parser-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 360px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Parser status bar */
+.ep-status {
+  padding: 6px 12px;
+  background: #d4edda;
+  border-radius: 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  color: #155724;
+  flex-shrink: 0;
+}
+
+/* Parser table wrapper */
+.ep-table-wrapper {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  min-height: 0;
+}
+
+.ep-table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+}
+
+.ep-table th,
+.ep-table td {
+  border: 1px solid #d0d0d0;
+  padding: 5px 10px;
+  text-align: left;
+  white-space: nowrap;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+}
+
+/* Corner cell (select-all) */
+.ep-table thead th:first-child {
+  background: #e0e0e0;
+  min-width: 44px;
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.ep-table thead th:first-child:hover {
+  background: #c8c8c8;
+}
+
+/* Column headers */
+.ep-table thead th {
+  background: #e9ecef;
+  font-weight: 600;
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  text-align: center;
+}
+
+.ep-table thead th:hover {
+  background: #d0d7de;
+}
+
+/* Row headers */
+.ep-table tbody td:first-child {
+  background: #e9ecef;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  min-width: 44px;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+.ep-table tbody td:first-child:hover {
+  background: #d0d7de;
+}
+
+/* Data cells */
+.ep-table tbody td {
+  cursor: cell;
+}
+
+/* Selection highlights */
+.ep-cell-selected {
+  background: #b3d9ff !important;
+}
+
+.ep-header-selected {
+  background: #a0c8f0 !important;
+}
+
+.ep-table tbody td:not(:first-child):not(.ep-cell-selected):hover {
+  background: #f0f4ff;
+}
+
+/* Pagination */
+.ep-pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ep-page-btn {
+  padding: 4px 10px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ep-page-btn:hover:not(:disabled) {
+  background: #545b62;
+}
+
+.ep-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ep-page-info {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #676f73;
+}
+
+/* Columns tab */
+.uw-s1-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.uw-s1-col-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.uw-s1-col-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  padding: 16px 20px 0 20px;
+}
+
+.uw-s1-col-options {
+  padding: 12px 20px 16px 20px;
+}
+
+.uw-s1-col-group-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  margin-bottom: 8px;
+}
+
+.uw-s1-col-group-label--other {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.uw-s1-col-option {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.uw-s1-col-option input[type="radio"] {
+  flex-shrink: 0;
+  margin: 0;
+  accent-color: #008029;
+}
+
+.uw-s1-col-option-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+  white-space: nowrap;
+}
+
+.uw-s1-col-option-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
 }

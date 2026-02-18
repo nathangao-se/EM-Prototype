@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Cell + Notes Reader</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Excel Cell + Notes Reader</h1>
+        <p class="subtitle">Upload an Excel file to extract all cell text alongside any cell notes/comments.</p>
+
+        <div class="upload-area" id="dropZone">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Drop an .xlsx / .xls file here, or</div>
+            <label class="upload-btn">
+                Browse files
+                <input type="file" id="fileInput" accept=".xlsx,.xls" hidden>
+            </label>
+        </div>
+
+        <div id="loadStatus" class="load-status hidden"></div>
+
+        <div id="output" class="hidden">
+            <div class="toolbar">
+                <div class="sheet-tabs" id="sheetTabs"></div>
+                <div class="toolbar-right">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="notesOnlyToggle"> Only cells with notes
+                    </label>
+                    <button class="btn" id="copyBtn">Copy as TSV</button>
+                    <button class="btn btn-secondary" id="downloadBtn">Download CSV</button>
+                </div>
+            </div>
+            <div class="table-scroll">
+                <table id="resultTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="stats" id="stats"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

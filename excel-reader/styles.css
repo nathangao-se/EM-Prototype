@@ -1,0 +1,204 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    padding: 24px;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px;
+}
+
+h1 { font-size: 22px; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+/* Upload area */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 48px 24px;
+    text-align: center;
+    transition: border-color 150ms, background 150ms;
+    cursor: default;
+}
+.upload-area.dragover {
+    border-color: #007bff;
+    background: #f0f7ff;
+}
+.upload-icon { font-size: 36px; margin-bottom: 12px; }
+.upload-text { font-size: 14px; color: #666; margin-bottom: 12px; }
+.upload-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    background: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.upload-btn:hover { background: #0062cc; }
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+.toolbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sheet-tabs {
+    display: flex;
+    gap: 4px;
+}
+.sheet-tab {
+    padding: 5px 12px;
+    font-size: 13px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f8f8f8;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.sheet-tab:hover { background: #eee; }
+.sheet-tab--active {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.toggle-label {
+    font-size: 13px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    border: 1px solid #007bff;
+    background: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn:hover { background: #0062cc; }
+.btn-secondary {
+    background: #fff;
+    color: #007bff;
+}
+.btn-secondary:hover { background: #f0f7ff; }
+
+/* Table */
+.table-scroll {
+    overflow: auto;
+    max-height: 70vh;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#resultTable {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+#resultTable th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f1f3f5;
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid #ddd;
+    white-space: nowrap;
+}
+#resultTable td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+    white-space: pre-wrap;
+    max-width: 400px;
+}
+#resultTable tbody tr:hover { background: #fafbfc; }
+
+/* Cell address column */
+#resultTable td:first-child,
+#resultTable th:first-child {
+    color: #888;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* Note column highlight */
+.has-note-cell {
+    background: #fffde7;
+}
+.note-text {
+    color: #8b6914;
+    font-size: 12px;
+}
+
+/* Named ranges chip */
+.named-range-chip {
+    display: inline-block;
+    background: #e8f0fe;
+    color: #1a5fb4;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 4px;
+    font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+.stats {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #888;
+}
+
+/* Loading / status bar */
+.load-status {
+    margin-top: 16px;
+    padding: 10px 16px;
+    background: #e8f4f8;
+    border: 1px solid #b6dde8;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #0c5460;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+.load-status--error {
+    background: #fdecea;
+    border-color: #f5c6cb;
+    color: #721c24;
+    animation: none;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.hidden { display: none; }

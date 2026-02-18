@@ -1,0 +1,471 @@
+Cell,Value,Note
+A4,Business entity,Business Entity name as appears in Resource Advisor+.
+B4,Start date,Start Date of Activity.
+C4,End date,End Date of Activity.
+D4,Estimation method,Method used to estimate emissions.
+E4,Description,Description of the Activity.
+F4,Record type,Select one of the drop-down Record Types.
+G4,Category,Select one of the drop-down Categories.
+H4,Fuel type/refrigerant,Select the fuel type or refrigerant for the activity.
+I4,Is renewable,Indicates if Fuel Type/Power is Renewable.
+J4,Is generation owned by client,"Indicates if RE Generator is owned by the client.
+
+This field is required when Category is On-Site Energy Generation and Is Renewable is true."
+K4,Is renewable power used on-site,"Indicates if renewable power is used on-site.
+
+This field is required if Category is On-Site Energy Generation and Is Renewable is true."
+L4,Are EACs retained by client,"Indicates if EACs are retained by the client.
+
+This field is required when Category is On-Site Energy Generation and Is Renewable is true."
+M4,Usage value,"Usage quantity.
+
+This field is required when Category is Stationary Combustion or Onsite Energy Generation or Refrigerants."
+N4,Usage UOM,"Usage Unit of Measure.
+
+This field is required when Category is Stationary Combustion or Onsite Energy Generation or Refrigerants."
+O4,Distance value,"Distance traveled for Mobile Combustion.
+
+For Mobile Combustion, either Usage value/UOM or Distance value/UOM is required."
+P4,Distance UOM,"Distance Unit of Measure for Mobile Combustion.
+
+For Mobile Combustion, either Usage value/UOM or Distance value/UOM is required."
+Q4,Spend value,The amount spent on the Activity.
+R4,Spend UOM,The unit of measurement (UoM) used for the amount spent on the Activity.
+S4,Vehicle type,"Type of vehicle driven.
+
+This field is required when Category is Mobile Combustion."
+,,
+A5,Business entity,Business Entity name as appears in Resource Advisor+.
+B5,Start date,Start date of Activity.
+C5,End date,End date of Activity.
+D5,Estimation method,Method used to estimate emissions.
+E5,Description,Description of the Activity.
+F5,Record type,Select one of the drop-down Record Types.
+G5,Category,Select one of the drop-down Categories.
+H5,Energy type,Select the energy type for the activity.
+I5,Is renewable,Indicates if Fuel Type/Power is Renewable.
+J5,Energy attribute type,Select one of the drop-down Energy Attribute Types. This field is required if the Category is Off-Site Purchased Energy.
+K5,Usage value,Usage value (fuel or energy). Required if Usage UOM is provided.
+L5,Usage UOM,Usage Unit of Measure (fuel or energy). Required if Usage value is provided.
+M5,Spend value,Spend value. Required if Spend UOM is provided.
+N5,Spend UOM,Spend Unit of Measure. Required if Spend value is provided.
+,,
+A6,Business entity,Business entity name as appears in Resource Advisor+.
+B6,Start date,Start date of Activity.
+C6,End date,End date of Activity.
+D6,Estimation method,Method used to estimate emissions.
+E6,Suborganization,Suborganization involved in the Activity.
+F6,Industry,Industry related to the Activity.
+G6,Sectors,Sectors involved in the Activity.
+H6,Products and services,Products and services related to the activity.
+I6,Vendor name,Name of the Vendor.
+J6,Raw material,Raw used for the Activity.
+K6,Item description,Description of the item.
+L6,Is metallic,Indicates if the raw material is metallic.
+M6,Usage value,Non-spend usage of the Activity. Required if Usage UOM is provided.
+N6,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc). Required if Usage value is provided."
+O6,Spend value,Amount spent on the Activity. Required if Spend UOM is provided.
+P6,Spend UOM,The unit of measurement (UOM) of the Spend value. Required if Spend value is provided.
+Q6,Region,Region where the Activity took place.
+,,
+A7,Business entity,Business entity name as appears in Resource Advisor+.
+B7,Start date,Start date of Activity.
+C7,End date,End date of Activity.
+D7,Estimation method,Method used to estimate emissions.
+E7,Suborganization,Suborganization involved in the Activity.
+F7,Industry,Industry related to the Activity.
+G7,Sectors,Sectors involved in the Activity.
+H7,Products and services,Products and services related to the activity.
+I7,Vendor name,Name of the Vendor.
+J7,Raw material,Raw used for the Activity.
+K7,Item description,Description of the item.
+L7,Is metallic,Indicates if the raw material is metallic.
+M7,Usage value,Non-spend usage of the Activity. Required if Usage UOM is provided.
+N7,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc). Required if Usage value is provided."
+O7,Spend value,Amount spent on the Activity. Required if Spend UOM is provided.
+P7,Spend UOM,The unit of measurement (UoM) of the Spend value. Required if Spend value is provided.
+Q7,Region,Region where the Activity took place.
+,,
+A9,Business entity,Business entity name as appears in Resource Advisor+.
+B9,Start date,Start date of Activity.
+C9,End date,End date of Activity.
+D9,Estimation method,Method used to estimate emissions.
+E9,Activity type,Select one of the drop-down Activity Types.
+F9,Segment,Segment of Activity.
+G9,Usage value,"Non-spend usage of the Activity. Any usage given in this field will be interpreted as fuel usage, not freight weight.
+
+Distance value/UOM or Spend value/UOM is required."
+H9,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc).
+
+Distance value/UOM or Spend value/UOM is required."
+I9,Distance value,"Distance-based value (not spend) of the Activity.
+
+Distance value/UOM or Spend value/UOM is required."
+J9,Distance UOM,"The unit of measurement (UoM) of the Distance value.
+
+Distance value/UOM or Spend value/UOM is required."
+K9,Spend value,"Spend-based value (not activity) of the Activity.
+
+Spend value/UOM or Activity value/UOM is required."
+L9,Spend UOM,"The unit of measurement (UoM) of the Spend value.
+
+Spend value/UOM or Activity value/UOM is required."
+M9,Fuel type,"Select one of the drop-down Fuel Types.
+
+This field is required for Storage and Retail Facility activity types.
+
+This field is also required when Usage Value and Usage UOM are provided."
+N9,Region,Region where the Activity took place.
+O9,Origin,"Starting location of the transport or activity (e.g., city, facility, or site)."
+P9,Destination,"Ending location of the transport or activity (e.g., city, facility, or site)."
+,,
+A10,Business entity,Business entity name as appears in Resource Advisor+.
+B10,Start date,Start date of Activity.
+C10,End date,End date of Activity.
+D10,Estimation method,Method used to estimate emissions.
+E10,Activity type,Select one of the drop-down Activity Types.
+F10,Is hazardous,Indicates whether the Material type is hazardous.
+G10,Disposal method,Select one of the drop-down Disposal Methods.
+H10,Usage value,"Non-spend usage of the Activity.
+
+Spend value/UOM or Usage value/UOM is required."
+I10,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc).
+
+Spend value/UOM or Usage value/UOM is required."
+J10,Spend value,"Spend-based value (not activity) of the Activity.
+
+Spend value/UOM or Activity value/UOM is required."
+K10,Spend UOM,"The unit of measurement (UOM) of the Spend value.
+
+Spend value/UOM or Activity value/UOM is required."
+L10,Region,Region where the Activity took place.
+CW10,em_template_8e5f6789a0b1c2d3e4f56789a12b3c4d,
+A11,Business entity,Business entity name as appears in Resource Advisor+.
+B11,Start date,Start date of Activity.
+C11,End date,End date of Activity.
+D11,Estimation method,Method used to estimate emissions.
+E11,Activity type,Select one of the drop-down Activity Types.
+F11,Cabin class,"Select Cabin Class (First Class, Business, etc.) used for Air travel.
+
+This field is required when Activity type is 'Air'."
+G11,Car type,"Select Type of Car used for Automobile Travel.
+
+This field is required when Activity type is 'Automobile'."
+H11,Rail type,"Select type of Rail used for Rail travel.
+
+This field is required when Acitivity type is 'Rail'."
+I11,Bus type,"Select Type of Bus used for Bus travel.
+
+This field is required if Activity type is 'Bus'."
+J11,Ferry passenger type,"Select the Type of Ferry travel.
+
+This field is required when Activity type is 'Water'."
+K11,Usage value,Non-spend usage of the Activity. Required if Usage UOM is provided.
+L11,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc). Required if Usage value is provided."
+M11,Distance value,"Distance-based value of the activity, in the unit of measure.
+
+Either Distance value/Distance UOM or Spend value/Spend UOM is required when Activity Type is 'Air', 'Automobile', 'Rail', 'Bus', or 'Sea'."
+N11,Distance UOM,"Distance-based Unit of Measure for the activity value (i.e. km, etc).
+
+Either Distance value/Distance UOM or Spend value/Spend UOM is required when Activity Type is 'Air', 'Automobile', 'Rail', 'Bus', or 'Sea'."
+O11,Spend value,"Spend-based value (not activity) of the activity, in the unit of measure
+
+Either Distance value/Distance UOM or Spend value/Spend UOM is required when Activity Type is 'Air', 'Automobile', 'Rail', 'Bus', or 'Sea'."
+P11,Spend UOM,"Spend-based Unit of Measure for the activity value (i.e. USD, EUR, etc).
+
+Either Distance value/Distance UOM or Spend value/Spend UOM is required when Activity Type is 'Air', 'Automobile', 'Rail', 'Bus', or 'Sea'."
+Q11,Room nights,Total number of nights for all rooms booked for the Activity.
+R11,Fuel type,"Select the Type of Fuel used for travel.
+
+Required when Activity Type is 'Air' and Usage value/Usage UOM is provided. Not required when using Distance value/Distance UOM or Spend value/Spend UOM."
+S11,Region,Region where the Activity took place.
+T11,Origin,"Starting location of the transport or activity (e.g., city, facility, or site)."
+U11,Destination,"Ending location of the transport or activity (e.g., city, facility, or site)."
+CW11,em_template_9f6789a0b1c2d3e4f56789a12b3c4d5e,
+A12,Business entity,Business entity name as appears in Resource Advisor+.
+B12,Start date,Start date of Activity.
+C12,End date,End date of Activity.
+D12,Estimation method,Method used to estimate emissions.
+E12,Activity type,Select one of the drop-down Activity Types.
+F12,Employee ID,"Identification of the employee as determined by the organization. Only for informational purposes.
+
+This field is required if Number of employees is 1."
+G12,Average distance,"Average one-way commute distance traveled, either by individual or across all employees."
+H12,Average distance UOM,Unit of measurement (UoM) for Average distance.
+I12,Days in office per week,Average number of days the employee commuted to the office in any given week.
+J12,Number of weeks,Number of weeks commuting.
+K12,Mode of transportation details,"Further details of the mode of transport(s) used. i.e. hybrid vehicle, subway train, etc."
+L12,Number of employees,"Number of employees.
+
+This field is required."
+M12,Region,Region where the activity took place.
+N12,Origin,"Starting location of the transport or activity (e.g., city, facility, or site)."
+O12,Destination,"Ending location of the transport or activity (e.g., city, facility, or site)."
+CW12,em_template_a06789a0b1c2d3e4f56789a12b3c4d5f,
+A13,Business entity,Business entity name as appears in Resource Advisor+.
+B13,Start date,Start date of Activity.
+C13,End date,End date of Activity.
+D13,Estimation method,Method used to estimate emissions.
+E13,Activity type,Select one of the drop-down Activity Types.
+F13,Fuel type/refrigerant,Select the fuel type or refrigerant for the activity.
+G13,Is renewable,Indicates whether Fuel Type/Power is Renewable.
+H13,Is generation owned by client,"Indicates if RE Generator is owned by the client.
+
+This field is required when Activity type is On-Site Energy Generation and Is Renewable is true."
+I13,Is renewable power used on-site,"Indicates if renewable power is used on-site.
+
+This field is required if Activity type is On-Site Energy Generation and Is Renewable is true."
+J13,Are EACs retained by client,"Indicates if EACs are retained by the client.
+
+This field is required when Activity type is On-Site Energy Generation and Is Renewable is true."
+K13,Energy attribute type,Select one of the drop-down Energy Attribute Types.
+L13,Usage value,Non-spend usage of the Activity. Required if Usage UOM is provided.
+M13,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc). Required if Usage value is provided."
+N13,Distance value,"The distance traveled when Activity type is Mobile Combustion.
+
+This field is required when Activity type is Mobile Combustion and Fuel value is null."
+O13,Distance UOM,"The unit of measurement (UOM) used for the distance traveled.
+
+This field is required when Activity type is Mobile Combustion and Distance value is not null."
+P13,Spend value,The amount spent on the Activity.
+Q13,Spend UOM,The unit of measurement (UOM) used for the amount spent on the Activity.
+R13,Vehicle type,"Type of vehicle driven.
+
+This field is required when Activity type is Mobile Combustion."
+S13,Postal code,Postal Code where the Activity took place.
+T13,Region,Region where the Activity took place.
+CW13,em_template_b1789a0b1c2d3e4f56789a12b3c4d5f6,
+A14,Business entity,Business entity name as appears in Resource Advisor+.
+B14,Start date,Start date of Activity.
+C14,End date,End date of Activity.
+D14,Estimation method,Method used to estimate emissions.
+E14,Activity type,Select one of the drop-down Activity Types.
+F14,Segment,Segment of Activity.
+G14,Usage value,"Non-spend usage of the Activity. Any usage given in this field will be interpreted as fuel usage, not freight weight.
+
+Distance value/UOM or Spend value/UOM or Usage value/UOM is required."
+H14,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc).
+
+Distance value/UOM or Spend value/UOM or Usage value/UOM is required."
+I14,Distance value,"Distance-based value (not spend) of the Activity.
+
+Distance value/UOM or Spend value/UOM or Usage value/UOM is required."
+J14,Distance UOM,"The unit of measurement (UOM) of the Distance value.
+
+Distance value/UOM or Spend value/UOM or Usage value/UOM is required."
+K14,Spend value,"Spend-based value (not activity) of the Activity.
+
+Spend value/UOM or Distance value/UOM or Usage value/UOM is required."
+L14,Spend UOM,"The unit of measurement (UoM) of the Spend value.
+
+Spend value/UOM or Distance value/UOM or Usage value/UOM is required."
+M14,Fuel type,"Select one of the drop-down Fuel Types.
+
+This field is required for Storage and Retail Facility activity types.
+
+This field is also required when Usage Value and Usage UOM are provided."
+N14,Region,Region where the Activity took place.
+O14,Origin,"Starting location of the transport or activity (e.g., city, facility, or site)."
+P14,Destination,"Ending location of the transport or activity (e.g., city, facility, or site)."
+CW14,em_template_c289a0b1c2d3e4f56789a12b3c4d5f67,
+A15,Business entity,Business entity name as appears in Resource Advisor+.
+B15,Start date,Start date of Activity.
+C15,End date,End date of Activity.
+D15,Estimation method,Method used to estimate emissions.
+E15,Product category,The category of the product.
+F15,Product name,The name of the product.
+G15,Number of uses per lifetime (required),Number of uses during the product's lifetime.
+H15,Quantity sold,Number of products products sold.
+I15,Processing source,Select one of the drop-down Processing Sources.
+J15,Processing usage per unit sold,"Processing consumed per unit per use.
+
+Processing usage per unit per use/UOM is required."
+K15,Processing usage UOM per unit sold,The amount of processing used per unit per use of the product.
+L15,Region,"Region where the Activity took place.
+
+This field is required when the Energy Source is Electricity."
+CW15,em_template_d39a0b1c2d3e4f56789a12b3c4d5f678,
+A16,Business entity,Business entity name as appears in Resource Advisor+.
+B16,Start date,Start date of Activity.
+C16,End date,End date of Activity.
+D16,Estimation method,Method used to estimate emissions.
+E16,Product category,The category of the product.
+F16,Product name,The name of the product.
+G16,Number of uses per lifetime (required),The number of uses during the product's lifetime.
+H16,Quantity sold,Number of products sold.
+I16,Energy per unit per use,The amount of energy used per unit per use of the product.
+J16,Energy use UOM,The unit of measure for the energy use.
+K16,Energy source,Select one of the drop-down Energy Sources.
+L16,Region,"Region where the Activity took place.
+
+This field is required when the Energy source is Electricity."
+CW16,em_template_e4a0b1c2d3e4f56789a12b3c4d5f6789,
+A17,Business entity,Business entity name as appears in Resource Advisor+.
+B17,Start date,Start date of Activity.
+C17,End date,End date of Activity.
+D17,Estimation method,Method used to estimate emissions.
+E17,Activity type,Select one of the drop-down Activity Types.
+F17,Usage value,Non-spend usage of the Activity. Required if Usage UOM is provided.
+G17,Usage UOM,"Usage-based Unit of Measure (UOM) for the usage value (i.e. km, room night, etc). Required if Usage value is provided."
+H17,Revenue value,Revenue-based value (not activity) of the activity.
+I17,Revenue UOM,"Revenue-based unit of measure (UOM) for the activity value (i.e. USD, EUR, etc)"
+J17,Disposal method,Select one of the drop-down Disposal Methods.
+K17,Is hazardous,Indicates if the material is hazardous.
+L17,Region,Region where the Activity took place.
+CW17,em_template_f5b1c2d3e4f56789a12b3c4d5f6789a0,
+A18,Business entity,Business entity name as appears in Resource Advisor+.
+B18,Start date,Start date of Activity.
+C18,End date,End date of Activity.
+D18,Estimation method,Method used to estimate emissions.
+E18,Activity type,Select one of the drop-down Activity Types.
+F18,Fuel type/refrigerant,Select the fuel type or refrigerant for the activity.
+G18,Is renewable,Indicates if Fuel Type/Power is Renewable.
+H18,Is generation owned by client,"Indicates if RE Generator is owned by the client.
+
+This field is required when Activity Type is On-Site Energy Generation and Is Renewable is true."
+I18,Is renewable power used on-site,"Indicates if renewable power is used on-site.
+
+This field is required if Activity Type is On-Site Energy Generation and Is Renewable is true."
+J18,Are EACs retained by client,"Indicates if EACs are retained by the client.
+
+This field is required when Activity Type is On-Site Energy Generation and Is Renewable is true."
+K18,Energy attribute type,Select one of the drop-down Energy Attribute Types.
+L18,Spend UOM,The unit of measurement (UoM) used for the amount spent on the Activity.
+M18,Spend value,The amount spent on the Activity.
+N18,Distance UOM,"The unit of measurement (UoM) used for the distance traveled.
+
+This field is required when Activity Type is Mobile Combustion and Distance Value is not null."
+O18,Distance value,"The distance traveled when Activity Type is Mobile Combustion.
+
+This field is required when Activity Type is Mobile Combustion and Fuel Value is null."
+P18,Vehicle type,"Type of vehicle driven.
+
+This field is required when Activity Type is Mobile Combustion."
+Q18,Usage UOM,"Usage-based Unit of Measure (UoM) for the usage value (i.e. km, room night, etc). Required if Usage Value is provided."
+R18,Usage value,Non-spend usage of the Activity. Required if Usage UoM is provided.
+S18,Postal code,Postal Code where the Activity took place.
+T18,Region,Region where the Activity took place.
+CW18,em_template_06c2d3e4f56789a12b3c4d5f6789a0b1,
+A19,Business entity,Business entity name as appears in Resource Advisor+.
+B19,Start date,Start date of Activity.
+C19,End date,End date of Activity.
+D19,Estimation method,Method used to estimate emissions.
+E19,Activity type,Select one of the drop-down Activity Types.
+F19,Fuel type/refrigerant,Select the fuel type or refrigerant for the activity.
+G19,Is renewable,Indicates if Fuel Type/Power is Renewable.
+H19,Is generation owned by client,"Indicates if RE Generator is owned by the client.
+
+This field is required when Activity Type is On-Site Energy Generation and Is Renewable is true."
+I19,Is renewable power used on-site,"Indicates if renewable power is used on-site.
+
+This field is required if Activity Type is On-Site Energy Generation and Is Renewable is true."
+J19,Are EACs retained by client,"Indicates if EACs are retained by the client.
+
+This field is required when Activity Type is On-Site Energy Generation and Is Renewable is true."
+K19,Energy attribute type,Select one of the drop-down Energy Attribute Types.
+L19,Vehicle type,"Type of vehicle driven.
+
+This field is required when Activity type is Mobile Combustion."
+M19,Usage value,Non-spend usage of the Activity. Required if Usage UOM is provided.
+N19,Usage UOM,"Usage-based Unit of Measure (UoM) for the usage value (i.e. km, room night, etc). Required if Usage value is provided."
+O19,Distance value,"The distance traveled when Activity type is Mobile Combustion.
+
+This field is required when Activity type is Mobile Combustion and Fuel Value is null."
+P19,Distance UOM,"The unit of measurement (UOM) used for the distance traveled.
+
+This field is required when Activity type is Mobile Combustion and Distance value is not null."
+Q19,Revenue value,Revenue-based value (not activity) of the activity. Required if Revenue UOM is provided.
+R19,Revenue UOM,"Revenue-based unit of measure (UOM) for the activity value (i.e. USD, EUR, etc). Required if Revenue value is provided."
+S19,Postal code,Postal Code where the Activity took place.
+T19,Region,Region where the Activity took place.
+CW19,em_template_17d3e4f56789a12b3c4d5f6789a0b1c2,
+A20,Business entity,Business entity name as appears in Resource Advisor+.
+B20,Start date,Start date of Activity.
+C20,End date,End date of Activity.
+D20,Estimation method,Method used to estimate emissions.
+E20,Investment type,Type of investment.
+F20,Total asset value amount,"Total value of the investment.
+
+This field is required if Equity Share is not given."
+G20,Revenue UOM,"Currency all monetary values of this row are given in.
+
+Conditionally required if any of the monetary fields are filled out."
+H20,Total amount invested,"Total amount invested in the investment.
+
+This field is required if Equity Share is not given."
+I20,Equity share,Percent ownership of the investment.
+J20,Industry of investment,Industry of investment.
+K20,Building type,Building type of the investment.
+L20,Is initial sponsor or lender,"Indicates if the client is an initial sponsor or lender of the investment.
+
+This field is required if Investment Type is Debt Investment or Project Finance."
+M20,Is proceeds use known,"Indicates if the use of the proceeds generated by the investment is known.
+
+This field is required if Investment Type is Debt Investment."
+N20,Total debt amount,"Total debt amount held in the investment.
+
+This field is required if ""Is the use of the proceeds known?"" is No."
+O20,Total asset revenue,"Annual asset revenue.
+
+This field is required if ""Is the client an initial sponsor or lender of the investment?"" is Yes."
+P20,Asset status,"Status of the asset.
+
+This field is required if ""Is the client an initial sponsor or lender of the investment?"" is Yes."
+Q20,Total asset cost,"Total asset cost.
+
+This field is required if Investment Type is Debt Investment."
+R20,Annual asset cost,"Annual asset cost.
+
+This field is required if Investment Type is Debt Investment."
+S20,Projected annual emissions,"Projected annual emissions of the investment.
+
+This field is required if Investment Type is Debt Investment."
+T20,Projected lifetime in years,"Projected lifetime in years of the investment.
+
+This field is required if Investment Type is Debt Investment."
+CW20,em_template_a3e2c1d45b6f4a8e9c2d7f1b3e4a5c6d,
+A21,Business entity,Business entity name as appears in Resource Advisor+.
+B21,Start date,Start date of Activity.
+C21,End date,End date of Activity.
+D21,Estimation method,Method used to estimate emissions.
+E21,Investment type,Type of investment.
+F21,Emissions of the investment,Emissions of the investment. Required for emissions calculations.
+G21,Emissions UoM,Unit of measure for the investment emissions.
+H21,Total asset value amount,"Total value of the investment.
+
+This field is required if Equity Share is not given."
+I21,Revenue UOM,"Currency all monetary values of this row are given in.
+
+Conditionally required if any of the monetary fields are filled out."
+J21,Total amount invested,"Total amount invested in the investment.
+
+This field is required if Equity Share is not given."
+K21,Equity share,Percent ownership of the investment.
+L21,Is initial sponsor or lender,"Indicates if the client is an initial sponsor or lender of the investment.
+
+This field is required if Investment Type is Debt Investment or Project Finance."
+M21,Is proceeds use known,"Indicates if the use of the proceeds generated by the investment is known.
+
+This field is required if Investment Type is Debt Investment."
+N21,Total debt amount,"Total debt amount held in the investment.
+
+This field is required if ""Is the use of the proceeds known?"" is No."
+O21,Total asset revenue,"Annual asset revenue.
+
+This field is required if ""Is the client an initial sponsor or lender of the investment?"" is Yes."
+P21,Asset status,"Status of the asset.
+
+This field is required if ""Is the client an initial sponsor or lender of the investment?"" is Yes."
+Q21,Total asset cost,"Total asset cost.
+
+This field is required if Investment Type is Debt Investment."
+R21,Annual asset cost,"Annual asset cost.
+
+This field is required if Investment Type is Debt Investment."
+S21,Projected annual emissions,"Projected annual emissions of the investment.
+
+This field is required if Investment Type is Debt Investment."
+T21,Projected lifetime in years,"Projected lifetime in years of the investment.
+
+This field is required if Investment Type is Debt Investment."
+CW21,em_template_e7a2c8b14f3d4e2a9b7c2d1f8a6c5b4e,
