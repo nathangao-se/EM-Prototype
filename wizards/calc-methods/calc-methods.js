@@ -482,160 +482,7 @@
     }
   };
 
-  function getCollectionForMethod(methodName) {
-    var detail = METHOD_DETAILS[methodName];
-    if (!detail) return null;
-    var collection = { main: detail, variations: detail.variations || [] };
-    collection.variations = collection.variations.map(function (v) {
-      return {
-        title: v.title,
-        decisions: v.decisions || detail.decisions,
-        dataPaths: v.dataPaths || detail.dataPaths,
-        lifecycle: v.lifecycle || detail.lifecycle,
-        activityTypes: v.activityTypes || detail.activityTypes
-      };
-    });
-    return collection;
-  }
-
-  function chipHTML(label, type) {
-    var cls = 'ac-chip';
-    if (type === 'green') cls += ' ac-chip--green';
-    else if (type === 'orange') cls += ' ac-chip--orange';
-    else if (type === 'blue') cls += ' ac-chip--blue';
-    else cls += ' ac-chip--grey';
-    return '<span class="' + cls + '">' + esc(label) + '</span>';
-  }
-
-  function buildACSection(title, bodyHTML) {
-    return '<div class="ac-section">' +
-      '<div class="ac-section-header"><span class="ac-section-title">' + esc(title) + '</span><div class="ac-section-line"></div></div>' +
-      '<div class="ac-section-body">' + bodyHTML + '</div></div>';
-  }
-
-  function buildACCard(data, isMain, methodName) {
-    var title = isMain ? methodName : ('Variation: ' + data.title);
-    var html = '<div class="ac-card' + (isMain ? '' : ' ac-card--variation') + '">';
-
-    html += '<div class="ac-card-title">' + esc(title) + '</div>';
-    html += '<div class="ac-card-divider"></div>';
-    html += '<div class="ac-card-body">';
-
-    // Decision points
-    var dpHTML = '';
-    data.decisions.forEach(function (d) {
-      dpHTML += '<div class="ac-list-item">' +
-        '<div class="ac-list-item-text"><div class="ac-list-item-label">' + esc(d.label) + '</div>' +
-        '<div class="ac-list-item-sub">' + esc(d.sub) + '</div></div>' +
-        chipHTML(d.chip, d.chipType) + '</div>';
-    });
-    html += buildACSection('Decision points', dpHTML);
-
-    // Data path priority
-    var pathHTML = '';
-    data.dataPaths.forEach(function (d, i) {
-      pathHTML += '<div class="ac-list-item ac-list-item--numbered">' +
-        '<span class="ac-list-num">' + (i + 1) + '.</span>' +
-        '<span class="ac-list-item-label">' + esc(d.label) + '</span>' +
-        chipHTML(d.chipLabel, d.chipType) + '</div>';
-    });
-    html += buildACSection('Data path priority', pathHTML);
-
-    // Lifecycle stages → Scope assignment
-    var lcHTML = '';
-    data.lifecycle.forEach(function (l) {
-      lcHTML += '<div class="ac-list-item ac-list-item--lifecycle">' +
-        '<div class="ac-list-item-text"><div class="ac-list-item-label">' + esc(l.stage) + '</div>' +
-        '<div class="ac-list-item-sub">' + esc(l.sub) + '</div></div>' +
-        '<span class="ac-lifecycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>' +
-        chipHTML(l.scope, l.scopeType) + '</div>';
-    });
-    html += buildACSection('Lifecycle stages  \u2192  Scope assignment', lcHTML);
-
-    // Activity types
-    var atHTML = '';
-    data.activityTypes.forEach(function (a) {
-      atHTML += '<div class="ac-list-item">' +
-        '<div class="ac-list-item-text"><div class="ac-list-item-label">' + esc(a.name) + '</div>' +
-        '<div class="ac-list-item-sub">' + esc(a.sub) + '</div></div></div>';
-    });
-    var atTitle = 'Activity types';
-    var atHeaderExtra = '<span class="ac-chip ac-chip--grey" style="margin-left:8px;">' + data.activityTypes.length + ' types</span>';
-    html += '<div class="ac-section">' +
-      '<div class="ac-section-header"><span class="ac-section-title">' + esc(atTitle) + '</span>' + atHeaderExtra + '<div class="ac-section-line"></div></div>' +
-      '<div class="ac-section-body">' + atHTML + '</div></div>';
-
-    html += '</div>';
-
-    // Footer
-    html += '<div class="ac-card-footer">';
-    if (isMain) {
-      html += '<button class="btn btn-outline btn-small ac-btn-exit" data-ac-action="exit">Exit</button>';
-      html += '<button class="btn btn-primary btn-small ac-btn-add">+ Add variation</button>';
-    } else {
-      html += '<div class="ac-card-footer-spacer"></div>';
-      html += '<button class="ac-btn-delete"><i class="fa-regular fa-trash-can"></i> Delete</button>';
-    }
-    html += '</div>';
-
-    html += '</div>';
-    return html;
-  }
-
-  function buildACModal(methodName) {
-    var collection = getCollectionForMethod(methodName);
-    if (!collection) return null;
-
-    var html = '<div class="ac-overlay">';
-    html += '<div class="ac-modal">';
-    html += '<div class="ac-modal-body">';
-
-    html += buildACCard(collection.main, true, methodName);
-
-    collection.variations.forEach(function (v) {
-      html += buildACCard(v, false, methodName);
-    });
-
-    html += '</div></div></div>';
-    return html;
-  }
-
-  function equalizeACRows(overlay) {
-    var allCards = overlay.querySelectorAll('.ac-card');
-    if (allCards.length < 2) return;
-
-    // Equalize titles
-    var titles = overlay.querySelectorAll('.ac-card-title');
-    var maxTitle = 0;
-    titles.forEach(function (t) { t.style.minHeight = ''; var h = t.offsetHeight; if (h > maxTitle) maxTitle = h; });
-    titles.forEach(function (t) { t.style.minHeight = maxTitle + 'px'; });
-
-    // Equalize body sections
-    var bodies = overlay.querySelectorAll('.ac-card-body');
-    var sectionCount = 4;
-    for (var i = 0; i < sectionCount; i++) {
-      var maxH = 0;
-      var sections = [];
-      bodies.forEach(function (card) {
-        var sec = card.children[i];
-        if (sec) {
-          sec.style.minHeight = '';
-          sections.push(sec);
-          var h = sec.offsetHeight;
-          if (h > maxH) maxH = h;
-        }
-      });
-      sections.forEach(function (sec) {
-        sec.style.minHeight = maxH + 'px';
-      });
-    }
-
-    // Equalize footers
-    var footers = overlay.querySelectorAll('.ac-card-footer');
-    var maxFooter = 0;
-    footers.forEach(function (f) { f.style.minHeight = ''; var h = f.offsetHeight; if (h > maxFooter) maxFooter = h; });
-    footers.forEach(function (f) { f.style.minHeight = maxFooter + 'px'; });
-  }
+  // AC modal functions are in activity-collection.js
 
   // ── Sidebar ──
 
@@ -754,39 +601,7 @@
     return html;
   }
 
-  function openACModal(methodName) {
-    var existing = document.querySelector('.ac-overlay');
-    if (existing) existing.remove();
-
-    var modalHTML = buildACModal(methodName);
-    if (!modalHTML) return;
-
-    var container = document.createElement('div');
-    container.innerHTML = modalHTML;
-    var overlay = container.firstChild;
-    document.body.appendChild(overlay);
-
-    requestAnimationFrame(function () {
-      overlay.classList.add('ac-overlay--open');
-      equalizeACRows(overlay);
-    });
-
-    overlay.addEventListener('click', function (e) {
-      if (e.target.closest('[data-ac-action="exit"]') || e.target === overlay) {
-        overlay.classList.remove('ac-overlay--open');
-        setTimeout(function () { overlay.remove(); }, 200);
-        return;
-      }
-      // "Add variation" inside AC modal → close modal, open builder
-      if (e.target.closest('.ac-btn-add')) {
-        overlay.classList.remove('ac-overlay--open');
-        setTimeout(function () {
-          overlay.remove();
-          if (window.openVariationBuilder) window.openVariationBuilder(methodName);
-        }, 200);
-      }
-    });
-  }
+  // openACModal is now in activity-collection.js (window.openACModal)
 
   window.getCalcMethodsPageContent = function () {
     var activeGroup = 'all';
@@ -818,7 +633,7 @@
       var row = e.target.closest('.cm-row');
       if (row) {
         var name = row.getAttribute('data-method-name');
-        if (name) openACModal(name);
+        if (name && window.openACModal) window.openACModal(name);
       }
     });
 

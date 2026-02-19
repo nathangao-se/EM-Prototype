@@ -1,0 +1,310 @@
+/* ========================================
+   ACTIVITY COLLECTION — modal styles
+   ======================================== */
+
+/* ── Overlay & modal shell ── */
+
+.ac-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.ac-overlay--open {
+  display: flex;
+}
+
+.ac-modal {
+  width: fit-content;
+  max-width: 92vw;
+  height: 82vh;
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 3px 6px rgba(9, 11, 12, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ac-overlay--open .ac-modal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Modal body: horizontal layout of columns ── */
+
+.ac-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  display: flex;
+  padding: 16px 24px 0;
+}
+
+/* ── Column (shared base) ── */
+
+.ac-col {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* ── Label column ── */
+
+.ac-col--labels {
+  width: 200px;
+  padding-top: 48px;
+  gap: 8px;
+}
+
+/* ── Value column ── */
+
+.ac-col--values {
+  width: 224px;
+}
+
+.ac-modal--single .ac-col--values {
+  width: 240px;
+}
+
+/* ── Column title ── */
+
+.ac-col-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  padding: 0 8px;
+  flex-shrink: 0;
+  line-height: 20px;
+}
+
+/* ── Sections ── */
+
+.ac-section {
+  padding: 0;
+}
+
+.ac-section-header {
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.ac-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  white-space: nowrap;
+  line-height: 24px;
+}
+
+.ac-section-line {
+  height: 1px;
+  background: #d5dde0;
+  margin-top: 8px;
+}
+
+.ac-section-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Value columns: center the empty section header */
+.ac-col--values .ac-section-title {
+  text-align: center;
+  display: block;
+}
+
+/* ── Label rows (left column) ── */
+
+.ac-label-row {
+  height: 72px;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.ac-label-row--path {
+  height: 40px;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.ac-label-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 23px;
+}
+
+.ac-label-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+  line-height: 16px;
+}
+
+.ac-path-num {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+/* Data path label rows are shorter */
+.ac-col--labels .ac-section:nth-of-type(2) .ac-label-row {
+  height: 40px;
+}
+
+/* Lifecycle label rows keep 72px (has subtitle) — handled by default */
+
+/* ── Value rows (value columns) ── */
+
+.ac-value-row {
+  height: 72px;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Data path value rows are 40px */
+.ac-col--values .ac-section:nth-of-type(2) .ac-value-row {
+  height: 40px;
+}
+
+/* Lifecycle scope rows match label rows that have subtitles */
+
+.ac-value-row--alt {
+  background: #f9fbfc;
+}
+
+.ac-value {
+  font-family: 'Nunito Sans', sans-serif;
+  text-align: center;
+  display: block;
+  width: 100%;
+  line-height: 24px;
+}
+
+.ac-value--green {
+  font-size: 18px;
+  font-weight: 700;
+  color: #008029;
+}
+
+.ac-value--primary {
+  font-size: 18px;
+  font-weight: 700;
+  color: #008029;
+}
+
+.ac-value--fallback {
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.ac-value--scope {
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+/* ── Activity types section ── */
+
+.ac-activity-item {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.ac-activity-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 23px;
+}
+
+.ac-activity-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+  line-height: 16px;
+  margin-top: 2px;
+}
+
+/* ── Column spacer ── */
+
+.ac-col-spacer {
+  flex: 1;
+  min-height: 16px;
+}
+
+/* ── Column footer ── */
+
+.ac-col-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px;
+  border-top: 1px solid #cbd3d6;
+  flex-shrink: 0;
+  border-radius: 0 0 12px 12px;
+}
+
+.ac-col-footer--labels {
+  justify-content: flex-start;
+}
+
+.ac-col-footer .btn-outline {
+  width: 80px;
+  height: 32px;
+}
+
+.ac-col-footer .btn-primary {
+  width: 200px;
+  height: 32px;
+}
+
+.ac-btn-delete {
+  background: none;
+  border: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #dc2626;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.ac-btn-delete:hover {
+  text-decoration: underline;
+}
