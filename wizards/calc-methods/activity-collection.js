@@ -34,13 +34,16 @@
   function buildLabelColumn(data) {
     var html = '<div class="ac-col ac-col--labels">';
 
+    // Same title element as value columns for vertical alignment
+    html += '<div class="ac-col-title"></div>';
+
     // Decision points
     html += '<div class="ac-section">';
     html += '<div class="ac-section-header"><span class="ac-section-title">Decision points</span></div>';
     html += '<div class="ac-section-line"></div>';
     html += '<div class="ac-section-body">';
     data.decisions.forEach(function (d) {
-      html += '<div class="ac-label-row">';
+      html += '<div class="ac-row ac-row--label">';
       html += '<div class="ac-label-name">' + esc(d.label) + '</div>';
       html += '<div class="ac-label-sub">' + esc(d.sub) + '</div>';
       html += '</div>';
@@ -53,7 +56,7 @@
     html += '<div class="ac-section-line"></div>';
     html += '<div class="ac-section-body">';
     data.dataPaths.forEach(function (d, i) {
-      html += '<div class="ac-label-row ac-label-row--path">';
+      html += '<div class="ac-row ac-row--path">';
       html += '<span class="ac-path-num">' + (i + 1) + '.</span>';
       html += '<span class="ac-label-name">' + esc(d.label) + '</span>';
       html += '</div>';
@@ -66,14 +69,14 @@
     html += '<div class="ac-section-line"></div>';
     html += '<div class="ac-section-body">';
     data.lifecycle.forEach(function (l) {
-      html += '<div class="ac-label-row">';
+      html += '<div class="ac-row ac-row--label">';
       html += '<div class="ac-label-name">' + esc(l.stage) + '</div>';
       html += '<div class="ac-label-sub">' + esc(l.sub) + '</div>';
       html += '</div>';
     });
     html += '</div></div>';
 
-    // Spacer
+    // Spacer (fills the space where value columns have activity types)
     html += '<div class="ac-col-spacer"></div>';
 
     // Footer with Exit
@@ -99,7 +102,7 @@
     html += '<div class="ac-section-line"></div>';
     html += '<div class="ac-section-body">';
     data.decisions.forEach(function (d) {
-      html += '<div class="ac-value-row">';
+      html += '<div class="ac-row ac-row--label">';
       html += '<span class="ac-value ac-value--green">' + esc(d.chip) + '</span>';
       html += '</div>';
     });
@@ -112,9 +115,8 @@
     html += '<div class="ac-section-body">';
     data.dataPaths.forEach(function (d, i) {
       var isPrimary = d.chipLabel === 'Primary';
-      var rowClass = 'ac-value-row ac-value-row--path';
-      if (i % 2 === 1) rowClass += ' ac-value-row--alt';
-      html += '<div class="' + rowClass + '">';
+      var altClass = (i % 2 === 1) ? ' ac-row--alt' : '';
+      html += '<div class="ac-row ac-row--path' + altClass + '">';
       html += '<span class="ac-value' + (isPrimary ? ' ac-value--primary' : ' ac-value--fallback') + '">' + esc(d.chipLabel) + '</span>';
       html += '</div>';
     });
@@ -126,7 +128,7 @@
     html += '<div class="ac-section-line"></div>';
     html += '<div class="ac-section-body">';
     data.lifecycle.forEach(function (l) {
-      html += '<div class="ac-value-row">';
+      html += '<div class="ac-row ac-row--label">';
       html += '<span class="ac-value ac-value--scope">' + esc(l.scope) + '</span>';
       html += '</div>';
     });

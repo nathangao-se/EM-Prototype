@@ -39,7 +39,7 @@
   transform: translateY(0);
 }
 
-/* ── Modal body: horizontal layout of columns ── */
+/* ── Modal body ── */
 
 .ac-modal-body {
   flex: 1;
@@ -50,7 +50,7 @@
   padding: 16px 24px 0;
 }
 
-/* ── Column (shared base) ── */
+/* ── Column (shared structure — identical for label and value) ── */
 
 .ac-col {
   display: flex;
@@ -58,15 +58,9 @@
   flex-shrink: 0;
 }
 
-/* ── Label column ── */
-
 .ac-col--labels {
   width: 200px;
-  padding-top: 48px;
-  gap: 8px;
 }
-
-/* ── Value column ── */
 
 .ac-col--values {
   width: 224px;
@@ -76,7 +70,7 @@
   width: 240px;
 }
 
-/* ── Column title ── */
+/* ── Column title (present in EVERY column, same height) ── */
 
 .ac-col-title {
   font-family: 'Nunito Sans', sans-serif;
@@ -93,10 +87,14 @@
   line-height: 20px;
 }
 
-/* ── Sections ── */
+/* ── Section (identical wrapper in every column) ── */
 
 .ac-section {
-  padding: 0;
+  padding: 12px 0 0;
+}
+
+.ac-section:first-of-type {
+  padding-top: 0;
 }
 
 .ac-section-header {
@@ -125,29 +123,41 @@
   flex-direction: column;
 }
 
-/* Value columns: center the empty section header */
 .ac-col--values .ac-section-title {
   text-align: center;
   display: block;
 }
 
-/* ── Label rows (left column) ── */
+/* ── Shared row (same class, same height in every column) ── */
 
-.ac-label-row {
+.ac-row {
   height: 72px;
   padding: 8px 0;
   display: flex;
+  align-items: center;
+}
+
+.ac-row--label {
   flex-direction: column;
   justify-content: center;
   gap: 2px;
 }
 
-.ac-label-row--path {
+.ac-row--path {
   height: 40px;
   flex-direction: row;
-  align-items: center;
   gap: 4px;
 }
+
+.ac-row--alt {
+  background: #f9fbfc;
+}
+
+.ac-col--values .ac-row {
+  justify-content: center;
+}
+
+/* ── Label content (left column text) ── */
 
 .ac-label-name {
   font-family: 'Nunito Sans', sans-serif;
@@ -174,33 +184,7 @@
   flex-shrink: 0;
 }
 
-/* Data path label rows are shorter */
-.ac-col--labels .ac-section:nth-of-type(2) .ac-label-row {
-  height: 40px;
-}
-
-/* Lifecycle label rows keep 72px (has subtitle) — handled by default */
-
-/* ── Value rows (value columns) ── */
-
-.ac-value-row {
-  height: 72px;
-  padding: 8px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Data path value rows are 40px */
-.ac-col--values .ac-section:nth-of-type(2) .ac-value-row {
-  height: 40px;
-}
-
-/* Lifecycle scope rows match label rows that have subtitles */
-
-.ac-value-row--alt {
-  background: #f9fbfc;
-}
+/* ── Value content (value column text) ── */
 
 .ac-value {
   font-family: 'Nunito Sans', sans-serif;
@@ -234,7 +218,7 @@
   color: #1d201f;
 }
 
-/* ── Activity types section ── */
+/* ── Activity types (value columns only, below lifecycle) ── */
 
 .ac-activity-item {
   text-align: center;
@@ -258,7 +242,7 @@
   margin-top: 2px;
 }
 
-/* ── Column spacer ── */
+/* ── Column spacer (label column, where value columns have activities) ── */
 
 .ac-col-spacer {
   flex: 1;
