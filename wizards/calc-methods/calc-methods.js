@@ -698,9 +698,12 @@
 
     html += '<td class="cm-cell-var">';
     if (m.variations > 0) {
+      html += '<span class="cm-var-group">';
       html += '<span class="cm-chip cm-chip--highlight cm-variation-chip" data-method-name="' + esc(m.name) + '">' + esc(m.variationLabel) + '</span>';
+      html += '<button class="cm-chip cm-chip--highlight cm-var-add-btn" data-method-name="' + esc(m.name) + '"><i class="fa-solid fa-plus"></i></button>';
+      html += '</span>';
     } else {
-      html += '<button class="cm-add-variation">' + esc(m.variationLabel) + '</button>';
+      html += '<button class="cm-add-variation" data-method-name="' + esc(m.name) + '">' + esc(m.variationLabel) + '</button>';
     }
     html += '</td>';
 
@@ -803,12 +806,11 @@
     });
 
     wrap.addEventListener('click', function (e) {
-      // "Add variation" button in table → open builder
-      var addBtn = e.target.closest('.cm-add-variation');
+      // "+ Add variation" text link or "+" icon button → open builder
+      var addBtn = e.target.closest('.cm-add-variation') || e.target.closest('.cm-var-add-btn');
       if (addBtn) {
         e.stopPropagation();
-        var row = addBtn.closest('.cm-row');
-        var name = row && row.getAttribute('data-method-name');
+        var name = addBtn.getAttribute('data-method-name') || (addBtn.closest('.cm-row') && addBtn.closest('.cm-row').getAttribute('data-method-name'));
         if (name && window.openVariationBuilder) window.openVariationBuilder(name);
         return;
       }

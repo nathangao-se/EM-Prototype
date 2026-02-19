@@ -526,12 +526,35 @@
   width: 40px;
 }
 
-.vb-path-enabled {
-  color: #008029;
+.vb-toggle {
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: #d5dde0;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+  vertical-align: middle;
 }
 
-.vb-path-disabled {
-  color: #94a3b8;
+.vb-toggle--on {
+  background: #008029;
+}
+
+.vb-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.15s;
+}
+
+.vb-toggle--on .vb-toggle-knob {
+  left: 16px;
 }
 
 /* ── Step 3: Review ── */

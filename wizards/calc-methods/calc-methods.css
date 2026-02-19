@@ -194,7 +194,7 @@
 .cm-th-cat2 { width: 80px; }
 .cm-th-act  { width: 80px; text-align: right !important; }
 .cm-th-config { width: 140px; text-align: center !important; }
-.cm-th-var  { width: 140px; text-align: center !important; }
+.cm-th-var  { width: 180px; text-align: center !important; }
 
 .cm-row {
   cursor: pointer;
@@ -315,6 +315,32 @@
 
 .cm-cell-var {
   text-align: center;
+}
+
+.cm-var-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cm-var-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #42caff;
+  border-radius: 999px;
+  background: #dbf5ff;
+  color: #0075a3;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cm-var-add-btn:hover {
+  background: #c4eeff;
 }
 
 /* --- Add variation link --- */

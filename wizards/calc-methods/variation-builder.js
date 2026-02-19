@@ -306,8 +306,9 @@
       html += '<tr>';
       html += '<td class="vb-path-num">' + (enabled ? (i + 1) : '—') + '</td>';
       html += '<td>' + esc(p.label) + '</td>';
-      html += '<td class="' + (enabled ? 'vb-path-enabled' : 'vb-path-disabled') + '">';
-      html += '<i class="fa-solid ' + (enabled ? 'fa-circle-check' : 'fa-circle-xmark') + '"></i></td>';
+      html += '<td>';
+      html += '<span class="vb-toggle' + (enabled ? ' vb-toggle--on' : '') + '"><span class="vb-toggle-knob"></span></span>';
+      html += '</td>';
       html += '<td style="color:#676f73;font-size:12px;">' + esc(p.desc) + '</td>';
       html += '<td style="color:#676f73;font-size:12px;">' + esc(p.efCompat) + '</td>';
       html += '</tr>';
