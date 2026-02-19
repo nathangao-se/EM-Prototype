@@ -193,7 +193,7 @@
 .cm-th-cat1 { width: 200px; }
 .cm-th-cat2 { width: 80px; }
 .cm-th-act  { width: 80px; text-align: right !important; }
-.cm-th-config { width: 140px; text-align: center !important; }
+.cm-th-config { width: 140px; text-align: left !important; }
 .cm-th-var  { width: 180px; text-align: center !important; }
 
 .cm-row {
@@ -305,10 +305,10 @@
   font-size: 14px;
 }
 
-/* --- Config cell (centered) --- */
+/* --- Config cell --- */
 
 .cm-cell-config {
-  text-align: center;
+  text-align: left;
 }
 
 /* --- Variations cell (centered) --- */

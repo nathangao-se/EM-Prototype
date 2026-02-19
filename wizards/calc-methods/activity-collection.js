@@ -76,8 +76,12 @@
     });
     html += '</div></div>';
 
-    // Spacer (fills the space where value columns have activity types)
-    html += '<div class="ac-col-spacer"></div>';
+    // Activity types (header only, no items in label column)
+    html += '<div class="ac-section ac-section--activities">';
+    html += '<div class="ac-section-header"><span class="ac-section-title">Activity types</span></div>';
+    html += '<div class="ac-section-line"></div>';
+    html += '<div class="ac-section-body"></div>';
+    html += '</div>';
 
     // Footer with Exit
     html += '<div class="ac-col-footer ac-col-footer--labels">';
@@ -90,7 +94,7 @@
 
   // ── Value column (one per method/variation) ──
 
-  function buildValueColumn(data, title, isMain) {
+  function buildValueColumn(data, title, isMain, isSingle) {
     var html = '<div class="ac-col ac-col--values">';
 
     // Title
@@ -136,7 +140,8 @@
 
     // Activity types
     html += '<div class="ac-section ac-section--activities">';
-    html += '<div class="ac-section-header"><span class="ac-section-title">' + data.activityTypes.length + ' Activity types</span></div>';
+    var actLabel = isSingle ? (data.activityTypes.length + ' Activity types') : (data.activityTypes.length + ' types');
+    html += '<div class="ac-section-header"><span class="ac-section-title">' + actLabel + '</span></div>';
     html += '<div class="ac-section-line"></div>';
     html += '<div class="ac-section-body">';
     data.activityTypes.forEach(function (a) {
@@ -174,10 +179,10 @@
     html += '<div class="ac-modal-body">';
 
     html += buildLabelColumn(collection.main);
-    html += buildValueColumn(collection.main, methodName, true);
+    html += buildValueColumn(collection.main, methodName, true, isSingle);
 
     collection.variations.forEach(function (v) {
-      html += buildValueColumn(v, 'Variation: ' + v.title, false);
+      html += buildValueColumn(v, 'Variation: ' + v.title, false, isSingle);
     });
 
     html += '</div></div></div>';

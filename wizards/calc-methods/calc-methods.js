@@ -35,7 +35,7 @@
     // ── Purchased Energy ──
     { group: 'purchased', name: 'Purchased Electricity', subtitle: 'Grid electricity consumption',
       category: 'Energy', categoryIcon: 'fa-solid fa-bolt-lightning', catLabel: '4 types',
-      activities: 4, config: 'Location + Market', variations: 0, variationLabel: '+ Add variation' },
+      activities: 4, config: 'Location + Market', variations: 1, variationLabel: '1 variation' },
     { group: 'purchased', name: 'Purchased Heat & Steam', subtitle: 'District heating, cooling, chilled water',
       category: 'Energy', categoryIcon: 'fa-solid fa-bolt-lightning', catLabel: '4 types',
       activities: 4, config: 'Location/Market', variations: 0, variationLabel: '+ Add variation' },
@@ -49,7 +49,7 @@
       activities: 8, config: 'TTW + WTT', variations: 0, variationLabel: '+ Add variation' },
     { group: 'transport', name: 'Business Travel', subtitle: 'Flights, hotels, ground transport (Cat 6)',
       category: 'Transport', categoryIcon: 'fa-solid fa-plane-departure', catLabel: 'Cat 6',
-      activities: 12, config: 'TTW + WTT', variations: 0, variationLabel: '+ Add variation' },
+      activities: 12, config: 'TTW + WTT', variations: 3, variationLabel: '3 variations' },
     { group: 'transport', name: 'Employee Commuting', subtitle: 'Daily commute and WFH (Cat 7)',
       category: 'Transport', categoryIcon: 'fa-solid fa-car', catLabel: 'Cat 7',
       activities: 6, config: 'TTW + WTT', variations: 0, variationLabel: '+ Add variation' },
@@ -60,13 +60,13 @@
     // ── Goods & Services ──
     { group: 'goods', name: 'Purchased Goods & Services', subtitle: 'Upstream goods and services (Cat 1)',
       category: 'Goods', categoryIcon: 'fa-solid fa-boxes-stacked', catLabel: 'Cat 1',
-      activities: 14, config: 'Cradle-to-Gate', variations: 0, variationLabel: '+ Add variation' },
+      activities: 14, config: 'Cradle-to-Gate', variations: 1, variationLabel: '1 variation' },
     { group: 'goods', name: 'Capital Goods', subtitle: 'Purchased capital assets (Cat 2)',
       category: 'Goods', categoryIcon: 'fa-solid fa-boxes-stacked', catLabel: 'Cat 2',
       activities: 10, config: 'Cradle-to-Gate', variations: 0, variationLabel: '+ Add variation' },
     { group: 'goods', name: 'Waste in Operations', subtitle: 'Waste disposal and treatment (Cat 5)',
       category: 'Goods', categoryIcon: 'fa-solid fa-recycle', catLabel: 'Cat 5',
-      activities: 7, config: 'Treatment', variations: 0, variationLabel: '+ Add variation' },
+      activities: 7, config: 'Treatment', variations: 2, variationLabel: '2 variations' },
 
     // ── Additional Categories ──
     { group: 'additional', name: 'Upstream Leased Assets', subtitle: 'Leased assets (Cat 8)',
@@ -117,8 +117,39 @@
         { name: 'Fuel Oil', sub: 'StationaryCombustion_FuelOil' }
       ],
       variations: [
-        { title: 'ACME Corp - Stationary Combustion' },
-        { title: 'ACME Corp - Stationary Combustion' }
+        {
+          title: 'ACME Corp - Stationary Combustion',
+          decisions: [
+            { label: 'Fuel combustion lifecycle', sub: 'Which lifecycle stages to include for fuel combustion', chip: 'TTW + WTT', chipType: 'blue' },
+            { label: 'Heating value type', sub: 'Heating value basis for energy-based EFs', chip: 'HHV', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Activity-based', chipLabel: 'Fallback', chipType: 'grey' },
+            { label: 'Spend-based', chipLabel: 'Primary', chipType: 'green' },
+            { label: 'Direct measurement', chipLabel: 'Fallback', chipType: 'grey' }
+          ],
+          activityTypes: [
+            { name: 'Natural Gas (Grid Average)', sub: 'StationaryCombustion_NaturalGas' },
+            { name: 'LNG', sub: 'StationaryCombustion_LNG' },
+            { name: 'Propane', sub: 'StationaryCombustion_Propane' },
+            { name: 'Biomass Wood', sub: 'StationaryCombustion_BiomassWood' }
+          ]
+        },
+        {
+          title: 'EU Plants - Stationary Combustion',
+          decisions: [
+            { label: 'Fuel combustion lifecycle', sub: 'Which lifecycle stages to include for fuel combustion', chip: 'TTW only', chipType: 'blue' },
+            { label: 'Heating value type', sub: 'Heating value basis for energy-based EFs', chip: 'LHV', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Activity-based', chipLabel: 'Primary', chipType: 'green' },
+            { label: 'Spend-based', chipLabel: 'Fallback', chipType: 'grey' },
+            { label: 'Direct measurement', chipLabel: 'Primary', chipType: 'green' }
+          ],
+          lifecycle: [
+            { stage: 'TTW', sub: 'Tank-to-wheel direct combustion', scope: 'Scope 1', scopeType: 'green' }
+          ]
+        }
       ]
     },
     'Mobile Combustion': {
@@ -178,6 +209,24 @@
         { name: 'Renewable (RECs)', sub: 'PurchasedElectricity_RECs' },
         { name: 'On-site Solar', sub: 'PurchasedElectricity_Solar' },
         { name: 'PPA Electricity', sub: 'PurchasedElectricity_PPA' }
+      ],
+      variations: [
+        {
+          title: 'EU Grid - Market Based',
+          decisions: [
+            { label: 'Reporting method', sub: 'Location-based, market-based, or both', chip: 'Market only', chipType: 'blue' },
+            { label: 'Grid factor source', sub: 'Grid emission factor dataset', chip: 'AIB / GO', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Activity-based', chipLabel: 'Primary', chipType: 'green' },
+            { label: 'Spend-based', chipLabel: 'Fallback', chipType: 'grey' }
+          ],
+          activityTypes: [
+            { name: 'Grid Electricity (EU)', sub: 'PurchasedElectricity_GridEU' },
+            { name: 'GO-backed Renewable', sub: 'PurchasedElectricity_GO' },
+            { name: 'PPA Electricity (EU)', sub: 'PurchasedElectricity_PPA_EU' }
+          ]
+        }
       ]
     },
     'Purchased Heat & Steam': {
@@ -259,6 +308,57 @@
         { name: 'Rail', sub: 'BusinessTravel_Rail' },
         { name: 'Taxi / Rideshare', sub: 'BusinessTravel_Taxi' },
         { name: 'Hotel Stay', sub: 'BusinessTravel_Hotel' }
+      ],
+      variations: [
+        {
+          title: 'APAC Region',
+          decisions: [
+            { label: 'Distance class split', sub: 'Short-haul vs long-haul classification', chip: 'TTW + WTT', chipType: 'blue' },
+            { label: 'Radiative forcing', sub: 'Whether to include aviation RF multiplier', chip: 'Included', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Distance-based', chipLabel: 'Fallback', chipType: 'grey' },
+            { label: 'Spend-based', chipLabel: 'Primary', chipType: 'green' }
+          ],
+          activityTypes: [
+            { name: 'Short-Haul Flight', sub: 'BusinessTravel_ShortHaul' },
+            { name: 'Long-Haul Flight', sub: 'BusinessTravel_LongHaul' },
+            { name: 'Rail (HSR)', sub: 'BusinessTravel_HSR' },
+            { name: 'Hotel Stay', sub: 'BusinessTravel_Hotel' }
+          ]
+        },
+        {
+          title: 'EU Region - No RF',
+          decisions: [
+            { label: 'Distance class split', sub: 'Short-haul vs long-haul classification', chip: 'TTW only', chipType: 'blue' },
+            { label: 'Radiative forcing', sub: 'Whether to include aviation RF multiplier', chip: 'Excluded', chipType: 'blue' }
+          ],
+          lifecycle: [
+            { stage: 'TTW', sub: 'Tank-to-wheel transport operation', scope: 'Scope 3 Cat 6', scopeType: 'orange' }
+          ],
+          activityTypes: [
+            { name: 'Short-Haul Flight', sub: 'BusinessTravel_ShortHaul' },
+            { name: 'Rail (EU)', sub: 'BusinessTravel_RailEU' },
+            { name: 'Taxi / Rideshare', sub: 'BusinessTravel_Taxi' },
+            { name: 'Hotel Stay', sub: 'BusinessTravel_Hotel' }
+          ]
+        },
+        {
+          title: 'Executive Travel',
+          decisions: [
+            { label: 'Distance class split', sub: 'Short-haul vs long-haul classification', chip: 'TTW + WTT', chipType: 'blue' },
+            { label: 'Radiative forcing', sub: 'Whether to include aviation RF multiplier', chip: 'Included', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Distance-based', chipLabel: 'Primary', chipType: 'green' },
+            { label: 'Spend-based', chipLabel: 'Primary', chipType: 'green' }
+          ],
+          activityTypes: [
+            { name: 'Long-Haul Flight (Business)', sub: 'BusinessTravel_LongHaulBiz' },
+            { name: 'Private Charter', sub: 'BusinessTravel_Charter' },
+            { name: 'Hotel Stay (Premium)', sub: 'BusinessTravel_HotelPremium' }
+          ]
+        }
       ]
     },
     'Employee Commuting': {
@@ -319,6 +419,29 @@
         { name: 'Professional Services', sub: 'PGS_ProfessionalServices' },
         { name: 'Cloud Services', sub: 'PGS_CloudServices' },
         { name: 'Raw Materials', sub: 'PGS_RawMaterials' }
+      ],
+      variations: [
+        {
+          title: 'Direct Suppliers Only',
+          decisions: [
+            { label: 'Boundary approach', sub: 'Cradle-to-gate vs cradle-to-grave', chip: 'Cradle-to-Grave', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Supplier-specific', chipLabel: 'Primary', chipType: 'green' },
+            { label: 'Spend-based', chipLabel: 'Fallback', chipType: 'grey' }
+          ],
+          lifecycle: [
+            { stage: 'Cradle-to-Grave', sub: 'Full lifecycle including end-of-life', scope: 'Scope 3 Cat 1', scopeType: 'orange' }
+          ],
+          activityTypes: [
+            { name: 'Steel & Metals', sub: 'PGS_SteelMetals' },
+            { name: 'Plastics & Polymers', sub: 'PGS_Plastics' },
+            { name: 'Chemicals', sub: 'PGS_Chemicals' },
+            { name: 'Packaging Materials', sub: 'PGS_Packaging' },
+            { name: 'Electronic Components', sub: 'PGS_Electronics' },
+            { name: 'Textiles', sub: 'PGS_Textiles' }
+          ]
+        }
       ]
     },
     'Capital Goods': {
@@ -356,6 +479,42 @@
         { name: 'Recycling', sub: 'Waste_Recycling' },
         { name: 'Composting', sub: 'Waste_Composting' },
         { name: 'Wastewater Treatment', sub: 'Waste_Wastewater' }
+      ],
+      variations: [
+        {
+          title: 'Zero Waste Sites',
+          decisions: [
+            { label: 'Treatment method', sub: 'Landfill, incineration, recycling, composting', chip: 'Recycling', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Activity-based', chipLabel: 'Primary', chipType: 'green' },
+            { label: 'Spend-based', chipLabel: 'Fallback', chipType: 'grey' }
+          ],
+          activityTypes: [
+            { name: 'Recycling (Mixed)', sub: 'Waste_RecyclingMixed' },
+            { name: 'Composting (Organic)', sub: 'Waste_CompostOrganic' },
+            { name: 'Anaerobic Digestion', sub: 'Waste_AnaerobicDigestion' }
+          ]
+        },
+        {
+          title: 'EU Compliance',
+          decisions: [
+            { label: 'Treatment method', sub: 'Landfill, incineration, recycling, composting', chip: 'EU WFD Hierarchy', chipType: 'blue' }
+          ],
+          dataPaths: [
+            { label: 'Activity-based', chipLabel: 'Fallback', chipType: 'grey' },
+            { label: 'Spend-based', chipLabel: 'Primary', chipType: 'green' }
+          ],
+          lifecycle: [
+            { stage: 'Treatment', sub: 'EU Waste Framework Directive compliant', scope: 'Scope 3 Cat 5', scopeType: 'orange' }
+          ],
+          activityTypes: [
+            { name: 'Incineration (EfW)', sub: 'Waste_IncinerationEfW' },
+            { name: 'Recycling (Sorted)', sub: 'Waste_RecyclingSorted' },
+            { name: 'Landfill (Residual)', sub: 'Waste_LandfillResidual' },
+            { name: 'Hazardous Waste', sub: 'Waste_Hazardous' }
+          ]
+        }
       ]
     },
     'Upstream Leased Assets': {
@@ -536,12 +695,7 @@
 
     html += '<td class="cm-cell-act">' + m.activities + '</td>';
 
-    html += '<td class="cm-cell-config">';
-    html += '<span class="cm-chip cm-chip--plain">';
-    html += '<i class="fa-solid fa-gear cm-chip-icon"></i>';
-    html += '<span>' + esc(m.config) + '</span>';
-    html += '</span>';
-    html += '</td>';
+    html += '<td class="cm-cell-config">' + esc(m.config) + '</td>';
 
     html += '<td class="cm-cell-var">';
     if (m.variations > 0) {
