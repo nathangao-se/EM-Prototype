@@ -2273,7 +2273,7 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       progress: 50,
       actions: [
         { label: 'Add files', icon: 'fa-solid fa-plus', actionId: 'open-activity-data-setup' },
-        { label: 'Review activity data', icon: 'fa-solid fa-map', actionId: 'open-activity-map' }
+        { label: 'Review activity data', icon: 'fa-solid fa-map', actionId: 'open-activity-map', slot: 'left' }
       ]
     },
     {
@@ -2284,7 +2284,7 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       progress: 46,
       actions: [
         { label: 'Review EF progress', icon: 'fa-solid fa-chart-simple' },
-        { label: 'Calculations', icon: 'fa-solid fa-plus' }
+        { label: 'Calculation methods', icon: 'fa-solid fa-plus', actionId: 'open-calc-methods', slot: 'left' }
       ]
     },
     {
@@ -2301,6 +2301,7 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       dropdown: {
         label: 'See inventory',
         icon: 'fa-solid fa-book-open',
+        slot: 'left',
         items: [
           { label: 'Q4 2025 Corporate Inventory', meta: '1,061.9 tCO\u2082e', badge: 'Calculated', badgeType: 'success', actionId: 'open-ghg-inventory' },
           { label: 'Q3 2025 Corporate Inventory', meta: '987.3 tCO\u2082e', badge: 'Locked', badgeType: 'success', actionId: 'open-ghg-inventory' },

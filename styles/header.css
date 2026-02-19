@@ -5,6 +5,7 @@
   display: flex;
   gap: 16px;
   align-items: stretch;
+  flex-shrink: 0;
 }
 
 .header-main {

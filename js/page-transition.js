@@ -271,7 +271,8 @@
         headerMain.insertBefore(backBtn, headerTitle);
       }
 
-      // Hide main sections
+      // Hide main sections, lock container to viewport
+      if (appContainer) appContainer.classList.add('app-container--page');
       [goalsSection, projectBar, dashboardSection].forEach(function (el) {
         if (el) el.classList.add('pt-hidden');
       });
@@ -324,6 +325,7 @@
       }
       pageSection = null;
 
+      if (appContainer) appContainer.classList.remove('app-container--page');
       [goalsSection, projectBar, dashboardSection].forEach(function (el) {
         if (el) el.classList.remove('pt-hidden');
       });
@@ -339,6 +341,37 @@
           if (headerMain) cleanAll([headerMain]);
           currentState = null;
           state.onExit();
+        });
+      }, BETWEEN_STAGES);
+    });
+  };
+  // ------------------------------------------------------------------
+  // CONFIG SWAP  (e.g. global admin ↔ site manager)
+  // Same stagger rules, but the header stays visible throughout.
+  // ------------------------------------------------------------------
+
+  var configTransitioning = false;
+
+  window.runConfigTransition = function (swapFn) {
+    if (!swapFn || configTransitioning) return;
+    configTransitioning = true;
+
+    var oldItems = collectMainItems();
+    var skipHeader = function (el) { return el !== headerMain; };
+
+    var outOrder = buildOrder(oldItems, 'out').filter(skipHeader);
+
+    staggerOut(outOrder, function () {
+      swapFn();
+
+      var newItems = collectMainItems();
+      hideInstantly(newItems.filter(skipHeader));
+
+      setTimeout(function () {
+        var inOrder = buildOrder(newItems, 'in').filter(skipHeader);
+        staggerIn(inOrder, function () {
+          cleanAll(newItems);
+          configTransitioning = false;
         });
       }, BETWEEN_STAGES);
     });

@@ -33,7 +33,18 @@
   display: none !important;
 }
 
-/* Page section wrapper (no opacity — items handle visibility) */
+/* Lock app-container to viewport height when a content page is showing */
+.app-container--page {
+  height: 100vh;
+  min-height: 0 !important;
+  overflow: hidden;
+}
+
+/* Page section wrapper — fills remaining viewport so inner content can scroll */
 .pt-page-section {
-  /* structural only */
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }

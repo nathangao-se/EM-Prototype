@@ -35,8 +35,12 @@
       option.classList.add('dev-panel-option--active');
       const config = configs[configId];
       if (config && typeof loadConfig === 'function') {
-        loadConfig(config);
         currentConfigId = configId;
+        if (typeof runConfigTransition === 'function') {
+          runConfigTransition(function () { loadConfig(config); });
+        } else {
+          loadConfig(config);
+        }
       }
     });
   });

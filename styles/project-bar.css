@@ -188,8 +188,17 @@
    ---------------------------------------- */
 .project-bar__actions {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 12px;
   margin-top: 4px;
+}
+
+.project-bar__actions-left,
+.project-bar__actions-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .project-bar__btn {

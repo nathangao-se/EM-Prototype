@@ -75,46 +75,69 @@
         '</div>';
     }
 
-    // Action buttons (and optional dropdown)
+    // Action buttons (and optional dropdown), split into left/right slots
     var hasActions = (card.actions && card.actions.length) || card.dropdown;
     if (hasActions) {
-      html += '<div class="project-bar__actions">';
+      var leftActions = [];
+      var rightActions = [];
       if (card.actions) {
-        card.actions.forEach(function (a) {
-          var attrs = a.actionId ? ' data-action-id="' + esc(a.actionId) + '"' : '';
-          html +=
-            '<button class="project-bar__btn"' + attrs + '>' +
-              (a.icon ? '<i class="' + esc(a.icon) + '"></i>' : '') +
-              '<span>' + esc(a.label) + '</span>' +
-            '</button>';
-        });
+        card.actions.forEach(function (a) { (a.slot === 'left' ? leftActions : rightActions).push(a); });
       }
-      if (card.dropdown) {
-        html += '<div class="project-bar__dropdown">';
-        html += '<button class="project-bar__dropdown-toggle">';
-        if (card.dropdown.icon) html += '<i class="' + esc(card.dropdown.icon) + '"></i>';
-        html += '<span>' + esc(card.dropdown.label) + '</span>';
-        html += '<i class="fa-solid fa-chevron-down project-bar__dropdown-chevron"></i>';
-        html += '</button>';
-        html += '<div class="project-bar__dropdown-menu">';
-        card.dropdown.items.forEach(function (item) {
+      var dropdownSlot = card.dropdown && card.dropdown.slot === 'left' ? 'left' : 'right';
+
+      function renderBtn(a) {
+        var attrs = a.actionId ? ' data-action-id="' + esc(a.actionId) + '"' : '';
+        return '<button class="project-bar__btn"' + attrs + '>' +
+          (a.icon ? '<i class="' + esc(a.icon) + '"></i>' : '') +
+          '<span>' + esc(a.label) + '</span>' +
+        '</button>';
+      }
+
+      function renderDropdown(dd) {
+        var h = '<div class="project-bar__dropdown">';
+        h += '<button class="project-bar__dropdown-toggle">';
+        if (dd.icon) h += '<i class="' + esc(dd.icon) + '"></i>';
+        h += '<span>' + esc(dd.label) + '</span>';
+        h += '<i class="fa-solid fa-chevron-down project-bar__dropdown-chevron"></i>';
+        h += '</button>';
+        h += '<div class="project-bar__dropdown-menu">';
+        dd.items.forEach(function (item) {
           var attrs = item.actionId ? ' data-action-id="' + esc(item.actionId) + '"' : '';
-          html += '<button class="project-bar__dropdown-item"' + attrs + '>';
-          html += '<span class="project-bar__dropdown-item-label">' + esc(item.label) + '</span>';
+          h += '<button class="project-bar__dropdown-item"' + attrs + '>';
+          h += '<span class="project-bar__dropdown-item-label">' + esc(item.label) + '</span>';
           if (item.meta || item.badge) {
-            html += '<span class="project-bar__dropdown-item-row">';
-            if (item.meta) html += '<span class="project-bar__dropdown-item-meta">' + esc(item.meta) + '</span>';
+            h += '<span class="project-bar__dropdown-item-row">';
+            if (item.meta) h += '<span class="project-bar__dropdown-item-meta">' + esc(item.meta) + '</span>';
             if (item.badge) {
               var badgeCls = item.badgeType ? ' project-bar__dropdown-badge--' + esc(item.badgeType) : '';
-              html += '<span class="project-bar__dropdown-badge' + badgeCls + '">' + esc(item.badge) + '</span>';
+              h += '<span class="project-bar__dropdown-badge' + badgeCls + '">' + esc(item.badge) + '</span>';
             }
-            html += '</span>';
+            h += '</span>';
           }
-          html += '</button>';
+          h += '</button>';
         });
-        html += '</div>';
+        h += '</div></div>';
+        return h;
+      }
+
+      html += '<div class="project-bar__actions">';
+
+      // Left slot
+      if (leftActions.length || dropdownSlot === 'left') {
+        html += '<div class="project-bar__actions-left">';
+        leftActions.forEach(function (a) { html += renderBtn(a); });
+        if (card.dropdown && dropdownSlot === 'left') html += renderDropdown(card.dropdown);
         html += '</div>';
       }
+
+      // Right slot
+      if (rightActions.length || dropdownSlot === 'right') {
+        html += '<div class="project-bar__actions-right">';
+        rightActions.forEach(function (a) { html += renderBtn(a); });
+        if (card.dropdown && dropdownSlot === 'right') html += renderDropdown(card.dropdown);
+        html += '</div>';
+      }
+
       html += '</div>';
     }
 
@@ -163,6 +186,17 @@
         if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
         if (typeof window.openActivityDataSetupModal === 'function') {
           window.openActivityDataSetupModal();
+        }
+      });
+    }
+
+    var calcMethodsBtn = container.querySelector('[data-action-id="open-calc-methods"]');
+    if (calcMethodsBtn) {
+      calcMethodsBtn.addEventListener('click', function () {
+        if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
+        if (typeof window.runPageTransition === 'function' && typeof window.getCalcMethodsPageContent === 'function') {
+          var pageContent = window.getCalcMethodsPageContent();
+          window.runPageTransition({ triggerEl: calcMethodsBtn, pageContent: pageContent, title: 'Calculation methods', onExit: function () {} });
         }
       });
     }

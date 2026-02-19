@@ -286,7 +286,8 @@
 
   /** Returns the body HTML string (dm-layout) for the Data management page. */
   function getBodyHTML() {
-    var html = '<div class="dm-layout">';
+    var html = '<h1 class="dm-page-title">Activity data</h1>';
+    html += '<div class="dm-layout">';
 
     html += '<div class="dm-top-row">';
     html += '<div class="goals-card">';

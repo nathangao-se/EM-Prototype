@@ -1,0 +1,590 @@
+/* ============================================
+   CALCULATION METHODS PAGE
+   ============================================ */
+
+.cm-page {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* --- Page title --- */
+
+.cm-page-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1d201f;
+  margin: 0;
+  padding: 4px 0 8px;
+  flex-shrink: 0;
+}
+
+/* --- Layout: sidebar + content --- */
+
+.cm-layout {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* --- Left sidebar --- */
+
+.cm-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 4px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow-y: auto;
+}
+
+.cm-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  position: relative;
+  transition: background 0.15s;
+}
+
+.cm-sidebar-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 1px;
+  background: #d5dde0;
+}
+
+.cm-sidebar-item:hover {
+  background: #f5f8fa;
+}
+
+.cm-sidebar-item--active {
+  background: #f5f8fa;
+}
+
+.cm-sidebar-icon {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  color: #1d201f;
+}
+
+.cm-sidebar-label {
+  flex: 1;
+}
+
+.cm-sidebar-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #676f73;
+  min-width: 20px;
+  text-align: right;
+}
+
+/* --- Right content area --- */
+
+.cm-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* --- Toolbar (sticky, never scrolls) --- */
+
+.cm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.cm-search {
+  width: 240px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  color: #1d201f;
+  background: #fff;
+  outline: none;
+}
+
+.cm-search::placeholder {
+  color: #676f73;
+}
+
+.cm-search:focus {
+  border-color: #0075a3;
+}
+
+.cm-select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  color: #1d201f;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+}
+
+/* --- Table --- */
+
+.cm-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.cm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Nunito Sans', sans-serif;
+  table-layout: fixed;
+}
+
+.cm-table thead th {
+  font-size: 14px;
+  font-weight: 600;
+  color: #676f73;
+  text-align: left;
+  padding: 14px 8px;
+  border-bottom: 1px solid #dfe7eb;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}
+
+.cm-th-name { width: auto; }
+.cm-th-cat1 { width: 200px; }
+.cm-th-cat2 { width: 80px; }
+.cm-th-act  { width: 80px; text-align: right !important; }
+.cm-th-config { width: 140px; text-align: center !important; }
+.cm-th-var  { width: 140px; text-align: center !important; }
+
+.cm-row {
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.cm-row:hover td {
+  background: #f5f8fa;
+}
+
+.cm-table tbody td {
+  height: 56px;
+  padding: 4px 8px;
+  border-bottom: 1px solid #d9d9d9;
+  font-size: 14px;
+  color: #676f73;
+  vertical-align: middle;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* --- Name cell (two lines) --- */
+
+.cm-cell-name {
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.cm-name-primary {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 1.25;
+}
+
+.cm-name-sub {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.25;
+}
+
+/* --- Category chip (outlined, blue icon + text) --- */
+
+.cm-cell-cat1 {
+  padding-left: 4px;
+  padding-right: 12px;
+}
+
+.cm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-family: 'Nunito Sans', sans-serif;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.cm-chip-icon {
+  font-size: 14px;
+}
+
+.cm-chip--outlined {
+  border: 1px solid #cbd3d6;
+  background: #fff;
+  color: #0075a3;
+}
+
+.cm-chip--outlined .cm-chip-icon {
+  color: #0075a3;
+}
+
+/* --- Plain chip (config) --- */
+
+.cm-chip--plain {
+  color: #1d201f;
+  padding: 0;
+}
+
+.cm-chip--plain .cm-chip-icon {
+  color: #1d201f;
+}
+
+/* --- Highlight chip (variations count) --- */
+
+.cm-chip--highlight {
+  background: #dbf5ff;
+  border: 1px solid #42caff;
+  color: #0075a3;
+}
+
+/* --- Category 2 text cell --- */
+
+.cm-cell-cat2 {
+  color: #676f73;
+  font-size: 14px;
+}
+
+/* --- Activities (right-aligned number) --- */
+
+.cm-cell-act {
+  text-align: right;
+  color: #676f73;
+  font-size: 14px;
+}
+
+/* --- Config cell (centered) --- */
+
+.cm-cell-config {
+  text-align: center;
+}
+
+/* --- Variations cell (centered) --- */
+
+.cm-cell-var {
+  text-align: center;
+}
+
+/* --- Add variation link --- */
+
+.cm-add-variation {
+  background: none;
+  border: none;
+  color: #0075a3;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cm-add-variation:hover {
+  text-decoration: underline;
+}
+
+.cm-variation-chip {
+  cursor: pointer;
+}
+
+/* ============================================
+   ACTIVITY COLLECTION MODAL
+   ============================================ */
+
+.ac-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.ac-overlay--open {
+  display: flex;
+}
+
+.ac-modal {
+  width: fit-content;
+  max-width: 92vw;
+  height: 82vh;
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ac-overlay--open .ac-modal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Modal body: horizontal scroll of card columns ── */
+
+.ac-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Card column ── */
+
+.ac-card {
+  flex: 0 0 480px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #d5dde0;
+}
+
+.ac-card:last-child {
+  border-right: none;
+}
+
+.ac-card-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  padding: 16px 24px;
+  line-height: 32px;
+  flex-shrink: 0;
+}
+
+.ac-card-divider {
+  height: 1px;
+  background: #d5dde0;
+  margin: 0 24px;
+  flex-shrink: 0;
+}
+
+.ac-card-body {
+  flex: 1;
+  padding: 16px 24px;
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+  gap: 16px;
+  align-content: start;
+}
+
+/* ── Section (Decision points, Data path, etc.) ── */
+
+.ac-section {
+  background: #fff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.ac-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.ac-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  white-space: nowrap;
+}
+
+.ac-section-line {
+  display: none;
+}
+
+.ac-section-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── List items ── */
+
+.ac-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  min-height: 36px;
+}
+
+.ac-list-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ac-list-item-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 1.25;
+}
+
+.ac-list-item-sub {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+  line-height: 16px;
+}
+
+.ac-list-item--numbered {
+  gap: 4px;
+}
+
+.ac-list-item--numbered .ac-list-item-label {
+  flex: 1;
+}
+
+.ac-list-num {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.ac-lifecycle-arrow {
+  color: #676f73;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+/* ── Chips ── */
+
+.ac-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.ac-chip--blue {
+  background: #dbf5ff;
+  border: 1px solid #42caff;
+  color: #0075a3;
+}
+
+.ac-chip--green {
+  background: #e3f8e7;
+  border: 1px solid #3dcd58;
+  color: #008029;
+}
+
+.ac-chip--orange {
+  background: #fff3cd;
+  border: 1px solid #f5a623;
+  color: #856404;
+}
+
+.ac-chip--grey {
+  background: #e8ecee;
+  border: 1px solid #cbd3d6;
+  color: #41494d;
+}
+
+/* ── Card footer ── */
+
+.ac-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 20px 24px;
+  border-top: 1px solid #d5dde0;
+  flex-shrink: 0;
+}
+
+.ac-card-footer-spacer {
+  flex: 1;
+}
+
+.ac-btn-delete {
+  background: none;
+  border: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #dc2626;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.ac-btn-delete:hover {
+  text-decoration: underline;
+}
+
