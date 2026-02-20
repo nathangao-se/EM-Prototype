@@ -22,7 +22,7 @@
     { id: 'monitor',  icon: 'fa-solid fa-chart-line',             label: 'Monitor',  expandable: true,
       title: 'GHG Monitoring',
       items: [
-        { id: 'inventory-list',      label: 'Inventory List',      page: 'getGhgEnginePageContent' },
+        { id: 'inventory-list',      label: 'Inventory List',      page: 'getGhgInventoriesPageContent' },
         { id: 'calculation-methods', label: 'Calculation Methods',  page: 'getCalcMethodsPageContent' },
         { id: 'ef-library',         label: 'EF Library',           page: 'getEfLibraryPageContent' },
         { id: 'ef-selection',       label: 'EF Selection',         page: null }
@@ -83,6 +83,13 @@
     });
   }
 
+  function loadGhgDetail() {
+    if (typeof window.getGhgEnginePageContent !== 'function') return;
+    contentEl.innerHTML = '';
+    var pageNode = window.getGhgEnginePageContent({ skipList: true });
+    contentEl.appendChild(pageNode);
+  }
+
   function loadPage(itemId) {
     var itemDef = null;
     NAV_SECTIONS.forEach(function (s) {
@@ -107,7 +114,19 @@
       return;
     }
 
-    var opts = itemDef.page === 'getGhgEnginePageContent' ? { skipList: true } : undefined;
+    var opts;
+    if (itemDef.page === 'getGhgEnginePageContent') {
+      opts = { skipList: true };
+    } else if (itemDef.page === 'getGhgInventoriesPageContent') {
+      opts = {
+        onOpenInventory: function () {
+          loadGhgDetail();
+        },
+        onCreateInventory: function () {
+          if (typeof window.openInventoryWizard === 'function') window.openInventoryWizard();
+        }
+      };
+    }
     var pageNode = getter(opts);
     contentEl.appendChild(pageNode);
   }
