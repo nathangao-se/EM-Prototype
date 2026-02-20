@@ -2284,7 +2284,7 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       progress: 46,
       actions: [
         { label: 'EF library', icon: 'fa-solid fa-chart-simple', actionId: 'open-ef-library' },
-        { label: 'Calculation methods', icon: 'fa-solid fa-plus', actionId: 'open-calc-methods', slot: 'left' }
+        { label: 'Calculation methods', icon: 'fa-solid fa-flask', actionId: 'open-calc-methods', slot: 'left' }
       ]
     },
     {
