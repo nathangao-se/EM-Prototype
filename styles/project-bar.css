@@ -41,18 +41,11 @@
 }
 
 /* ----------------------------------------
-   INDIVIDUAL CARD
+   INDIVIDUAL CARD — extends .kpi-card
    ---------------------------------------- */
 .project-bar__card {
   flex: 1;
   min-width: 0;
-  background: #ffffff;
-  border: 1px solid #d5dde0;
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   position: relative;
 }
 
@@ -191,7 +184,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-top: 4px;
 }
 
 .project-bar__actions-left,

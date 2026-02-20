@@ -32,23 +32,24 @@
   align-items: flex-end;
 }
 
-/* Goals Card (Left Side) */
+/* Goals Card (Left Side) — extends .kpi-card */
 .goals-card {
   flex: 1;
-  background: #ffffff;
-  border: 1px solid #d5dde0;
-  border-radius: 12px;
-  padding: 16px;
+}
+
+.goals-card-heading {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
 
-.goals-card-content {
+.goals-card-label {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #41494d;
+  line-height: 1.4;
 }
 
 .goals-metric {
@@ -114,11 +115,6 @@
 .goals-actions {
   display: flex;
   gap: 12px;
-  margin-top: 4px;
-}
-
-.goals-card .btn-outline {
-  align-self: flex-start;
 }
 
 /* Goals Alerts (Right Side) */
@@ -189,60 +185,71 @@
 }
 
 /* ========================================
-   ALERT CARDS
+   ALERT CARDS — extends .kpi-card
    ======================================== */
 .alert-card {
   width: 282px;
   flex: 1;
-  background: #ffffff;
-  border: 1px solid #d5dde0;
-  border-radius: 12px;
-  padding: 16px;
-  display: grid;
-  grid-template-rows: auto auto auto auto 1fr;
-  gap: 4px;
 }
 
 .alert-card-title {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   color: #41494d;
-  line-height: 20px;
+  line-height: 1.4;
   margin: 0;
 }
 
 .alert-card-metric {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 .alert-card-icon {
-  font-size: 16px;
-  color: #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  font-size: 21px;
+  background: #ffefdb;
+  color: #804700;
+}
+
+.alert-card--warning .alert-card-icon {
+  background: #ffefdb;
+  color: #804700;
+}
+
+.alert-card--success .alert-card-icon {
+  background: #e6f4ea;
+  color: #008029;
 }
 
 .alert-card-value {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 600;
   color: #1d201f;
-  line-height: 32px;
+  line-height: 40px;
 }
 
 .alert-card-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
-  color: #676f73;
-  align-self: flex-end;
-  padding-bottom: 4px;
+  color: #1d201f;
+  line-height: 25px;
+  padding-bottom: 2px;
 }
 
 .alert-card-subtitle {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   color: #676f73;
   margin: 0;
@@ -252,7 +259,6 @@
   position: relative;
   width: 100%;
   height: 8px;
-  margin-top: 8px;
 }
 
 .alert-card-progress-track {
@@ -277,15 +283,9 @@
   z-index: 2;
 }
 
-/* Alert Card Variants */
-.alert-card--warning .alert-card-icon,
+/* Alert Card Variants — progress fills */
 .alert-card--warning .alert-card-progress-fill {
-  color: #f59e0b;
   background: #f59e0b;
-}
-
-.alert-card--success .alert-card-icon {
-  color: #008029;
 }
 
 .alert-card--success .alert-card-progress-fill {
@@ -293,6 +293,5 @@
 }
 
 .alert-card .btn {
-  align-self: end;
-  justify-self: start;
+  align-self: flex-start;
 }

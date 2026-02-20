@@ -54,11 +54,13 @@
     ensureDimDOM();
     dimOverlay.classList.remove('pt-dim-overlay--animate');
     void dimOverlay.offsetWidth;
-    dimOverlay.classList.add('pt-dim-overlay--animate');
-    setTimeout(function () {
+    function onEnd() {
+      dimOverlay.removeEventListener('animationend', onEnd);
       dimOverlay.classList.remove('pt-dim-overlay--animate');
       if (done) done();
-    }, 500);
+    }
+    dimOverlay.addEventListener('animationend', onEnd);
+    dimOverlay.classList.add('pt-dim-overlay--animate');
   }
 
   function getParentCardColor(triggerEl) {
@@ -186,13 +188,12 @@
     ordered.forEach(function (el, i) {
       var bg  = isBgSection(el);
       var dur = bg ? BG_DURATION : ITEM_DURATION;
-      setTimeout(function () {
-        if (bg) {
-          el.classList.add('pt-bg-item', 'pt-bg-item--out');
-        } else {
-          el.classList.add('pt-item', 'pt-item--out');
-        }
-      }, i * ITEM_STAGGER);
+      el.style.setProperty('--pt-delay', (i * ITEM_STAGGER) + 'ms');
+      if (bg) {
+        el.classList.add('pt-bg-item', 'pt-bg-item--out');
+      } else {
+        el.classList.add('pt-item', 'pt-item--out');
+      }
       var end = i * ITEM_STAGGER + dur;
       if (end > maxEnd) maxEnd = end;
     });
@@ -202,21 +203,25 @@
   function staggerIn(ordered, done) {
     var maxEnd = 0;
     ordered.forEach(function (el, i) {
-      var bg  = isBgSection(el);
+      var bg = isBgSection(el);
       var dur = bg ? BG_DURATION : ITEM_DURATION;
-      setTimeout(function () {
-        if (bg) {
-          el.classList.add('pt-bg-item', 'pt-bg-item--in-start');
-          void el.offsetWidth;
-          el.classList.remove('pt-bg-item--out', 'pt-bg-item--in-start');
-        } else {
-          el.classList.add('pt-item', 'pt-item--in-start');
-          void el.offsetWidth;
-          el.classList.remove('pt-item--out', 'pt-item--in-start');
-        }
-      }, i * ITEM_STAGGER);
+      el.style.setProperty('--pt-delay', (i * ITEM_STAGGER) + 'ms');
+      if (bg) {
+        el.classList.add('pt-bg-item', 'pt-bg-item--in-start');
+      } else {
+        el.classList.add('pt-item', 'pt-item--in-start');
+      }
       var end = i * ITEM_STAGGER + dur;
       if (end > maxEnd) maxEnd = end;
+    });
+    void document.body.offsetWidth;
+    ordered.forEach(function (el) {
+      var bg = isBgSection(el);
+      if (bg) {
+        el.classList.remove('pt-bg-item--out', 'pt-bg-item--in-start');
+      } else {
+        el.classList.remove('pt-item--out', 'pt-item--in-start');
+      }
     });
     setTimeout(done, maxEnd);
   }
@@ -237,6 +242,7 @@
         'pt-item', 'pt-item--out', 'pt-item--in-start',
         'pt-bg-item', 'pt-bg-item--out', 'pt-bg-item--in-start'
       );
+      el.style.removeProperty('--pt-delay');
     });
   }
 

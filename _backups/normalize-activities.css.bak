@@ -94,10 +94,15 @@
   gap: 2px;
 }
 
-.normalize-cards-row .normalize-card .goals-card-label {
+.normalize-cards-row .normalize-card .goals-title {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.3;
+}
+
+.normalize-cards-row .normalize-card .goals-card-content {
+  flex: 0;
+  gap: 0;
 }
 
 .normalize-cards-row .normalize-card .goals-subtitle {

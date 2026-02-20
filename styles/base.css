@@ -112,3 +112,77 @@ body {
   font-size: 14px;
   padding: 0 8px;
 }
+
+/* ========================================
+   KPI CARD — shared structural base
+   ======================================== */
+.kpi-card {
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* No-title variant: larger KPI value fills the missing heading space */
+.kpi-card--no-title .goals-metric-value,
+.kpi-card--no-title .project-bar__kpi-value,
+.kpi-card--no-title .alert-card-value {
+  font-size: 40px;
+  line-height: 48px;
+}
+
+.kpi-value {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1d201f;
+  line-height: 40px;
+}
+
+.kpi-unit {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 25px;
+  padding-bottom: 2px;
+}
+
+.kpi-subtitle {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.kpi-progress {
+  position: relative;
+  width: 100%;
+  height: 8px;
+}
+
+.kpi-progress-track {
+  position: absolute;
+  inset: 0;
+  background: #dfe7eb;
+  border-radius: 500px;
+}
+
+.kpi-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 8px;
+  border-radius: 500px;
+}
+
+.kpi-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}

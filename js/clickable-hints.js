@@ -23,7 +23,9 @@
     '[data-action="open-activity-data-setup"]',
     '[data-action="open-columns-modal"]',
     '[data-action="open-normalize"]',
-    '.activity-data-setup-card[data-option="upload"]'
+    '.activity-data-setup-card[data-option="upload"]',
+    '.cm-var-group',
+    '.cm-add-variation'
   ];
 
   var QUERY = SELECTORS.join(', ');

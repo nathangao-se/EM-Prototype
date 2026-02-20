@@ -33,7 +33,7 @@
   }
 
   function buildCard(card) {
-    var html = '<div class="project-bar__card">';
+    var html = '<div class="kpi-card project-bar__card">';
 
     // Heading row
     html += '<div class="project-bar__card-heading">';

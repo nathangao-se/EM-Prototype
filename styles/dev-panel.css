@@ -133,3 +133,8 @@
 .dev-panel-hint:hover::after {
   opacity: 1;
 }
+
+/* Hide dev panel on sub-pages (activity data, calc methods, etc.) */
+.app-container--page ~ .dev-panel {
+  display: none;
+}

@@ -22,7 +22,7 @@
 .shell-nav {
   display: flex;
   flex-shrink: 0;
-  height: 100%;
+  align-self: stretch;
 }
 
 /* Icon rail */
@@ -32,8 +32,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 0;
-  gap: 4px;
+  padding: 16px 0;
+  gap: 12px;
   border-right: 1px solid #e8ecee;
   background: #fff;
   flex-shrink: 0;

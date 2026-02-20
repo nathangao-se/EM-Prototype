@@ -113,15 +113,12 @@
   function vizStaggerOut(items, done) {
     var sorted = sortVizItems(items, true);
     sorted.forEach(function (el, i) {
-      setTimeout(function () {
-        if (isPin(el)) {
-          // viz-pin-item is already on the element (baked into HTML),
-          // so adding --out immediately triggers the upward-fly transition
-          el.classList.add('viz-pin-item--out');
-        } else {
-          el.classList.add('pt-item', 'pt-item--out');
-        }
-      }, i * VIZ_STAGGER);
+      el.style.setProperty('--pt-delay', (i * VIZ_STAGGER) + 'ms');
+      if (isPin(el)) {
+        el.classList.add('viz-pin-item--out');
+      } else {
+        el.classList.add('pt-item', 'pt-item--out');
+      }
     });
     var total = Math.max((sorted.length - 1) * VIZ_STAGGER + VIZ_DURATION, 0);
     setTimeout(done, total);
@@ -130,20 +127,20 @@
   function vizStaggerIn(items, done) {
     var sorted = sortVizItems(items, false);
     sorted.forEach(function (el, i) {
-      setTimeout(function () {
-        if (isPin(el)) {
-          // Restore class-based transition (was suppressed during hide),
-          // reflow to lock in the pre-in position, then remove it to
-          // trigger the upward-into-position animation
-          el.style.transition = '';
-          void el.offsetWidth;
-          el.classList.remove('viz-pin-item--pre-in');
-        } else {
-          el.classList.add('pt-item', 'pt-item--in-start');
-          void el.offsetWidth;
-          el.classList.remove('pt-item--out', 'pt-item--in-start');
-        }
-      }, i * VIZ_STAGGER);
+      el.style.setProperty('--pt-delay', (i * VIZ_STAGGER) + 'ms');
+      if (isPin(el)) {
+        el.style.transition = '';
+      } else {
+        el.classList.add('pt-item', 'pt-item--in-start');
+      }
+    });
+    void document.body.offsetWidth;
+    sorted.forEach(function (el) {
+      if (isPin(el)) {
+        el.classList.remove('viz-pin-item--pre-in');
+      } else {
+        el.classList.remove('pt-item--out', 'pt-item--in-start');
+      }
     });
     var total = Math.max((sorted.length - 1) * VIZ_STAGGER + VIZ_DURATION, 0);
     setTimeout(done, total);
@@ -168,6 +165,7 @@
         'pt-item', 'pt-item--out', 'pt-item--in-start',
         'viz-pin-item--out', 'viz-pin-item--pre-in'
       );
+      el.style.removeProperty('--pt-delay');
     });
   }
 

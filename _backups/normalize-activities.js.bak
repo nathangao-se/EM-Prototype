@@ -252,9 +252,11 @@
     var cardsHtml = '';
     SUMMARY_CARDS.forEach(function (c) {
       cardsHtml +=
-        '<div class="kpi-card normalize-card goals-card">' +
-          '<div class="goals-card-heading"><span class="goals-card-label">' + esc(c.title) + '</span></div>' +
-          '<p class="goals-subtitle">' + esc(c.meta) + '</p>' +
+        '<div class="normalize-card goals-card">' +
+          '<h3 class="goals-title">' + esc(c.title) + '</h3>' +
+          '<div class="goals-card-content">' +
+            '<p class="goals-subtitle">' + esc(c.meta) + '</p>' +
+          '</div>' +
         '</div>';
     });
     cardsRow.innerHTML = cardsHtml;

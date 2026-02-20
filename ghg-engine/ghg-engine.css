@@ -906,14 +906,8 @@
   margin-bottom: 16px;
 }
 
+/* extends .kpi-card */
 .ghg-kpi-card {
-  background: #ffffff;
-  border: 1px solid #d5dde0;
-  border-radius: 10px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 .ghg-kpi-top {

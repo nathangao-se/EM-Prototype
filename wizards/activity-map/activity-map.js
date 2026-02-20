@@ -290,11 +290,13 @@
     html += '<div class="dm-layout">';
 
     html += '<div class="dm-top-row">';
-    html += '<div class="goals-card">';
-    html += '<h2 class="goals-title">Active campaigns</h2>';
-    html += '<div class="goals-card-content">';
+    html += '<div class="kpi-card goals-card">';
+    html += '<div class="goals-card-heading"><span class="goals-card-label">Active campaigns</span></div>';
     html += '<div class="goals-metric">';
-    html += '<span class="goals-metric-value">3 Active 5% past due</span>';
+    html += '<span class="goals-metric-value">3</span>';
+    html += '<span class="goals-metric-label">Active</span>';
+    html += '<span class="goals-metric-value">5%</span>';
+    html += '<span class="goals-metric-label">past due</span>';
     html += '</div>';
     html += '<p class="goals-subtitle">19,832 records requested, 992 past due</p>';
     html += '<div class="goals-progress">';
@@ -305,11 +307,9 @@
     html += '<button class="btn btn-outline btn-small">Review campaigns</button>';
     html += '</div>';
     html += '</div>';
-    html += '</div>';
 
-    html += '<div class="goals-card">';
-    html += '<h2 class="goals-title">All activity records</h2>';
-    html += '<div class="goals-card-content">';
+    html += '<div class="kpi-card goals-card">';
+    html += '<div class="goals-card-heading"><span class="goals-card-label">All activity records</span></div>';
     html += '<div class="goals-metric">';
     html += '<span class="goals-metric-value">86%</span>';
     html += '<span class="goals-metric-label">Activities normalized</span>';
@@ -322,7 +322,6 @@
     html += '<div class="goals-actions">';
     html += '<button class="btn btn-outline btn-small" data-action="open-activity-data-setup">+ Add files/data</button>';
     html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-book"></i> Rules library</button>';
-    html += '</div>';
     html += '</div>';
     html += '</div>';
     html += '</div>';
