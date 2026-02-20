@@ -16,9 +16,9 @@
 }
 
 .dev-panel-toggle {
-  background: #f0f2f4;
-  color: #3a3f44;
-  border: 1px solid #c8cdd2;
+  background: #e6f4ec;
+  color: #1a5c2e;
+  border: 1px solid #a3d4b5;
   border-radius: 4px;
   padding: 6px 10px;
   cursor: pointer;
@@ -27,14 +27,14 @@
 }
 
 .dev-panel-toggle:hover {
-  background: #e4e7ea;
-  color: #1d201f;
+  background: #d0eadb;
+  color: #145224;
 }
 
 .dev-panel-content {
   display: none;
-  background: #f7f8fa;
-  border: 1px solid #c8cdd2;
+  background: #edf7f0;
+  border: 1px solid #a3d4b5;
   border-radius: 6px;
   padding: 12px 16px;
   margin-bottom: 8px;
@@ -53,7 +53,7 @@
 }
 
 .dev-panel-label {
-  color: #676f73;
+  color: #3a6b4a;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -67,9 +67,9 @@
 
 .dev-panel-option {
   flex: 1;
-  background: #e8ebee;
-  color: #3a3f44;
-  border: 1px solid #c8cdd2;
+  background: #dceee3;
+  color: #1a5c2e;
+  border: 1px solid #a3d4b5;
   border-radius: 4px;
   padding: 6px 8px;
   cursor: pointer;
@@ -80,18 +80,18 @@
 }
 
 .dev-panel-option:hover {
-  background: #dce0e4;
-  color: #1d201f;
+  background: #c8e5d2;
+  color: #145224;
 }
 
 .dev-panel-option--active {
-  background: #0066cc;
+  background: #008029;
   color: #fff;
-  border-color: #0077ee;
+  border-color: #006622;
 }
 
 .dev-panel-option--active:hover {
-  background: #0077ee;
+  background: #006622;
 }
 
 /* Hint labels (non-interactive, tooltip on hover) */
