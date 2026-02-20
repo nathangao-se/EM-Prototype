@@ -22,14 +22,115 @@
   var importedFiles = [];
 
   var SAMPLE_IMPORTED = [
-    { name: 'Southern Europe Measure Data Point Data 1', size: '999.5mb', type: 'All activity types' },
-    { name: 'Asia Measure Data Point Data 1', size: '999.5mb', type: 'All activity types' },
-    { name: 'North America Measure Data Point Data 1', size: '999.5mb', type: 'Electricity only' },
-    { name: 'Southern Europe Measure Data Point Data 1', size: '999.5mb', type: 'Mixed activities' }
+    { name: 'North America Q4 2024 — Stationary & Electricity', size: '2.1mb', type: 'Mixed activities' },
+    { name: 'Southern Europe FY2024 — Combustion & Refrigerants', size: '1.4mb', type: 'Mixed activities' },
+    { name: 'Asia Pacific Q4 2024 — Multi-table Export', size: '3.8mb', type: 'All activity types' },
+    { name: 'East Africa 2024 — RA+ Raw Export', size: '890kb', type: 'Mixed activities' }
   ];
+
+  // Per-file CSV datasets (varying messiness levels)
+  var SAMPLE_CSV_DATA = {
+    // Clean-ish: two clearly separated blocks with good headers
+    'North America Q4 2024 — Stationary & Electricity': [
+      'North America Operations - Q4 2024,,,,,',
+      'Generated: 2024-12-01,,,,,',
+      ',,,,,',
+      'Date,Facility,Fuel Type,Usage Value,Usage UOM,tCO2e',
+      '2024-10-01,Chicago HQ,Natural Gas,18420,MMBtu,975.3',
+      '2024-10-01,Detroit Plant,Diesel,4210,Gallons,41.2',
+      '2024-11-01,Chicago HQ,Natural Gas,19850,MMBtu,1050.8',
+      '2024-11-01,Detroit Plant,Diesel,3890,Gallons,38.1',
+      '2024-12-01,Chicago HQ,Natural Gas,21300,MMBtu,1127.6',
+      ',,,,,',
+      ',,,,,',
+      'EMEA Electricity Consumption,,,,,',
+      'Location,Start Date,End Date,kWh,Renewable (Y/N),tCO2e',
+      'London Office,2024-10-01,2024-10-31,128400,Y,0',
+      'Frankfurt DC,2024-10-01,2024-10-31,342800,N,121.3',
+      'Paris Office,2024-10-01,2024-10-31,97200,Y,0',
+      'London Office,2024-11-01,2024-11-30,134100,Y,0',
+      'Frankfurt DC,2024-11-01,2024-11-30,361200,N,127.8',
+      'Paris Office,2024-11-01,2024-11-30,102600,Y,0'
+    ].join('\n'),
+
+    // Medium messy: metadata rows, preliminary notes, extra column, second mini-table
+    'Southern Europe FY2024 — Combustion & Refrigerants': [
+      'Report: Southern Europe Facilities,,,,,,,',
+      'Reporting Period: FY2024,,,,,,,',
+      'NOTE: Values are preliminary - subject to audit,,,,,,,',
+      ',,,,,,,',
+      'Site,Country,Fuel Type,Qty,Unit,Emissn Factor,tCO2e,Data Source',
+      'Barcelona DC,Spain,Natural Gas,29340,MMBtu,53.06,155.7,Utility bill',
+      'Madrid HQ,Spain,Diesel,1820,Litres,2.68,4.9,Fleet log',
+      'Rome Office,Italy,Electricity,482000,kWh,0.233,112.3,Utility bill',
+      'Milan Plant,Italy,Natural Gas,38200,MMBtu,53.06,202.6,Utility bill',
+      'Lisbon Site,Portugal,Electricity,214000,kWh,0.249,53.3,Utility bill',
+      ',,,,,,,',
+      '[See tab: Scope 3 for upstream data],,,,,,,',
+      ',,,,,,,',
+      'Refrigerants (leak events),,,,,,,',
+      'Site,Refrig. Type,Charge Amount (kg),Leakage Rate (%),Estimated Loss (kg),,,'  ,
+      'Barcelona DC,R-410A,120,2.4,2.88,,,',
+      'Milan Plant,R-22,85,5.1,4.34,,,',
+      'Madrid HQ,R-404A,200,1.8,3.60,,,'
+    ].join('\n'),
+
+    // Very messy: scattered blocks with offset columns, typos, mixed notes inline
+    'Asia Pacific Q4 2024 — Multi-table Export': [
+      'ASIA PACIFIC EMISSIONS INVENTORY,,,,,,,,',
+      'Export Date: 2024-12-10 | Source: Facilities ERP,,,,,,,,',
+      ',,,,,,,,',
+      '[BLOCK 1 - Stationary Combustion],,,,,,,,',
+      ',,,,,,,,',
+      'Loction,Fuel,Amount Used,Amt UOM,Start Dt,End Dt,CO2e (metric t),,',
+      'Tokyo HQ,LNG,18200,MMBtu,Oct-24,Dec-24,963.8,,',
+      'Shanghai Fac.,Coal,142000,kg,Oct-24,Dec-24,407.2,,',
+      'Sydney Office,Natl. Gas,7400,MMBtu,Oct-24,Dec-24,391.9,,',
+      'Mumbai Plant,HFO,28500,kg,Oct-24,Dec-24,86.3,,',
+      ',,,,,,,,',
+      ',,,,,,,,',
+      ',,,,Purchased Electricity (Scope 2),,,,',
+      ',,,,Facility Name,Billing Period,kWh Consumed,Scope 2 (t),',
+      ',,,,Tokyo HQ,Q4 2024,284000,38.1,',
+      ',,,,Shanghai Fac.,Q4 2024,921000,595.1,',
+      ',,,,Seoul Branch,Q4 2024,183000,86.0,',
+      ',,,,Singapore DC,Q4 2024,412000,91.1,',
+      ',,,,Sydney Office,Q4 2024,97000,9.4,',
+      ',,,,,,,,',
+      'NOTE: Shanghai grid factor updated Nov 2024,,,,,,,,',
+      ',,,,,,,,',
+      'Business Travel (approx.),,,,,,,,'  ,
+      'Traveler ID,Dep.,Dest.,Cabin,Dist. (km),Transport,CO2e,,',
+      'EMP-0042,Tokyo,Singapore,Economy,5300,Air,0.82,,',
+      'EMP-0117,Shanghai,London,Business,9200,Air,4.12,,',
+      'EMP-0089,Sydney,Auckland,Economy,2160,Air,0.28,,'
+    ].join('\n'),
+
+    // Moderately messy: one main block but with embedded notes, shifted columns, sparse rows
+    'East Africa 2024 — RA+ Raw Export': [
+      'East Africa Activity Data Export,,,,,,',
+      'Source: RA+ Export 2024-12-15,,,,,,',
+      ',,,,,,',
+      'Category,Activity,Location,Value,UOM,,',
+      'Stationary Combustion,Diesel generator,Nairobi HQ,12400,Litres,,',
+      'Stationary Combustion,Diesel generator,Kampala Office,8200,Litres,,',
+      '** Note: Mombasa site excluded - data pending **,,,,,,',
+      'Purchased Electricity,Grid electricity,Nairobi HQ,186000,kWh,,',
+      'Purchased Electricity,Grid electricity,Dar es Salaam,94000,kWh,,',
+      'Purchased Electricity,Solar (on-site),Nairobi HQ,28000,kWh,,',
+      ',,,,,,',
+      ',Vhcl Type,Fuel,Distance (km),Litres,Location,',
+      ',Company fleet,Petrol,142000,14820,Kenya,',
+      ',Company fleet,Diesel,98000,9150,Uganda,',
+      ',Field vehicles,Diesel,218000,23400,Tanzania,',
+      ',,,,,,',
+      '[ END OF EXPORT — 3 sites, partial Q4 data ],,,,,,',
+    ].join('\n')
+  };
 
   // Step 2 (columns cleanup) state
   var step1Tab = 'layouts';
+  var showTablePreview = false;
   var savedSections = [];
   var SAMPLE_SECTIONS = [
     { range: 'A1:E15' },
@@ -236,6 +337,7 @@
     uploadedFiles = [];
     importedFiles = [];
     step1Tab = 'layouts';
+    showTablePreview = false;
     savedSections = [];
     columnMatches.forEach(function (c) { c.selected = ''; });
     render();
@@ -354,7 +456,7 @@
   }
 
   function updateModalWidth() {
-    wiz.classList.toggle('upload-wiz--wide', currentStep === 1);
+    wiz.classList.toggle('upload-wiz--wide', currentStep === 1 && showTablePreview);
   }
 
   // ========================================
@@ -505,25 +607,76 @@
   function renderStep1() {
     var html = '';
 
-    html += '<div class="uw-s1-banner">';
-    html += '<div class="uw-s1-banner-icon"><i class="fa-light fa-circle-info"></i></div>';
-    html += '<div class="uw-s1-banner-text">';
-    html += '<p>For accurate calculations, your data columns need to conform to our standard data set. We found unclear columns/layouts in your data that doesn\'t match our standard set, please reconcile the items below.</p>';
-    html += '<p>Your original data will be preserved in our records and will not be lost.</p>';
-    html += '</div>';
-    html += '</div>';
+    // Body — two-col when preview is on, single col otherwise
+    if (showTablePreview) {
+      html += '<div class="uw-s1-two-col">';
 
-    html += '<div class="uw-s1-tabs">';
-    html += '<button type="button" class="uw-s1-tab' + (step1Tab === 'layouts' ? ' uw-s1-tab--active' : '') + '" data-s1tab="layouts"><i class="fa-solid fa-table"></i> Unrecognized column layouts</button>';
-    html += '<button type="button" class="uw-s1-tab' + (step1Tab === 'columns' ? ' uw-s1-tab--active' : '') + '" data-s1tab="columns"><i class="fa-solid fa-table-columns"></i> Columns</button>';
-    html += '</div>';
+      // Left: file selector + save buttons + table preview
+      html += '<div class="uw-s1-preview-col">';
+      var allFiles = uploadedFiles.length > 0 ? uploadedFiles : SAMPLE_IMPORTED;
+      html += '<div class="uw-s1-file-select-wrap">';
+      html += '<select class="uw-s1-file-select">';
+      allFiles.forEach(function (f) {
+        html += '<option>' + esc(f.name) + '</option>';
+      });
+      html += '</select>';
+      html += '<i class="fa-solid fa-chevron-down uw-s1-file-select-chevron"></i>';
+      html += '</div>';
 
-    if (step1Tab === 'layouts') {
-      html += renderLayoutsTab();
+      // Save buttons — right under the dropdown
+      html += '<div class="uw-s1-save-actions">';
+      html += '<button type="button" class="btn btn-outline btn-small uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Save block</button>';
+      html += '<button type="button" class="btn btn-outline btn-small uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Use selected row as header</button>';
+      html += '</div>';
+
+      html += '<div class="uw-s1-table-preview" id="ep-container"></div>';
+
+      // Saved blocks list
+      if (savedSections.length > 0) {
+        html += '<div class="uw-s1-section-list">';
+        savedSections.forEach(function (s, i) {
+          html += '<div class="uw-s1-section-item" data-idx="' + i + '">';
+          html += '<span class="uw-s1-section-range">' + esc(s.range) + '</span>';
+          html += '<button type="button" class="uw-s1-section-remove" data-idx="' + i + '" title="Remove"><i class="fa-solid fa-trash"></i></button>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+
+      // Right: intro + toggle + column mapping cards
+      html += '<div class="uw-s1-map-col">';
+      html += '<div class="uw-s1-intro">';
+      html += '<p>For accurate calculations, your data columns need to conform to our standard data set. We found mismatches that you\'ll need to reconcile before you continue.</p>';
+      html += '<p>Your original data will be preserved in our records and will not be lost.</p>';
+      html += '</div>';
+      html += '<div class="uw-s1-toggle-row">';
+      html += '<span class="uw-s1-toggle-label">Show how we\'re reading your tables</span>';
+      html += '<button type="button" class="uw-s1-toggle uw-s1-toggle--on" data-action="toggle-preview" aria-pressed="true">';
+      html += '<span class="uw-s1-toggle-handle"></span>';
+      html += '</button>';
+      html += '</div>';
+      html += renderColumnsTab();
+      html += '</div>';
+
+      html += '</div>';
     } else {
+      // Single col: intro + toggle + mapping cards
+      html += '<div class="uw-s1-intro">';
+      html += '<p>For accurate calculations, your data columns need to conform to our standard data set. We found mismatches that you\'ll need to reconcile before you continue.</p>';
+      html += '<p>Your original data will be preserved in our records and will not be lost.</p>';
+      html += '</div>';
+      html += '<div class="uw-s1-toggle-row">';
+      html += '<span class="uw-s1-toggle-label">Show how we\'re reading your tables</span>';
+      html += '<button type="button" class="uw-s1-toggle" data-action="toggle-preview" aria-pressed="false">';
+      html += '<span class="uw-s1-toggle-handle"></span>';
+      html += '</button>';
+      html += '</div>';
       html += renderColumnsTab();
     }
 
+    bodyEl.classList.toggle('upload-wiz-body--split', showTablePreview);
     bodyEl.innerHTML = html;
     bindStep1Events();
   }
@@ -611,19 +764,73 @@
   }
 
   function bindStep1Events() {
-    bodyEl.querySelectorAll('.uw-s1-tab').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        step1Tab = btn.getAttribute('data-s1tab');
-        renderStep1();
+    // Toggle preview
+    var toggleBtn = bodyEl.querySelector('[data-action="toggle-preview"]');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function () {
+        showTablePreview = !showTablePreview;
+        render();
+      });
+    }
+
+    // Radio selections
+    bodyEl.querySelectorAll('input[type="radio"][data-col]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        var ci = parseInt(radio.getAttribute('data-col'), 10);
+        columnMatches[ci].selected = radio.value;
       });
     });
 
+    // Save block buttons
+    var saveBlockBtn = bodyEl.querySelector('[data-action="save-block"]');
+    var saveHeadersBtn = bodyEl.querySelector('[data-action="save-headers"]');
+
+    function updateSaveBtns() {
+      if (!window.ExcelParser) return;
+      var hasSel = window.ExcelParser.hasSelection();
+      var canHeader = window.ExcelParser.canSaveWithHeader();
+      if (saveBlockBtn) saveBlockBtn.disabled = !hasSel;
+      if (saveHeadersBtn) saveHeadersBtn.disabled = !canHeader;
+    }
+
+    if (saveBlockBtn) {
+      saveBlockBtn.addEventListener('click', function () {
+        if (window.ExcelParser && window.ExcelParser.hasSelection()) {
+          var sel = window.ExcelParser.getSelection();
+          var block = window.ExcelParser.saveBlock();
+          if (block && sel) {
+            savedSections.push({ range: block.rangeLabel, sel: sel, block: block });
+            render();
+          }
+        }
+      });
+    }
+
+    if (saveHeadersBtn) {
+      saveHeadersBtn.addEventListener('click', function () {
+        if (window.ExcelParser && window.ExcelParser.canSaveWithHeader()) {
+          var sel = window.ExcelParser.getSelection();
+          var block = window.ExcelParser.saveBlockWithHeader();
+          if (block && sel) {
+            var endRow = sel.minRow + (block.rows ? block.rows.length : 0);
+            savedSections.push({
+              range: block.rangeLabel,
+              sel: { minRow: sel.minRow, maxRow: endRow, minCol: sel.minCol, maxCol: sel.maxCol },
+              block: block
+            });
+            render();
+          }
+        }
+      });
+    }
+
+    // Saved block removal
     bodyEl.querySelectorAll('.uw-s1-section-remove').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
         var idx = parseInt(btn.getAttribute('data-idx'), 10);
         savedSections.splice(idx, 1);
-        renderStep1();
+        render();
       });
     });
 
@@ -637,67 +844,33 @@
       });
     });
 
-    var saveBlockBtn = bodyEl.querySelector('[data-action="save-block"]');
-    if (saveBlockBtn) {
-      saveBlockBtn.addEventListener('click', function () {
-        if (window.ExcelParser && window.ExcelParser.hasSelection()) {
-          var sel = window.ExcelParser.getSelection();
-          var block = window.ExcelParser.saveBlock();
-          if (block && sel) {
-            savedSections.push({ range: block.rangeLabel, sel: sel, block: block });
-            renderStep1();
-          }
-        }
-      });
-    }
-
-    var saveHeadersBtn = bodyEl.querySelector('[data-action="save-headers"]');
-    if (saveHeadersBtn) {
-      saveHeadersBtn.addEventListener('click', function () {
-        if (window.ExcelParser && window.ExcelParser.canSaveWithHeader()) {
-          var sel = window.ExcelParser.getSelection();
-          var block = window.ExcelParser.saveBlockWithHeader();
-          if (block) {
-            var endRow = sel.minRow + (block.rows ? block.rows.length : 0);
-            savedSections.push({
-              range: block.rangeLabel,
-              sel: { minRow: sel.minRow, maxRow: endRow, minCol: sel.minCol, maxCol: sel.maxCol },
-              block: block
-            });
-            renderStep1();
-          }
-        }
-      });
-    }
-
-    bodyEl.querySelectorAll('input[type="radio"][data-col]').forEach(function (radio) {
-      radio.addEventListener('change', function () {
-        var ci = parseInt(radio.getAttribute('data-col'), 10);
-        columnMatches[ci].selected = radio.value;
-      });
-    });
-
-    // Initialize parser in the right panel (layouts tab only)
-    if (step1Tab === 'layouts') {
+    // Initialize excel parser in preview panel if visible
+    if (showTablePreview) {
       var epContainer = bodyEl.querySelector('#ep-container');
+      var fileSelect = bodyEl.querySelector('.uw-s1-file-select');
+
       if (epContainer && window.ExcelParser) {
+        var allFiles = uploadedFiles.length > 0 ? uploadedFiles : SAMPLE_IMPORTED;
+        var initialName = allFiles[0] ? allFiles[0].name : '';
+        var initialCSV = SAMPLE_CSV_DATA[initialName];
+
         window.ExcelParser.init(epContainer, {
-          onSelectionChange: function (sel) {
-            updateSaveButtonStates();
+          onSelectionChange: function () { updateSaveBtns(); }
+        });
+        if (initialCSV) window.ExcelParser.loadCSV(initialCSV);
+        updateSaveBtns();
+      }
+
+      if (fileSelect && window.ExcelParser) {
+        fileSelect.addEventListener('change', function () {
+          var csv = SAMPLE_CSV_DATA[fileSelect.value];
+          if (csv) {
+            window.ExcelParser.loadCSV(csv);
+            updateSaveBtns();
           }
         });
       }
     }
-  }
-
-  function updateSaveButtonStates() {
-    var saveBlockBtn = bodyEl.querySelector('[data-action="save-block"]');
-    var saveHeadersBtn = bodyEl.querySelector('[data-action="save-headers"]');
-    if (!window.ExcelParser) return;
-    var hasSel = window.ExcelParser.hasSelection();
-    var canHeader = window.ExcelParser.canSaveWithHeader();
-    if (saveBlockBtn) saveBlockBtn.disabled = !hasSel;
-    if (saveHeadersBtn) saveHeadersBtn.disabled = !canHeader;
   }
 
   // ========================================

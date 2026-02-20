@@ -24,17 +24,7 @@ window.ExcelParser = (function () {
 
   var onSelectionChange = null;
 
-  var sampleCSV = [
-    "Name,Age,City,Email,Department",
-    "John Doe,28,New York,john@example.com,Engineering",
-    "Jane Smith,34,Los Angeles,jane@example.com,Marketing",
-    "Bob Johnson,42,Chicago,bob@example.com,Finance",
-    "Alice Williams,31,Houston,alice@example.com,Engineering",
-    "Charlie Brown,29,Phoenix,charlie@example.com,Design",
-    "Diana Davis,37,Philadelphia,diana@example.com,Marketing",
-    "Eve Wilson,26,San Antonio,eve@example.com,Engineering",
-    "Frank Garcia,45,San Diego,frank@example.com,Finance"
-  ].join("\n");
+  var sampleCSV = "";
 
   function colLabelFor(index) {
     var label = "";
@@ -395,8 +385,9 @@ window.ExcelParser = (function () {
   return {
     init: function (el, opts) {
       container = el;
-      if (opts && opts.onSelectionChange) onSelectionChange = opts.onSelectionChange;
-      parseCSV(sampleCSV);
+      onSelectionChange = (opts && opts.onSelectionChange) || null;
+      clearSelection();
+      container.innerHTML = '';
     },
     loadCSV: function (text) { parseCSV(text); },
     loadSample: function () { parseCSV(sampleCSV); },

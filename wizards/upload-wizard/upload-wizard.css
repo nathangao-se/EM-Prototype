@@ -136,6 +136,11 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-height: 0;
+}
+
+.upload-wiz-body--split {
+  overflow: hidden;
 }
 
 .upload-wiz-desc {
@@ -382,158 +387,186 @@
    STEP 2 — Columns cleanup
    ======================================== */
 
-/* Wider modal on step 2 */
+/* Wider modal when preview is shown */
 .upload-wiz--wide {
-  max-width: 1200px;
+  max-width: 96vw;
 }
 
-/* Info banner */
-.uw-s1-banner {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 20px 24px;
-  background: #edfaff;
-  border: 1px solid #42caff;
-  border-radius: 12px;
-}
-
-.uw-s1-banner-icon {
-  flex-shrink: 0;
-  font-size: 22px;
-  color: #009edb;
-  line-height: 1;
-  margin-top: 2px;
-}
-
-.uw-s1-banner-text {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  color: #1d201f;
-  line-height: 1.55;
-}
-
-.uw-s1-banner-text p {
-  margin: 0 0 8px 0;
-}
-
-.uw-s1-banner-text p:last-child {
-  margin-bottom: 0;
-}
-
-/* Sub-tabs */
-.uw-s1-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid #abb3b8;
-}
-
-.uw-s1-tab {
-  background: none;
-  border: none;
-  border-bottom: 4px solid transparent;
-  padding: 12px 16px;
+/* Intro paragraph */
+.uw-s1-intro {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 16px;
   font-weight: 400;
-  color: #676f73;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.uw-s1-tab:hover {
-  color: #41494d;
-}
-
-.uw-s1-tab--active {
-  color: #090b0c;
-  font-weight: 700;
-  border-bottom-color: #008029;
-}
-
-.uw-s1-tab i {
-  font-size: 18px;
-}
-
-/* Split layout (layouts tab) */
-.uw-s1-split {
-  display: flex;
-  gap: 16px;
-  flex: 1;
-  min-height: 0;
-}
-
-.uw-s1-left {
-  width: 340px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.uw-s1-left-desc {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
   color: #1d201f;
   line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.uw-s1-intro p {
   margin: 0;
 }
 
-.uw-s1-select-field {
-  background: #f9fbfc;
-  border: 1px solid #cbcbcb;
-  border-radius: 12px;
-  padding: 10px 16px;
+/* Toggle row */
+.uw-s1-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
-.uw-s1-select-text {
+.uw-s1-toggle-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 400;
   color: #1d201f;
 }
 
-/* Section list */
+.uw-s1-toggle {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 999px;
+  background: #676f73;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  flex-shrink: 0;
+  transition: background 200ms ease;
+}
+
+.uw-s1-toggle--on {
+  background: #008029;
+}
+
+.uw-s1-toggle-handle {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 200ms ease;
+}
+
+.uw-s1-toggle--on .uw-s1-toggle-handle {
+  transform: translateX(20px);
+}
+
+/* Two-column layout (toggle on) */
+.uw-s1-two-col {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.uw-s1-preview-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.uw-s1-file-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.uw-s1-file-select {
+  width: 100%;
+  height: 32px;
+  padding: 0 32px 0 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  background: #fff;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uw-s1-file-select:focus {
+  outline: none;
+  border-color: #008029;
+}
+
+.uw-s1-file-select-chevron {
+  position: absolute;
+  right: 10px;
+  font-size: 14px;
+  color: #1d201f;
+  pointer-events: none;
+}
+
+.uw-s1-table-preview {
+  flex: 1;
+  min-height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.uw-s1-map-col {
+  width: 600px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+/* Save actions below table */
+.uw-s1-save-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Saved section list */
 .uw-s1-section-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .uw-s1-section-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  border: 1px solid #e2e8f0;
-  border-bottom: none;
+  padding: 8px 12px;
   background: #fff;
+  border-bottom: 1px solid #d5dde0;
   cursor: pointer;
   transition: background 150ms ease;
+}
+
+.uw-s1-section-item:last-child {
+  border-bottom: none;
 }
 
 .uw-s1-section-item:hover {
   background: #f5f8fa;
 }
 
-.uw-s1-section-item:first-child {
-  border-radius: 10px 10px 0 0;
-}
-
-.uw-s1-section-item:last-child {
-  border-bottom: 1px solid #e2e8f0;
-  border-radius: 0 0 10px 10px;
-}
-
-.uw-s1-section-item:only-child {
-  border-radius: 10px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
 .uw-s1-section-range {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #1d201f;
 }
 
@@ -542,61 +575,13 @@
   border: none;
   color: #cc1300;
   cursor: pointer;
-  font-size: 14px;
-  padding: 4px;
+  font-size: 13px;
+  padding: 2px 4px;
   opacity: 0.7;
 }
 
 .uw-s1-section-remove:hover {
   opacity: 1;
-}
-
-/* Save actions */
-.uw-s1-save-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 4px;
-}
-
-.uw-s1-save-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #1d201f;
-  background: #fff;
-  border: 1px solid #1d201f;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.uw-s1-save-btn:hover {
-  background: #f5f8fa;
-}
-
-.uw-s1-save-btn i {
-  font-size: 13px;
-}
-
-/* Right panel — parser placeholder */
-.uw-s1-right {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-}
-
-.uw-s1-parser-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 360px;
-  user-select: none;
-  -webkit-user-select: none;
 }
 
 /* Parser status bar */
