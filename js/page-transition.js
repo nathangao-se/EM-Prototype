@@ -131,19 +131,13 @@
     if (!container) return [];
     var items = [];
 
-    // Activity-map specific selectors
+    // Activity-map — collect top-level visual blocks as units so their
+    // borders/backgrounds fade with their content (no nested duplicates)
     var pageTitle = container.querySelector('.dm-page-title');
     if (pageTitle) items.push(pageTitle);
     container.querySelectorAll('.dm-top-row > .goals-card').forEach(function (el) { items.push(el); });
-    container.querySelectorAll('.dm-filter-row').forEach(function (el) { items.push(el); });
-    var filterFooter = container.querySelector('.dm-filter-footer');
-    if (filterFooter) items.push(filterFooter);
     container.querySelectorAll('.dm-filter-card').forEach(function (el) { items.push(el); });
-    container.querySelectorAll('.dm-view-title').forEach(function (el) { items.push(el); });
-    var toolbar = container.querySelector('.dm-toolbar');
-    if (toolbar) items.push(toolbar);
-    var tableScroll = container.querySelector('.dm-table-scroll');
-    if (tableScroll) items.push(tableScroll);
+    container.querySelectorAll('.dm-table-wrap').forEach(function (el) { items.push(el); });
 
     // Generic: any page can mark children with .pt-stagger-item
     container.querySelectorAll('.pt-stagger-item').forEach(function (el) { items.push(el); });
