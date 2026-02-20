@@ -38,6 +38,7 @@
   gap: 20px;
   flex-shrink: 0;
 }
+.dm-top-row .goals-card-wrap,
 .dm-top-row .goals-card {
   flex: none;
   width: calc(100% / 3 - 4px);

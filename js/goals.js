@@ -21,36 +21,40 @@
     
     // Build main goal card
     const mainGoalHTML = mainGoal.title ? `
-      <div class="goals-card">
+      <div class="goals-card-wrap">
         <h2 class="goals-title">${mainGoal.title}</h2>
-        <div class="goals-card-content">
-          <div class="goals-metric">
-            <span class="goals-metric-value">${mainGoal.metricValue}</span>
-            <span class="goals-metric-label">${mainGoal.metricLabel}</span>
-          </div>
-          <p class="goals-subtitle">${mainGoal.subtitle}</p>
-          <div class="goals-progress">
-            <div class="goals-progress-track"></div>
-            ${mainGoal.progressSegments.map(seg => `
-              <div class="goals-progress-segment goals-progress-${seg.type}" style="width: ${seg.width}%;${seg.offset ? ` left: ${seg.offset}%;` : ''}"></div>
-            `).join('')}
-          </div>
-          <div class="goals-actions">
-            <button class="btn btn-outline btn-small">
-              <i class="fa-regular fa-plus"></i>
-              <span>Upload/request</span>
-            </button>
-            <button class="btn btn-outline btn-small">
-              <i class="fa-solid fa-compass"></i>
-              <span>Strategies and initiatives</span>
-            </button>
+        <div class="goals-card">
+          <div class="goals-card-content">
+            <div class="goals-metric">
+              <span class="goals-metric-value">${mainGoal.metricValue}</span>
+              <span class="goals-metric-label">${mainGoal.metricLabel}</span>
+            </div>
+            <p class="goals-subtitle">${mainGoal.subtitle}</p>
+            <div class="goals-progress">
+              <div class="goals-progress-track"></div>
+              ${mainGoal.progressSegments.map(seg => `
+                <div class="goals-progress-segment goals-progress-${seg.type}" style="width: ${seg.width}%;${seg.offset ? ` left: ${seg.offset}%;` : ''}"></div>
+              `).join('')}
+            </div>
+            <div class="goals-actions">
+              <button class="btn btn-outline btn-small">
+                <i class="fa-regular fa-plus"></i>
+                <span>Upload/request</span>
+              </button>
+              <button class="btn btn-outline btn-small">
+                <i class="fa-solid fa-compass"></i>
+                <span>Strategies and initiatives</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     ` : `
-      <div class="goals-card">
-        <div class="goals-card-content" style="color: #888; text-align: center; padding: 40px 20px;">
-          <p>No main goal configured</p>
+      <div class="goals-card-wrap">
+        <div class="goals-card">
+          <div class="goals-card-content" style="color: #888; text-align: center; padding: 40px 20px;">
+            <p>No main goal configured</p>
+          </div>
         </div>
       </div>
     `;

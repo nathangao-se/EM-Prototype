@@ -3,47 +3,58 @@
    ======================================== */
 .goals {
   display: flex;
-  gap: 20px;
+  align-items: stretch;
+  gap: 24px;
   background: #eef7f7;
   border: 1px solid #e8d4f9;
   border-radius: 12px;
   padding: 16px;
 }
 
-/* Goals Card (Left Side) */
-.goals-card {
+/* Goals card wrapper (title + card) */
+.goals-card-wrap {
   flex: 1;
   min-width: 250px;
-  height: 197px; /* alert-card (165px) + category row (28px) + title bump (4px) */
-  background: #ffffff;
-  border: 1px solid #d5dde0;
-  border-radius: 12px;
-  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 16px;
 }
 
 .goals-title {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  color: #41494d;
-  line-height: 24px;
+  color: #000000;
+  line-height: 1;
+  height: 28px;
   margin: 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Goals Card (Left Side) */
+.goals-card {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .goals-card-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 8px;
 }
 
 .goals-metric {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 .goals-metric-value {
@@ -59,8 +70,8 @@
   font-size: 16px;
   font-weight: 400;
   color: #1d201f;
-  align-self: flex-end;
-  padding-bottom: 4px;
+  line-height: 25px;
+  padding-bottom: 2px;
 }
 
 .goals-subtitle {
@@ -74,7 +85,7 @@
 .goals-progress {
   position: relative;
   width: 100%;
-  height: 12px;
+  height: 8px;
 }
 
 .goals-progress-track {
@@ -87,7 +98,7 @@
 .goals-progress-segment {
   position: absolute;
   top: 0;
-  height: 12px;
+  height: 8px;
 }
 
 .goals-progress-verified {
@@ -102,7 +113,8 @@
 
 .goals-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  margin-top: 4px;
 }
 
 .goals-card .btn-outline {
@@ -114,7 +126,6 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .goals-alerts-title {
@@ -127,7 +138,9 @@
 
 .goals-alerts-list {
   display: flex;
-  gap: 16px;
+  gap: 24px;
+  flex: 1;
+  align-items: stretch;
 }
 
 /* ========================================
@@ -136,15 +149,14 @@
 .alert-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 2px;
+  gap: 16px;
 }
 
 .alert-group-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  padding-bottom: 2px;
+  align-items: flex-end;
+  height: 28px;
 }
 
 .alert-group-category {
@@ -181,11 +193,11 @@
    ======================================== */
 .alert-card {
   width: 282px;
-  height: 165px;
+  flex: 1;
   background: #ffffff;
   border: 1px solid #d5dde0;
   border-radius: 12px;
-  padding: 12px;
+  padding: 16px;
   display: grid;
   grid-template-rows: auto auto auto auto 1fr;
   gap: 4px;
