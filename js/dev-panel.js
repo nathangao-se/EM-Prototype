@@ -33,6 +33,20 @@
       if (configId === currentConfigId) return;
       options.forEach(opt => opt.classList.remove('dev-panel-option--active'));
       option.classList.add('dev-panel-option--active');
+
+      // Deactivate app shell if leaving it
+      if (currentConfigId === 'app-shell' && typeof window.deactivateAppShell === 'function') {
+        window.deactivateAppShell();
+      }
+
+      if (configId === 'app-shell') {
+        currentConfigId = configId;
+        if (typeof window.activateAppShell === 'function') {
+          window.activateAppShell();
+        }
+        return;
+      }
+
       const config = configs[configId];
       if (config && typeof loadConfig === 'function') {
         currentConfigId = configId;
