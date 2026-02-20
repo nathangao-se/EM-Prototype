@@ -2,22 +2,21 @@
    PAGE TRANSITION — unified staggered dissolve
    ======================================== */
 
-/* ---- Item fade + subtle zoom ---- */
+/* ---- Item fade (z-axis only — pure opacity, no lateral shift) ---- */
 .pt-item {
-  transition: opacity 160ms ease-in, transform 160ms ease-in;
+  transition: opacity 160ms ease-in-out;
 }
 .pt-item--out {
   opacity: 0 !important;
-  transform: scale(0.97);
   pointer-events: none;
 }
 .pt-item--in-start {
-  transform: scale(1.03);
+  opacity: 0;
 }
 
 /* ---- Section background fade (slightly slower, bg + border only) ---- */
 .pt-bg-item {
-  transition: background-color 220ms ease-in, border-color 220ms ease-in;
+  transition: background-color 220ms ease-in-out, border-color 220ms ease-in-out;
 }
 .pt-bg-item--out {
   background-color: transparent !important;
@@ -26,6 +25,46 @@
 .pt-bg-item--in-start {
   background-color: transparent !important;
   border-color: transparent !important;
+}
+
+/* ---- Map pin fly animation (viz-tag only) ---- */
+/* viz-pin-item is baked into renderMapPin so the transition is always ready.
+   .viz-tag base transform is translate(-50%,-100%); we must preserve it
+   and append the vertical offset so the pin doesn't jump sideways. */
+.viz-pin-item {
+  transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+  transform: translate(-50%, -100%) translateY(0);
+}
+/* OUT: fly up and fade away */
+.viz-pin-item--out {
+  opacity: 0 !important;
+  transform: translate(-50%, -100%) translateY(-18px);
+  pointer-events: none;
+}
+/* PRE-IN: hidden above resting position, no motion yet (transition suppressed inline) */
+.viz-pin-item--pre-in {
+  opacity: 0 !important;
+  transform: translate(-50%, -100%) translateY(-18px);
+  pointer-events: none;
+}
+
+/* ---- Dim overlay (between stagger-out and stagger-in) ---- */
+.pt-dim-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.pt-dim-overlay--animate {
+  animation: pt-dim 500ms ease-in-out both;
+}
+
+@keyframes pt-dim {
+  0%   { background-color: transparent; }
+  50%  { background-color: #F1FBF3; }
+  100% { background-color: transparent; }
 }
 
 /* Fully hide sections so they release layout space */

@@ -30,6 +30,7 @@
   var BETWEEN_STAGES = 40;
 
   var headerMain = document.querySelector('.header-main');
+  var headerUser = document.querySelector('.header-user');
   var headerTitle = document.querySelector('.header-title');
   var headerActions = document.querySelector('.header-actions');
   var goalsSection = document.querySelector('.goals');
@@ -39,6 +40,26 @@
 
   var pageSection = null;
   var currentState = null;
+  var dimOverlay = null;
+
+  function ensureDimDOM() {
+    if (!dimOverlay) {
+      dimOverlay = document.createElement('div');
+      dimOverlay.className = 'pt-dim-overlay';
+      document.body.appendChild(dimOverlay);
+    }
+  }
+
+  function playDimAnimation(done) {
+    ensureDimDOM();
+    dimOverlay.classList.remove('pt-dim-overlay--animate');
+    void dimOverlay.offsetWidth;
+    dimOverlay.classList.add('pt-dim-overlay--animate');
+    setTimeout(function () {
+      dimOverlay.classList.remove('pt-dim-overlay--animate');
+      if (done) done();
+    }, 500);
+  }
 
   function getParentCardColor(triggerEl) {
     var card = triggerEl && triggerEl.closest('.project-bar__card');
@@ -110,11 +131,15 @@
     if (!container) return [];
     var items = [];
 
-    // Activity-map specific selectors (legacy)
+    // Activity-map specific selectors
+    var pageTitle = container.querySelector('.dm-page-title');
+    if (pageTitle) items.push(pageTitle);
     container.querySelectorAll('.dm-top-row > .goals-card').forEach(function (el) { items.push(el); });
     container.querySelectorAll('.dm-filter-row').forEach(function (el) { items.push(el); });
     var filterFooter = container.querySelector('.dm-filter-footer');
     if (filterFooter) items.push(filterFooter);
+    container.querySelectorAll('.dm-filter-card').forEach(function (el) { items.push(el); });
+    container.querySelectorAll('.dm-view-title').forEach(function (el) { items.push(el); });
     var toolbar = container.querySelector('.dm-toolbar');
     if (toolbar) items.push(toolbar);
     var tableScroll = container.querySelector('.dm-table-scroll');
@@ -139,7 +164,7 @@
     var btt = direction === 'out';
 
     items.forEach(function (el) {
-      if (el === headerMain) return;
+      if (el === headerMain || el === headerUser) return;
       if (isBgSection(el))      bgSections.push(el);
       else if (isGoalOrPbCard(el)) goalPbCards.push(el);
       else                         otherItems.push(el);
@@ -149,10 +174,13 @@
     sortByPosition(goalPbCards, btt);
     sortByPosition(otherItems, btt);
 
+    var headerOut = headerUser ? [headerUser, headerMain] : [headerMain];
+    var headerIn  = headerUser ? [headerMain, headerUser] : [headerMain];
+
     if (direction === 'out') {
-      return bgSections.concat(goalPbCards, otherItems, [headerMain]);
+      return bgSections.concat(goalPbCards, otherItems, headerOut);
     }
-    return [headerMain].concat(goalPbCards, otherItems, bgSections);
+    return headerIn.concat(goalPbCards, otherItems, bgSections);
   }
 
   // ------------------------------------------------------------------
@@ -240,6 +268,9 @@
     pageSection.appendChild(pageContent);
     appContainer.appendChild(pageSection);
 
+    // Blanket-hide the entire page section so nothing leaks through during dim
+    pageSection.classList.add('pt-item', 'pt-item--out');
+
     currentState = {
       onExit: onExit,
       savedBg: savedBg,
@@ -280,14 +311,21 @@
       // Clean out classes from main items
       cleanAll(mainItems);
 
-      // --- Stage 2: stagger IN page items (header first) ---
-      setTimeout(function () {
-        var inOrder = buildOrder(newPageItems, 'in');
-        staggerIn(inOrder, function () {
-          cleanAll(newPageItems);
-          if (headerMain) cleanAll([headerMain]);
-        });
-      }, BETWEEN_STAGES);
+      // --- Dim animation between stages ---
+      playDimAnimation(function () {
+        // Remove blanket hide so page section content can stagger in
+        cleanAll([pageSection]);
+
+        // --- Stage 2: stagger IN page items (header first) ---
+        setTimeout(function () {
+          var inOrder = buildOrder(newPageItems, 'in');
+          staggerIn(inOrder, function () {
+            cleanAll(newPageItems);
+            if (headerMain) cleanAll([headerMain]);
+            if (headerUser) cleanAll([headerUser]);
+          });
+        }, BETWEEN_STAGES);
+      });
     });
   };
 
@@ -309,40 +347,48 @@
     var outOrder = buildOrder(pageItems, 'out');
     staggerOut(outOrder, function () {
 
-      // --- Between stages: restore header content while invisible ---
-      if (headerMain) headerMain.style.backgroundColor = state.savedBg;
-      if (headerTitle) headerTitle.textContent = state.savedTitle;
-      var oldBack = headerMain && headerMain.querySelector('.pt-back-btn');
-      if (oldBack) oldBack.parentNode.removeChild(oldBack);
-      if (headerActions) {
-        headerActions.innerHTML = state.savedActionsHTML;
-        headerActions.style.display = '';
-      }
+      // Blanket-hide the page section so nothing is visible during dim
+      pageSection.classList.add('pt-item', 'pt-item--out');
 
-      // Remove page, unhide main sections
-      if (pageSection && pageSection.parentNode) {
-        pageSection.parentNode.removeChild(pageSection);
-      }
-      pageSection = null;
+      // --- Dim animation between stages ---
+      playDimAnimation(function () {
 
-      if (appContainer) appContainer.classList.remove('app-container--page');
-      [goalsSection, projectBar, dashboardSection].forEach(function (el) {
-        if (el) el.classList.remove('pt-hidden');
-      });
+        // --- Between stages: restore header content while invisible ---
+        if (headerMain) headerMain.style.backgroundColor = state.savedBg;
+        if (headerTitle) headerTitle.textContent = state.savedTitle;
+        var oldBack = headerMain && headerMain.querySelector('.pt-back-btn');
+        if (oldBack) oldBack.parentNode.removeChild(oldBack);
+        if (headerActions) {
+          headerActions.innerHTML = state.savedActionsHTML;
+          headerActions.style.display = '';
+        }
 
-      // Clean out classes from page items
-      cleanAll(pageItems);
+        // Remove page, unhide main sections
+        if (pageSection && pageSection.parentNode) {
+          pageSection.parentNode.removeChild(pageSection);
+        }
+        pageSection = null;
 
-      // --- Stage 4: stagger IN main items (header first) ---
-      setTimeout(function () {
-        var inOrder = buildOrder(mainItems, 'in');
-        staggerIn(inOrder, function () {
-          cleanAll(mainItems);
-          if (headerMain) cleanAll([headerMain]);
-          currentState = null;
-          state.onExit();
+        if (appContainer) appContainer.classList.remove('app-container--page');
+        [goalsSection, projectBar, dashboardSection].forEach(function (el) {
+          if (el) el.classList.remove('pt-hidden');
         });
-      }, BETWEEN_STAGES);
+
+        // Clean out classes from page items
+        cleanAll(pageItems);
+
+        // --- Stage 4: stagger IN main items (header first) ---
+        setTimeout(function () {
+          var inOrder = buildOrder(mainItems, 'in');
+          staggerIn(inOrder, function () {
+            cleanAll(mainItems);
+            if (headerMain) cleanAll([headerMain]);
+            if (headerUser) cleanAll([headerUser]);
+            currentState = null;
+            state.onExit();
+          });
+        }, BETWEEN_STAGES);
+      });
     });
   };
   // ------------------------------------------------------------------
@@ -357,7 +403,7 @@
     configTransitioning = true;
 
     var oldItems = collectMainItems();
-    var skipHeader = function (el) { return el !== headerMain; };
+    var skipHeader = function (el) { return el !== headerMain && el !== headerUser; };
 
     var outOrder = buildOrder(oldItems, 'out').filter(skipHeader);
 

@@ -201,6 +201,17 @@
       });
     }
 
+    var efLibraryBtn = container.querySelector('[data-action-id="open-ef-library"]');
+    if (efLibraryBtn) {
+      efLibraryBtn.addEventListener('click', function () {
+        if (typeof window.closeAllOverlays === 'function') window.closeAllOverlays();
+        if (typeof window.runPageTransition === 'function' && typeof window.getEfLibraryPageContent === 'function') {
+          var pageContent = window.getEfLibraryPageContent();
+          window.runPageTransition({ triggerEl: efLibraryBtn, pageContent: pageContent, title: 'EF library', onExit: function () {} });
+        }
+      });
+    }
+
     var inventoryWizBtn = container.querySelector('[data-action-id="open-inventory-wizard"]');
     if (inventoryWizBtn) {
       inventoryWizBtn.addEventListener('click', function () {

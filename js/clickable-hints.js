@@ -17,6 +17,7 @@
     '[data-action-id="open-activity-data-setup"]',
     '[data-action-id="open-activity-map"]',
     '[data-action-id="open-calc-methods"]',
+    '[data-action-id="open-ef-library"]',
     '[data-action-id="open-inventory-wizard"]',
     '.project-bar__dropdown-toggle',
     '[data-action="open-activity-data-setup"]',

@@ -61,13 +61,14 @@
   overflow-y: auto;
 }
 
-/* ---------- Right column view title ---------- */
+/* ---------- Right column view title (inside card) ---------- */
 .dm-view-title {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #1d201f;
   margin: 0;
+  padding: 14px 16px 0;
   flex-shrink: 0;
 }
 
@@ -420,10 +421,10 @@
   text-align: left;
   font-weight: 600;
   font-size: 14px;
-  color: #1d201f;
-  padding: 10px 12px;
-  background: #f5f8fa;
-  border-bottom: 1px solid #d5dde0;
+  color: #676f73;
+  padding: 14px 8px;
+  background: #fff;
+  border-bottom: 1px solid #dfe7eb;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -2283,7 +2283,7 @@ CONFIG_GLOBAL_OVERSIGHT.projectBar = {
       subtitle: '84 total emissions, 46 mapped, using 4 methods',
       progress: 46,
       actions: [
-        { label: 'Review EF progress', icon: 'fa-solid fa-chart-simple' },
+        { label: 'EF library', icon: 'fa-solid fa-chart-simple', actionId: 'open-ef-library' },
         { label: 'Calculation methods', icon: 'fa-solid fa-plus', actionId: 'open-calc-methods', slot: 'left' }
       ]
     },

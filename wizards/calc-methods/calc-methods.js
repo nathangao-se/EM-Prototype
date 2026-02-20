@@ -646,7 +646,7 @@
   // ── Sidebar ──
 
   function buildSidebar(activeId) {
-    var html = '<div class="cm-sidebar">';
+    var html = '<div class="cm-sidebar pt-stagger-item">';
     CATEGORIES.forEach(function (cat) {
       var activeClass = cat.id === activeId ? ' cm-sidebar-item--active' : '';
       var count = 0;
@@ -664,7 +664,7 @@
   // ── Toolbar ──
 
   function buildToolbar() {
-    var html = '<div class="cm-toolbar">';
+    var html = '<div class="cm-toolbar pt-stagger-item">';
     html += '<input type="text" class="cm-search" placeholder="Search">';
     html += '<select class="cm-select"><option>Display: list</option></select>';
     html += '<select class="cm-select"><option>All scope</option></select>';
@@ -716,7 +716,7 @@
   function buildTable(groupId) {
     var filtered = groupId === 'all' ? METHODS : METHODS.filter(function (m) { return m.group === groupId; });
 
-    var html = '<div class="cm-table-wrap">';
+    var html = '<div class="cm-table-wrap pt-stagger-item">';
     html += '<table class="cm-table">';
     html += '<thead><tr>';
     html += '<th class="cm-th-name">Method</th>';
@@ -745,7 +745,7 @@
   }
 
   function getBodyHTML(activeId) {
-    var html = '<h1 class="cm-page-title">Calculation methods</h1>';
+    var html = '<h1 class="cm-page-title pt-stagger-item">Calculation methods</h1>';
     html += '<div class="cm-layout">';
     html += buildSidebar(activeId);
     html += '<div class="cm-content">';

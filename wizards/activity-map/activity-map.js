@@ -81,8 +81,8 @@
   function renderScopeTable(scopeLabel, rightPanel) {
     var rows = filterRowsByScope(scopeLabel);
     var html = '';
-    html += '<h3 class="dm-view-title">' + esc(scopeLabel) + ' activities</h3>';
     html += '<div class="dm-table-wrap">';
+    html += '<h3 class="dm-view-title">' + esc(scopeLabel) + ' activities</h3>';
     html += '<div class="dm-toolbar">';
     html += '<input type="text" class="dm-search" placeholder="Search">';
     html += '<select class="dm-select"><option>All scope</option></select>';
@@ -126,8 +126,8 @@
   function restoreDataListView(rightPanel) {
     if (!rightPanel) return;
     var html = '';
-    html += '<h3 class="dm-view-title">All data list</h3>';
     html += '<div class="dm-table-wrap">';
+    html += '<h3 class="dm-view-title">All data list</h3>';
     html += '<div class="dm-toolbar">';
     html += '<input type="text" class="dm-search" placeholder="Search">';
     html += '<select class="dm-select"><option>Display: list</option></select>';
@@ -333,8 +333,8 @@
     html += '</div>';
 
     html += '<div class="dm-right">';
-    html += '<h3 class="dm-view-title">All data list</h3>';
     html += '<div class="dm-table-wrap">';
+    html += '<h3 class="dm-view-title">All data list</h3>';
     html += '<div class="dm-toolbar">';
     html += '<input type="text" class="dm-search" placeholder="Search">';
     html += '<select class="dm-select"><option>Display: list</option></select>';

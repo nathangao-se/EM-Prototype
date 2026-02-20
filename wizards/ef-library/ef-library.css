@@ -1,0 +1,217 @@
+/* ============================================
+   EMISSION FACTOR LIBRARY PAGE
+   ============================================ */
+
+.ef-page {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* --- Page header --- */
+
+.ef-page-header {
+  flex-shrink: 0;
+}
+
+.ef-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #676f73;
+  margin-bottom: 4px;
+}
+
+.ef-breadcrumb i {
+  font-size: 10px;
+}
+
+.ef-page-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1d201f;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.ef-page-subtitle {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  margin: 4px 0 0;
+}
+
+/* --- Table card --- */
+
+.ef-table-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* --- Toolbar --- */
+
+.ef-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #d5dde0;
+  flex-shrink: 0;
+}
+
+.ef-search-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 280px;
+}
+
+.ef-search-wrap i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #676f73;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.ef-search {
+  width: 100%;
+  height: 32px;
+  padding: 0 8px 0 32px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ef-search::placeholder {
+  color: #676f73;
+}
+
+.ef-search:focus {
+  border-color: #0075a3;
+}
+
+.ef-select {
+  height: 32px;
+  padding: 0 28px 0 8px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%231d201f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+/* --- Table scroll --- */
+
+.ef-table-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* --- Table --- */
+
+.ef-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  table-layout: fixed;
+}
+
+.ef-table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: #676f73;
+  padding: 14px 12px;
+  background: #fff;
+  border-bottom: 1px solid #dfe7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ef-table td {
+  padding: 14px 12px;
+  color: #1d201f;
+  font-weight: 400;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ef-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ef-table tbody tr:hover {
+  background: #f9fbfc;
+}
+
+.ef-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Column widths --- */
+
+.ef-th-name     { width: auto; }
+.ef-th-source   { width: 100px; }
+.ef-th-category { width: 190px; }
+.ef-th-region   { width: 190px; }
+.ef-th-factor   { width: 90px; }
+.ef-th-unit     { width: 130px; }
+.ef-th-year     { width: 70px; }
+
+/* --- Source badges --- */
+
+.ef-source-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.ef-source-badge--egrid { background: #dbeafe; color: #1e40af; }
+.ef-source-badge--epa   { background: #dcfce7; color: #166534; }
+.ef-source-badge--defra { background: #ede9fe; color: #5b21b6; }
+.ef-source-badge--eeio  { background: #fef3c7; color: #92400e; }
