@@ -67,9 +67,8 @@
   gap: 16px;
   width: 60%;
   flex-shrink: 0;
-  min-height: 0;
   opacity: 1;
-  overflow: hidden;
+  overflow-y: auto;
   transition: opacity 0.25s ease, width 0.3s ease;
 }
 
@@ -140,11 +139,10 @@
 
 /* Hierarchy Card */
 .dashboard-hierarchy-card {
-  flex: 1 1 0;
+  flex: 0 0 auto;
 }
 
 .dashboard-hierarchy-items {
-  flex: 1 1 0;
   overflow-y: auto;
 }
 
@@ -226,6 +224,37 @@
 
 .dashboard-hierarchy-item-change--down {
   color: #008029;
+}
+
+/* Status chips in hierarchy items — mirrors viz pin colors */
+.hierarchy-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.hierarchy-status-chip i {
+  font-size: 11px;
+}
+.hierarchy-status--blue {
+  background: #dbf5ff;
+  color: #005c80;
+  border: 1px solid #42caff;
+}
+.hierarchy-status--warning {
+  background: #a35b00;
+  color: #ffffff;
+  border: none;
+}
+.hierarchy-status--danger {
+  background: #cc1300;
+  color: #ffffff;
+  border: none;
 }
 
 .dashboard-hierarchy-item--selected {

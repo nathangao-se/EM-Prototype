@@ -221,12 +221,37 @@
       return;
     }
     
+    // Build a lookup from pin data so hierarchy items reflect the same status
+    var vizResult = getVisualizationForNode(currentNode);
+    var pinLookup = {};
+    if (vizResult && vizResult.vizData && vizResult.vizData.regions) {
+      vizResult.vizData.regions.forEach(function(r) {
+        pinLookup[r.targetHierarchy || r.label] = r;
+      });
+    }
+
     // Show children of current node
     hierarchyItemsContainer.innerHTML = currentNode.children.map(function(child) {
       var c = child._computed || { incidents: 0, siteCount: 0, spark: [0,0,0,0,0], change: '0%', changeDir: 'neutral' };
       var sparkColor = getSparklineColor(c.changeDir);
       var changeClass = c.changeDir !== 'neutral' ? ' dashboard-hierarchy-item-change--' + c.changeDir : '';
       var meta = getMetaForChild(child);
+
+      var pin = pinLookup[child.name];
+      var statusClass = 'hierarchy-status--blue';
+      if (pin) {
+        if (pin.status === 'danger') statusClass = 'hierarchy-status--danger';
+        else if (pin.status === 'warning') statusClass = 'hierarchy-status--warning';
+      } else {
+        if (c.incidents > 100) statusClass = 'hierarchy-status--danger';
+        else if (c.incidents > 20) statusClass = 'hierarchy-status--warning';
+      }
+
+      var chipHtml = '<span class="hierarchy-status-chip ' + statusClass + '">' +
+        '<i class="fa-solid ' + (statusClass === 'hierarchy-status--blue' ? 'fa-circle-exclamation' : 'fa-triangle-exclamation') + '"></i>' +
+        c.incidents +
+      '</span>';
+
       return '<div class="dashboard-hierarchy-item" data-child-name="' + child.name + '">' +
         '<div class="dashboard-hierarchy-item-info">' +
           '<span class="dashboard-hierarchy-item-title">' + child.name + '</span>' +
@@ -235,7 +260,7 @@
         '<div class="dashboard-hierarchy-item-progress">' +
           generateSparkline(c.spark, sparkColor) +
           '<div class="dashboard-hierarchy-item-numbers">' +
-            '<span class="dashboard-hierarchy-item-percent">' + c.incidents + ' alert' + (c.incidents !== 1 ? 's' : '') + '</span>' +
+            chipHtml +
             '<span class="dashboard-hierarchy-item-change' + changeClass + '">' + c.change + ' vs Q3</span>' +
           '</div>' +
         '</div>' +
@@ -353,19 +378,46 @@
   
   function renderFlatHierarchy() {
     hierarchyTitleEl.textContent = 'Hierarchy';
+
+    // Build a lookup from viz data so hierarchy items reflect the same status
+    var vizPinLookup = {};
+    if (activeConfig.visualization && activeConfig.visualization.regions) {
+      activeConfig.visualization.regions.forEach(function(r) {
+        vizPinLookup[r.targetHierarchy || r.label] = r;
+      });
+    }
+
     hierarchyItemsContainer.innerHTML = activeConfig.hierarchyRegions.map(function(region) {
       var sparkColor = getSparklineColor(region.changeDir);
       var selectedClass = region.name === currentSelection ? ' dashboard-hierarchy-item--selected' : '';
       var changeClass = region.changeDir !== 'neutral' ? ' dashboard-hierarchy-item-change--' + region.changeDir : '';
+
+      var pin = vizPinLookup[region.name];
+      var statusClass = 'hierarchy-status--blue';
+      if (pin) {
+        if (pin.status === 'danger') statusClass = 'hierarchy-status--danger';
+        else if (pin.status === 'warning') statusClass = 'hierarchy-status--warning';
+      } else {
+        if (region.incidents > 100) statusClass = 'hierarchy-status--danger';
+        else if (region.incidents > 20) statusClass = 'hierarchy-status--warning';
+      }
+
+      var chipHtml = '<span class="hierarchy-status-chip ' + statusClass + '">' +
+        '<i class="fa-solid ' + (statusClass === 'hierarchy-status--blue' ? 'fa-circle-exclamation' : 'fa-triangle-exclamation') + '"></i>' +
+        region.incidents +
+      '</span>';
+
+      var displayTitle = pin ? pin.label : region.name;
+
       return '<div class="dashboard-hierarchy-item' + selectedClass + '" data-region="' + region.name + '">' +
         '<div class="dashboard-hierarchy-item-info">' +
-          '<span class="dashboard-hierarchy-item-title">' + region.name + '</span>' +
+          '<span class="dashboard-hierarchy-item-title">' + displayTitle + '</span>' +
           '<span class="dashboard-hierarchy-item-meta">' + region.meta + '</span>' +
         '</div>' +
         '<div class="dashboard-hierarchy-item-progress">' +
           generateSparkline(region.spark, sparkColor) +
           '<div class="dashboard-hierarchy-item-numbers">' +
-            '<span class="dashboard-hierarchy-item-percent">' + region.incidents + ' alert' + (region.incidents !== 1 ? 's' : '') + '</span>' +
+            chipHtml +
             '<span class="dashboard-hierarchy-item-change' + changeClass + '">' + region.change + ' vs Q3</span>' +
           '</div>' +
         '</div>' +

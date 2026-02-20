@@ -143,6 +143,10 @@
 }
 
 /* --- HOVER STATE: expand tag --- */
+.viz-tag:hover {
+  z-index: 100;
+}
+
 .viz-tag:hover .viz-tag-container {
   border-radius: 5000px;
   flex-direction: column;

@@ -21,11 +21,11 @@ const CONFIG_GLOBAL_OVERSIGHT = {
           image: 'images/Europe.svg',
           imageAlt: 'Europe regional map',
           regions: [
-            { label: 'France', siteCount: '2', chipText: '95', status: 'warning', targetHierarchy: 'France', position: { x: 44, y: 58 } },
-            { label: 'United Kingdom', siteCount: '1', chipText: '3', status: 'blue', targetHierarchy: 'United Kingdom', position: { x: 38, y: 40 } },
-            { label: 'Germany', siteCount: '1', chipText: '3', status: 'blue', targetHierarchy: 'Germany', position: { x: 54, y: 42 } },
-            { label: 'Netherlands', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Netherlands', position: { x: 44, y: 36 } },
-            { label: 'Spain', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Spain', position: { x: 36, y: 74 } }
+            { label: 'France', siteCount: '2', chipText: '95', status: 'warning', targetHierarchy: 'France', position: { x: 54, y: 68 } },
+            { label: 'United Kingdom', siteCount: '1', chipText: '3', status: 'blue', targetHierarchy: 'United Kingdom', position: { x: 47, y: 50 } },
+            { label: 'Germany', siteCount: '1', chipText: '3', status: 'blue', targetHierarchy: 'Germany', position: { x: 59, y: 62 } },
+            { label: 'Netherlands', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Netherlands', position: { x: 56, y: 56 } },
+            { label: 'Spain', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Spain', position: { x: 46, y: 82 } }
           ]
         }
       },
@@ -44,10 +44,10 @@ const CONFIG_GLOBAL_OVERSIGHT = {
           image: 'images/South America.svg',
           imageAlt: 'South America regional map',
           regions: [
-            { label: 'Brazil', siteCount: '2', chipText: '195', status: 'warning', targetHierarchy: 'Brazil', position: { x: 65, y: 48 } },
-            { label: 'Argentina', siteCount: '1', chipText: '10', status: 'warning', targetHierarchy: 'Argentina', position: { x: 50, y: 70 } },
-            { label: 'Chile', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Chile', position: { x: 32, y: 68 } },
-            { label: 'Peru', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Peru', position: { x: 30, y: 30 } }
+            { label: 'Brazil', siteCount: '2', chipText: '195', status: 'warning', targetHierarchy: 'Brazil', position: { x: 65, y: 28 } },
+            { label: 'Argentina', siteCount: '1', chipText: '10', status: 'warning', targetHierarchy: 'Argentina', position: { x: 45, y: 65 } },
+            { label: 'Chile', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Chile', position: { x: 30, y: 68 } },
+            { label: 'Peru', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Peru', position: { x: 13, y: 30 } }
           ]
         }
       },
@@ -56,8 +56,8 @@ const CONFIG_GLOBAL_OVERSIGHT = {
           image: 'images/Asia Pacific.svg',
           imageAlt: 'Asia Pacific regional map',
           regions: [
-            { label: 'China', siteCount: '2', chipText: '181', status: 'danger', targetHierarchy: 'China', position: { x: 47, y: 47 } },
-            { label: 'Japan', siteCount: '1', chipText: '13', status: 'warning', targetHierarchy: 'Japan', position: { x: 76, y: 40 } },
+            { label: 'China', siteCount: '2', chipText: '181', status: 'danger', targetHierarchy: 'China', position: { x: 57, y: 47 } },
+            { label: 'Japan', siteCount: '1', chipText: '13', status: 'warning', targetHierarchy: 'Japan', position: { x: 66, y: 40 } },
             { label: 'Philippines', siteCount: '1', chipText: '5', status: 'blue', targetHierarchy: 'Philippines', position: { x: 66, y: 72 } },
             { label: 'India', siteCount: '1', chipText: '3', status: 'blue', targetHierarchy: 'India', position: { x: 37, y: 67 } },
             { label: 'Thailand', siteCount: '1', chipText: '2', status: 'blue', targetHierarchy: 'Thailand', position: { x: 53, y: 76 } }
@@ -69,10 +69,10 @@ const CONFIG_GLOBAL_OVERSIGHT = {
           image: 'images/Africa/Middle East.svg',
           imageAlt: 'Middle East & Africa regional map',
           regions: [
-            { label: 'UAE', siteCount: '1', chipText: '32', status: 'warning', targetHierarchy: 'UAE', position: { x: 78, y: 22 } },
-            { label: 'Saudi Arabia', siteCount: '1', chipText: '4', status: 'blue', targetHierarchy: 'Saudi Arabia', position: { x: 68, y: 18 } },
-            { label: 'South Africa', siteCount: '2', chipText: '3', status: 'blue', targetHierarchy: 'South Africa', position: { x: 50, y: 75 } },
-            { label: 'Qatar', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Qatar', position: { x: 72, y: 24 } }
+            { label: 'UAE', siteCount: '1', chipText: '32', status: 'warning', targetHierarchy: 'UAE', position: { x: 88, y: 22 } },
+            { label: 'Saudi Arabia', siteCount: '1', chipText: '4', status: 'blue', targetHierarchy: 'Saudi Arabia', position: { x: 76, y: 18 } },
+            { label: 'South Africa', siteCount: '2', chipText: '3', status: 'blue', targetHierarchy: 'South Africa', position: { x: 55, y: 92 } },
+            { label: 'Qatar', siteCount: '1', chipText: '1', status: 'blue', targetHierarchy: 'Qatar', position: { x: 92, y: 24 } }
           ]
         }
       },
@@ -81,7 +81,7 @@ const CONFIG_GLOBAL_OVERSIGHT = {
           image: 'images/Australia/Oceania.svg',
           imageAlt: 'Australia/Oceania regional map',
           regions: [
-            { label: 'Australia', siteCount: '4', chipText: '47', status: 'warning', targetHierarchy: 'Australia', position: { x: 80, y: 78 } }
+            { label: 'Australia', siteCount: '4', chipText: '47', status: 'warning', targetHierarchy: 'Australia', position: { x: 45, y: 68 } }
           ]
         }
       }
