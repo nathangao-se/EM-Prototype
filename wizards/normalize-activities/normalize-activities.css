@@ -3,7 +3,7 @@
    ======================================== */
 
 .normalize-overlay {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
@@ -12,10 +12,14 @@
   justify-content: center;
   padding: 24px;
   box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 220ms ease-in-out, visibility 220ms ease-in-out;
 }
 
 .normalize-overlay--open {
-  display: flex;
+  opacity: 1;
+  visibility: visible;
 }
 
 .normalize-modal {
@@ -28,6 +32,14 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transform: scale(0.97);
+  opacity: 0;
+  transition: transform 220ms ease-in-out, opacity 220ms ease-in-out;
+}
+
+.normalize-overlay--open .normalize-modal {
+  transform: scale(1);
+  opacity: 1;
 }
 
 /* Header */

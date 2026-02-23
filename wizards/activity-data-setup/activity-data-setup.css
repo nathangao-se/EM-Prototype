@@ -3,7 +3,7 @@
    ======================================== */
 
 .activity-data-setup-overlay {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
@@ -12,10 +12,14 @@
   justify-content: center;
   padding: 24px;
   box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 220ms ease-in-out, visibility 220ms ease-in-out;
 }
 
 .activity-data-setup-overlay--open {
-  display: flex;
+  opacity: 1;
+  visibility: visible;
 }
 
 .activity-data-setup-modal {
@@ -26,6 +30,14 @@
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
   max-height: 85vh;
   overflow: hidden;
+  transform: scale(0.97);
+  opacity: 0;
+  transition: transform 220ms ease-in-out, opacity 220ms ease-in-out;
+}
+
+.activity-data-setup-overlay--open .activity-data-setup-modal {
+  transform: scale(1);
+  opacity: 1;
 }
 
 /* Header: title, description, close */

@@ -1062,6 +1062,9 @@
     updateStepTabs();
     updateFooter();
     updateModalWidth();
+    bodyEl.style.animation = 'none';
+    void bodyEl.offsetWidth;
+    bodyEl.style.animation = '';
     if (currentStep === 0) renderStep0();
     else if (currentStep === 1) renderStep1();
     else renderStep2();

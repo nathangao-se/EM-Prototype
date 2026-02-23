@@ -65,7 +65,8 @@
 
 @keyframes pt-dim {
   0%   { background-color: transparent; }
-  50%  { background-color: #DFE7EB; }
+  40%  { background-color: #EDFAFF; }
+  60%  { background-color: #EDFAFF; }
   100% { background-color: transparent; }
 }
 

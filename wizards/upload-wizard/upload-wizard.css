@@ -3,7 +3,7 @@
    ======================================== */
 
 .upload-wiz-overlay {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
@@ -12,10 +12,14 @@
   justify-content: center;
   padding: 24px;
   box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 220ms ease-in-out, visibility 220ms ease-in-out;
 }
 
 .upload-wiz-overlay--open {
-  display: flex;
+  opacity: 1;
+  visibility: visible;
 }
 
 .upload-wiz {
@@ -28,6 +32,16 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transform: scale(0.97);
+  opacity: 0;
+  transition: max-width 220ms ease-in-out,
+              transform 220ms ease-in-out,
+              opacity 220ms ease-in-out;
+}
+
+.upload-wiz-overlay--open .upload-wiz {
+  transform: scale(1);
+  opacity: 1;
 }
 
 /* Header */
@@ -137,6 +151,7 @@
   flex-direction: column;
   gap: 20px;
   min-height: 0;
+  animation: uw-fade-in 160ms ease-in-out;
 }
 
 .upload-wiz-body--split {
@@ -471,6 +486,12 @@
   gap: 12px;
   flex-shrink: 0;
   overflow-y: auto;
+  animation: uw-fade-in 220ms ease-in-out;
+}
+
+@keyframes uw-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .uw-s1-file-select-wrap {
@@ -526,6 +547,9 @@
   width: 600px;
   flex-shrink: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* Save actions below table */
