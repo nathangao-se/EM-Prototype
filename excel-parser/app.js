@@ -318,6 +318,54 @@ window.ExcelParser = (function () {
     }
   }
 
+  function setPreview(rMin, rMax, cMin, cMax) {
+    clearPreview();
+    if (!container || rMin < 0) return;
+    var table = container.querySelector(".ep-table");
+    if (!table) return;
+    var cells = table.querySelectorAll("td[data-r][data-c]");
+    for (var i = 0; i < cells.length; i++) {
+      var r = parseInt(cells[i].getAttribute("data-r"), 10);
+      var c = parseInt(cells[i].getAttribute("data-c"), 10);
+      if (r >= rMin && r <= rMax && c >= cMin && c <= cMax) {
+        cells[i].classList.add("ep-cell-preview");
+      }
+    }
+  }
+
+  function clearPreview() {
+    if (!container) return;
+    var els = container.querySelectorAll(".ep-cell-preview");
+    for (var i = 0; i < els.length; i++) {
+      els[i].classList.remove("ep-cell-preview");
+      els[i].classList.remove("ep-cell-preview--intense");
+    }
+  }
+
+  function intensifyPreview() {
+    if (!container) return;
+    var els = container.querySelectorAll(".ep-cell-preview");
+    for (var i = 0; i < els.length; i++) {
+      els[i].classList.add("ep-cell-preview--intense");
+    }
+  }
+
+  function dimPreview() {
+    if (!container) return;
+    var els = container.querySelectorAll(".ep-cell-preview--intense");
+    for (var i = 0; i < els.length; i++) {
+      els[i].classList.remove("ep-cell-preview--intense");
+    }
+  }
+
+  function getHeaderBlockEnd() {
+    if (selMinRow < 0 || selMinRow !== selMaxRow) return -1;
+    var r = selMinRow + 1;
+    var maxR = totalDataRows();
+    while (r <= maxR && !isRowEmpty(r)) { r++; }
+    return r - 1;
+  }
+
   function clearSelection() {
     clearVisual();
     selMinRow = selMaxRow = selMinCol = selMaxCol = -1;
@@ -403,6 +451,11 @@ window.ExcelParser = (function () {
         applyRange(rMin, rMax, cMin, cMax);
       }
     },
+    setPreview: setPreview,
+    clearPreview: clearPreview,
+    intensifyPreview: intensifyPreview,
+    dimPreview: dimPreview,
+    getHeaderBlockEnd: getHeaderBlockEnd,
     destroy: function () { if (container) container.innerHTML = ""; container = null; }
   };
 })();

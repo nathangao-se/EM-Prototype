@@ -651,8 +651,10 @@
     if (showTablePreview) {
       html += '<div class="uw-s1-two-col">';
 
-      // Left: file selector + save buttons + table preview
-      html += '<div class="uw-s1-preview-col">';
+      // Top-left: toolbar (disclaimer + dropdown + chips + buttons)
+      html += '<div class="uw-s1-toolbar">';
+      html += '<div class="uw-s1-toolbar-left">';
+      html += '<p class="uw-s1-disclaimer">Some of your files have complex structures and we\'re not sure which part is relevant. Please select each file, then highlight and designate the section/headers we should treat as the correct data.</p>';
       var allFiles = uploadedFiles.length > 0 ? uploadedFiles : SAMPLE_IMPORTED;
       html += '<div class="uw-s1-file-select-wrap">';
       html += '<select class="uw-s1-file-select">';
@@ -662,9 +664,8 @@
       html += '</select>';
       html += '<i class="fa-solid fa-chevron-down uw-s1-file-select-chevron"></i>';
       html += '</div>';
-
-      // Active ranges + save buttons row
-      html += '<div class="uw-s1-actions-row">';
+      html += '</div>';
+      html += '<div class="uw-s1-toolbar-right">';
       html += '<div class="uw-s1-active-ranges">';
       if (savedRanges.length > 0) {
         html += '<span class="uw-s1-ranges-label">Active ranges</span>';
@@ -676,27 +677,31 @@
       }
       html += '</div>';
       html += '<div class="uw-s1-save-actions">';
-      html += '<button type="button" class="btn btn-outline btn-small uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Use entire selection as data</button>';
-      html += '<button type="button" class="btn btn-outline btn-small uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Use selected row as header</button>';
+      html += '<button type="button" class="btn btn-outline uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Designate selection</button>';
+      html += '<button type="button" class="btn btn-outline uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Designate using selected row as header</button>';
       html += '</div>';
       html += '</div>';
-
-      html += '<div class="uw-s1-table-preview" id="ep-container"></div>';
-
       html += '</div>';
 
-      // Right: intro + toggle + column mapping cards
-      html += '<div class="uw-s1-map-col">';
+      // Top-right: intro + toggle
+      html += '<div class="uw-s1-header-right">';
       html += '<div class="uw-s1-intro">';
       html += '<p>For accurate calculations, your data columns need to conform to our standard data set. We found mismatches that you\'ll need to reconcile before you continue.</p>';
       html += '<p>Your original data will be preserved in our records and will not be lost.</p>';
       html += '</div>';
       html += '<div class="uw-s1-toggle-row">';
-      html += '<span class="uw-s1-toggle-label">Show how we\'re reading your tables</span>';
+      html += '<span class="uw-s1-toggle-label">Resolve ambiguous data in your files</span>';
       html += '<button type="button" class="uw-s1-toggle uw-s1-toggle--on" data-action="toggle-preview" aria-pressed="true">';
       html += '<span class="uw-s1-toggle-handle"></span>';
       html += '</button>';
       html += '</div>';
+      html += '</div>';
+
+      // Bottom-left: table preview
+      html += '<div class="uw-s1-table-preview" id="ep-container"></div>';
+
+      // Bottom-right: column mapping cards
+      html += '<div class="uw-s1-cards-col">';
       html += renderColumnsTab();
       html += '</div>';
 
@@ -708,7 +713,7 @@
       html += '<p>Your original data will be preserved in our records and will not be lost.</p>';
       html += '</div>';
       html += '<div class="uw-s1-toggle-row">';
-      html += '<span class="uw-s1-toggle-label">Show how we\'re reading your tables</span>';
+      html += '<span class="uw-s1-toggle-label">Resolve ambiguous data in your files</span>';
       html += '<button type="button" class="uw-s1-toggle" data-action="toggle-preview" aria-pressed="false">';
       html += '<span class="uw-s1-toggle-handle"></span>';
       html += '</button>';
@@ -741,8 +746,8 @@
     }
 
     html += '<div class="uw-s1-save-actions">';
-    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Use entire selection as data</button>';
-    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Use selected row as header</button>';
+    html += '<button type="button" class="btn btn-outline uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Designate selection</button>';
+    html += '<button type="button" class="btn btn-outline uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Designate using selected row as header</button>';
     html += '</div>';
 
     html += '</div>';
@@ -875,6 +880,15 @@
       var canHeader = window.ExcelParser.canSaveWithHeader();
       if (saveBlockBtn) saveBlockBtn.disabled = !hasSel;
       if (saveHeadersBtn) saveHeadersBtn.disabled = !canHeader;
+      if (canHeader) {
+        var sel = window.ExcelParser.getSelection();
+        var endRow = window.ExcelParser.getHeaderBlockEnd();
+        if (endRow > sel.minRow) {
+          window.ExcelParser.setPreview(sel.minRow + 1, endRow, sel.minCol, sel.maxCol);
+        }
+      } else {
+        window.ExcelParser.clearPreview();
+      }
     }
 
     if (saveBlockBtn) {
@@ -909,6 +923,12 @@
     }
 
     if (saveHeadersBtn) {
+      saveHeadersBtn.addEventListener('mouseenter', function () {
+        if (window.ExcelParser) window.ExcelParser.intensifyPreview();
+      });
+      saveHeadersBtn.addEventListener('mouseleave', function () {
+        if (window.ExcelParser) window.ExcelParser.dimPreview();
+      });
       saveHeadersBtn.addEventListener('click', function () {
         if (window.ExcelParser && window.ExcelParser.canSaveWithHeader()) {
           var sel = window.ExcelParser.getSelection();
