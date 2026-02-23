@@ -325,6 +325,44 @@
 
   buildColumnMatches();
 
+  function isExactColumnMatch(name) {
+    var lower = name.toLowerCase();
+    return standardColumns.some(function (col) {
+      return col.label.toLowerCase() === lower;
+    });
+  }
+
+  function matchSingleColumn(name) {
+    var vocabSet = {};
+    standardColumns.forEach(function (col) {
+      col.label.split(/[\s\/\-(),]+/).forEach(function (w) {
+        var lw = w.toLowerCase();
+        if (lw.length > 1) vocabSet[lw] = true;
+      });
+    });
+    var vocabulary = Object.keys(vocabSet);
+    var corrected = correctTypo(name, vocabulary);
+
+    var matches = [];
+    standardColumns.forEach(function (col) {
+      var words = col.label.toLowerCase().split(/[\s\/\-(),]+/);
+      var found = false;
+      for (var i = 0; i < words.length; i++) {
+        if (words[i] === corrected) { found = true; break; }
+      }
+      if (!found && col.label.toLowerCase().indexOf(corrected) >= 0) found = true;
+      if (found) {
+        matches.push({ label: col.label, desc: col.desc, value: col.label.toLowerCase().replace(/[^a-z0-9]+/g, '-') });
+      }
+    });
+
+    var seen = {};
+    var unique = [];
+    matches.forEach(function (m) { if (!seen[m.label]) { seen[m.label] = true; unique.push(m); } });
+
+    return { name: name, bestMatches: unique.slice(0, 1), otherOptions: unique.slice(1, 6), selected: '' };
+  }
+
   function esc(str) {
     if (!str) return '';
     var d = document.createElement('div');
@@ -631,18 +669,6 @@
 
       html += '<div class="uw-s1-table-preview" id="ep-container"></div>';
 
-      // Saved blocks list
-      if (savedSections.length > 0) {
-        html += '<div class="uw-s1-section-list">';
-        savedSections.forEach(function (s, i) {
-          html += '<div class="uw-s1-section-item" data-idx="' + i + '">';
-          html += '<span class="uw-s1-section-range">' + esc(s.range) + '</span>';
-          html += '<button type="button" class="uw-s1-section-remove" data-idx="' + i + '" title="Remove"><i class="fa-solid fa-trash"></i></button>';
-          html += '</div>';
-        });
-        html += '</div>';
-      }
-
       html += '</div>';
 
       // Right: intro + toggle + column mapping cards
@@ -719,13 +745,57 @@
     var html = '';
     html += '<div class="uw-s1-columns">';
 
+    // Saved block cards (per-column, unmatched only) — rendered at top
+    savedSections.forEach(function (sec, si) {
+      var selJson = JSON.stringify(sec.sel);
+      var radioName = 'block-' + si;
+      var m = sec.match;
+      html += '<div class="uw-s1-col-card uw-s1-col-card--block" data-block-idx="' + si + '" data-block-sel=\'' + selJson + '\'>';
+      html += '<button type="button" class="uw-s1-block-delete" data-block-del="' + si + '" title="Remove"><i class="fa-solid fa-trash"></i></button>';
+      html += '<div class="uw-s1-col-card-left">';
+      html += '<div class="uw-s1-col-card-name">' + esc(sec.title) + '</div>';
+      html += '<span class="uw-s1-col-card-range">' + esc(sec.range) + '</span>';
+      html += '<span class="uw-s1-col-card-tag-new">New</span>';
+      html += '</div>';
+      html += '<div class="uw-s1-col-card-divider"></div>';
+      html += '<div class="uw-s1-col-card-body">';
+      if (m && (m.bestMatches.length > 0 || m.otherOptions.length > 0)) {
+        if (m.bestMatches.length > 0) {
+          html += '<div class="uw-s1-col-group">';
+          html += '<div class="uw-s1-col-group-label">Best matches in our standard data</div>';
+          m.bestMatches.forEach(function (opt) {
+            html += '<div class="uw-s1-col-row">';
+            html += '<label class="uw-s1-col-radio"><input type="radio" name="' + radioName + '" value="' + esc(opt.value) + '"><span>' + esc(opt.label) + '</span></label>';
+            html += '<span class="uw-s1-col-row-desc">' + esc(opt.desc) + '</span>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+        if (m.otherOptions.length > 0) {
+          html += '<div class="uw-s1-col-separator"></div>';
+          html += '<div class="uw-s1-col-group">';
+          html += '<div class="uw-s1-col-group-label">Other options</div>';
+          m.otherOptions.forEach(function (opt) {
+            html += '<div class="uw-s1-col-row">';
+            html += '<label class="uw-s1-col-radio"><input type="radio" name="' + radioName + '" value="' + esc(opt.value) + '"><span>' + esc(opt.label) + '</span></label>';
+            html += '<span class="uw-s1-col-row-desc">' + esc(opt.desc) + '</span>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+      } else {
+        html += '<div class="uw-s1-col-group"><div class="uw-s1-col-group-label">No results found</div></div>';
+      }
+      html += '</div>';
+      html += '</div>';
+    });
+
     columnMatches.forEach(function (col, ci) {
       html += '<div class="uw-s1-col-card">';
       html += '<div class="uw-s1-col-card-name">' + esc(col.name) + '</div>';
       html += '<div class="uw-s1-col-card-divider"></div>';
       html += '<div class="uw-s1-col-card-body">';
 
-      // Best matches group
       html += '<div class="uw-s1-col-group">';
       if (col.bestMatches.length === 0) {
         html += '<div class="uw-s1-col-group-label">No results found</div>';
@@ -799,7 +869,24 @@
           var sel = window.ExcelParser.getSelection();
           var block = window.ExcelParser.saveBlock();
           if (block && sel) {
-            savedSections.push({ range: block.rangeLabel, sel: sel, block: block });
+            var numCols = block.colLabelsSlice ? block.colLabelsSlice.length : 0;
+            for (var ci = 0; ci < numCols; ci++) {
+              var firstCell = '';
+              for (var ri = 0; ri < block.rows.length; ri++) {
+                if (block.rows[ri][ci] && block.rows[ri][ci].toString().trim()) {
+                  firstCell = block.rows[ri][ci].toString().trim();
+                  break;
+                }
+              }
+              if (!firstCell) continue;
+              if (isExactColumnMatch(firstCell)) continue;
+              savedSections.unshift({
+                range: block.rangeLabel,
+                sel: { minRow: sel.minRow, maxRow: sel.maxRow, minCol: sel.minCol + ci, maxCol: sel.minCol + ci },
+                title: firstCell,
+                match: matchSingleColumn(firstCell)
+              });
+            }
             render();
           }
         }
@@ -813,34 +900,46 @@
           var block = window.ExcelParser.saveBlockWithHeader();
           if (block && sel) {
             var endRow = sel.minRow + (block.rows ? block.rows.length : 0);
-            savedSections.push({
-              range: block.rangeLabel,
-              sel: { minRow: sel.minRow, maxRow: endRow, minCol: sel.minCol, maxCol: sel.maxCol },
-              block: block
-            });
+            var headerCells = block.headerData || [];
+            for (var ci = 0; ci < headerCells.length; ci++) {
+              var cell = headerCells[ci] ? headerCells[ci].trim() : '';
+              if (!cell) continue;
+              if (isExactColumnMatch(cell)) continue;
+              savedSections.unshift({
+                range: block.rangeLabel,
+                sel: { minRow: sel.minRow, maxRow: endRow, minCol: sel.minCol + ci, maxCol: sel.minCol + ci },
+                title: cell,
+                match: matchSingleColumn(cell)
+              });
+            }
             render();
           }
         }
       });
     }
 
-    // Saved block removal
-    bodyEl.querySelectorAll('.uw-s1-section-remove').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var idx = parseInt(btn.getAttribute('data-idx'), 10);
-        savedSections.splice(idx, 1);
-        render();
+    // Block card hover → highlight table selection
+    bodyEl.querySelectorAll('.uw-s1-col-card--block').forEach(function (card) {
+      card.addEventListener('mouseenter', function () {
+        try {
+          var sel = JSON.parse(card.getAttribute('data-block-sel'));
+          if (sel && window.ExcelParser) {
+            window.ExcelParser.setSelection(sel.minRow, sel.maxRow, sel.minCol, sel.maxCol);
+          }
+        } catch (e) {}
+      });
+      card.addEventListener('mouseleave', function () {
+        if (window.ExcelParser) window.ExcelParser.clearSelection();
       });
     });
 
-    bodyEl.querySelectorAll('.uw-s1-section-item').forEach(function (item) {
-      item.addEventListener('click', function () {
-        var idx = parseInt(item.getAttribute('data-idx'), 10);
-        var section = savedSections[idx];
-        if (section && section.sel && window.ExcelParser) {
-          window.ExcelParser.setSelection(section.sel.minRow, section.sel.maxRow, section.sel.minCol, section.sel.maxCol);
-        }
+    // Block card trash button
+    bodyEl.querySelectorAll('.uw-s1-block-delete').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var idx = parseInt(btn.getAttribute('data-block-del'), 10);
+        savedSections.splice(idx, 1);
+        render();
       });
     });
 
