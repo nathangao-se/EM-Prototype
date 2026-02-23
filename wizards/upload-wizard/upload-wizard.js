@@ -132,6 +132,7 @@
   var step1Tab = 'layouts';
   var showTablePreview = false;
   var savedSections = [];
+  var savedRanges = [];
   var SAMPLE_SECTIONS = [
     { range: 'A1:E15' },
     { range: 'P1:R15' }
@@ -377,6 +378,7 @@
     step1Tab = 'layouts';
     showTablePreview = false;
     savedSections = [];
+    savedRanges = [];
     columnMatches.forEach(function (c) { c.selected = ''; });
     render();
     overlay.classList.add('upload-wiz-overlay--open');
@@ -661,10 +663,22 @@
       html += '<i class="fa-solid fa-chevron-down uw-s1-file-select-chevron"></i>';
       html += '</div>';
 
-      // Save buttons — right under the dropdown
+      // Active ranges + save buttons row
+      html += '<div class="uw-s1-actions-row">';
+      html += '<div class="uw-s1-active-ranges">';
+      if (savedRanges.length > 0) {
+        html += '<span class="uw-s1-ranges-label">Active ranges</span>';
+        savedRanges.forEach(function (r, i) {
+          html += '<span class="uw-s1-range-chip" data-range-idx="' + i + '">' + esc(r.range) + ' <i class="fa-solid fa-xmark uw-s1-range-chip-x"></i></span>';
+        });
+      } else {
+        html += '<span class="uw-s1-ranges-label uw-s1-ranges-label--empty">No data designated</span>';
+      }
+      html += '</div>';
       html += '<div class="uw-s1-save-actions">';
-      html += '<button type="button" class="btn btn-outline btn-small uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Save block</button>';
+      html += '<button type="button" class="btn btn-outline btn-small uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Use entire selection as data</button>';
       html += '<button type="button" class="btn btn-outline btn-small uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Use selected row as header</button>';
+      html += '</div>';
       html += '</div>';
 
       html += '<div class="uw-s1-table-preview" id="ep-container"></div>';
@@ -727,8 +741,8 @@
     }
 
     html += '<div class="uw-s1-save-actions">';
-    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Save block</button>';
-    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Use row as header</button>';
+    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-block" disabled><i class="fa-solid fa-table"></i> Use entire selection as data</button>';
+    html += '<button type="button" class="btn btn-sm btn-outline uw-s1-save-btn" data-action="save-headers" disabled><i class="fa-solid fa-table-list"></i> Use selected row as header</button>';
     html += '</div>';
 
     html += '</div>';
@@ -869,6 +883,7 @@
           var sel = window.ExcelParser.getSelection();
           var block = window.ExcelParser.saveBlock();
           if (block && sel) {
+            savedRanges.push({ range: block.rangeLabel, sel: sel });
             var numCols = block.colLabelsSlice ? block.colLabelsSlice.length : 0;
             for (var ci = 0; ci < numCols; ci++) {
               var firstCell = '';
@@ -900,6 +915,7 @@
           var block = window.ExcelParser.saveBlockWithHeader();
           if (block && sel) {
             var endRow = sel.minRow + (block.rows ? block.rows.length : 0);
+            savedRanges.push({ range: block.rangeLabel, sel: { minRow: sel.minRow, maxRow: endRow, minCol: sel.minCol, maxCol: sel.maxCol } });
             var headerCells = block.headerData || [];
             for (var ci = 0; ci < headerCells.length; ci++) {
               var cell = headerCells[ci] ? headerCells[ci].trim() : '';
@@ -939,6 +955,32 @@
         e.stopPropagation();
         var idx = parseInt(btn.getAttribute('data-block-del'), 10);
         savedSections.splice(idx, 1);
+        render();
+      });
+    });
+
+    // Range chip hover → highlight table selection
+    bodyEl.querySelectorAll('.uw-s1-range-chip').forEach(function (chip) {
+      var idx = parseInt(chip.getAttribute('data-range-idx'), 10);
+      var rng = savedRanges[idx];
+      chip.addEventListener('mouseenter', function () {
+        if (rng && rng.sel && window.ExcelParser) {
+          window.ExcelParser.setSelection(rng.sel.minRow, rng.sel.maxRow, rng.sel.minCol, rng.sel.maxCol);
+        }
+      });
+      chip.addEventListener('mouseleave', function () {
+        if (window.ExcelParser) window.ExcelParser.clearSelection();
+      });
+      chip.addEventListener('click', function () {
+        savedRanges.splice(idx, 1);
+        savedSections = savedSections.filter(function (sec) {
+          var col = sec.sel.minCol;
+          var row = sec.sel.minRow;
+          return savedRanges.some(function (r) {
+            return col >= r.sel.minCol && col <= r.sel.maxCol &&
+                   row >= r.sel.minRow && row <= r.sel.maxRow;
+          });
+        });
         render();
       });
     });
