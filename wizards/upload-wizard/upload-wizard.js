@@ -15,6 +15,7 @@
   var discardLink = overlay.querySelector('.upload-wiz-discard');
 
   var currentStep = 0;
+  var stepDirection = 'forward';
 
   var ACTIVITY_TYPES = ['All activity types', 'Electricity only', 'Mixed activities', 'Fuel consumption', 'Water usage'];
 
@@ -127,6 +128,9 @@
       '[ END OF EXPORT — 3 sites, partial Q4 data ],,,,,,',
     ].join('\n')
   };
+
+  // Step 0 (add activity files) state
+  var showManualEntry = false;
 
   // Step 2 (columns cleanup) state
   var step1Tab = 'layouts';
@@ -376,6 +380,7 @@
     uploadedFiles = [];
     importedFiles = [];
     step1Tab = 'layouts';
+    showManualEntry = false;
     showTablePreview = false;
     savedSections = [];
     savedRanges = [];
@@ -417,6 +422,7 @@
 
   backBtn.addEventListener('click', function () {
     if (currentStep > 0) {
+      stepDirection = 'back';
       currentStep--;
       render();
     } else {
@@ -431,6 +437,7 @@
     if (currentStep === 2) {
       closeWizard();
     } else if (currentStep < 2) {
+      stepDirection = 'forward';
       currentStep++;
       render();
     }
@@ -450,30 +457,22 @@
     stepData.forEach(function (s, i) {
       var isComplete = i < currentStep;
       var isActive = i === currentStep;
-      var cls = 'upload-wiz-stepper-item';
-      if (isComplete) cls += ' upload-wiz-stepper--complete';
-      else if (isActive) cls += ' upload-wiz-stepper--active';
+      var cls = 'wizard-stepper-item';
+      if (isComplete) cls += ' wizard-stepper-item--complete';
+      else if (isActive) cls += ' wizard-stepper-item--active';
 
-      html += '<div class="' + cls + '" data-step="' + i + '">';
-      html += '<div class="upload-wiz-stepper-label">';
+      html += '<div class="' + cls + '">';
+      html += '<div class="wizard-stepper-label">';
       html += '<span>' + s.num + '. ' + s.label + '</span>';
-      if (isComplete) html += ' <i class="fa-solid fa-circle-check upload-wiz-stepper-check"></i>';
+      if (isComplete) html += ' <span class="wizard-stepper-check"><i class="fa-solid fa-check"></i></span>';
       html += '</div>';
-      html += '<div class="upload-wiz-stepper-bar"><div class="upload-wiz-stepper-bar-fill"></div></div>';
+      html += '<div class="wizard-stepper-bar"><div class="wizard-stepper-bar-fill"></div></div>';
       html += '</div>';
     });
 
+    stepsContainer.className = 'upload-wiz-steps wizard-stepper';
     stepsContainer.innerHTML = html;
 
-    stepsContainer.querySelectorAll('.upload-wiz-stepper-item').forEach(function (item) {
-      item.addEventListener('click', function () {
-        var s = parseInt(item.getAttribute('data-step'), 10);
-        if (!isNaN(s) && s >= 0 && s <= 2) {
-          currentStep = s;
-          render();
-        }
-      });
-    });
   }
 
   function updateFooter() {
@@ -495,8 +494,18 @@
     }
   }
 
+  var footerEl = overlay.querySelector('.upload-wiz-footer');
+
   function updateModalWidth() {
     wiz.classList.toggle('upload-wiz--wide', currentStep === 1 && showTablePreview);
+  }
+
+  function updateFooterMode() {
+    var inForm = currentStep === 0 && showManualEntry;
+    footerEl.classList.toggle('upload-wiz-footer--hidden', inForm);
+
+    var formFooter = overlay.querySelector('.uw-s0-form-footer');
+    if (formFooter) formFooter.style.display = inForm ? 'flex' : 'none';
   }
 
   // ========================================
@@ -543,48 +552,196 @@
     return html;
   }
 
+  var FORM_SCOPES = [
+    'Scope 1 | Category 1: Stationary combustion',
+    'Scope 1 | Category 2: Mobile combustion',
+    'Scope 2 | Category 1: Purchased electricity',
+    'Scope 3 | Category 6: Business travel',
+    'Scope 3 | Category 7: Employee commuting'
+  ];
+  var FORM_ACT_TYPES = ['Electricity', 'Natural gas', 'Diesel', 'Gasoline', 'Business travel — air', 'Business travel — rail', 'Employee commuting'];
+  var FORM_EST_METHODS = ['Spend-based', 'Activity-based', 'Average-data', 'Supplier-specific', 'Hybrid'];
+  var FORM_ENTITIES = ['Aiken', 'Chicago HQ', 'Detroit Plant', 'London Office', 'Frankfurt DC', 'Paris Office'];
+  var FORM_UNITS = ['kWh', 'MWh', 'MMBtu', 'Gallons', 'Litres', 'Therms', 'kg', 'tonnes', 'USD', 'EUR', 'GBP'];
+
+  function buildSelectOptions(items) {
+    var h = '<option value="">Select...</option>';
+    items.forEach(function (v) { h += '<option value="' + esc(v) + '">' + esc(v) + '</option>'; });
+    return h;
+  }
+
+  function buildManualEntryForm() {
+    var html = '';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label"><span class="uw-s0-req">*</span> Business Entity <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<select class="uw-s0-select uw-s0-input-track">' + buildSelectOptions(FORM_ENTITIES) + '</select>';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label"><span class="uw-s0-req">*</span> Scope / Category <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<select class="uw-s0-select uw-s0-input-track">' + buildSelectOptions(FORM_SCOPES) + '</select>';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label"><span class="uw-s0-req">*</span> Activity date <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<div class="uw-s0-date-row">';
+    html += '<input type="date" class="uw-s0-input uw-s0-date uw-s0-input-track">';
+    html += '<span class="uw-s0-date-to">to</span>';
+    html += '<input type="date" class="uw-s0-input uw-s0-date uw-s0-input-track">';
+    html += '</div>';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label"><span class="uw-s0-req">*</span> Activity Type <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<select class="uw-s0-select uw-s0-input-track">' + buildSelectOptions(FORM_ACT_TYPES) + '</select>';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label">Estimation Method <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<select class="uw-s0-select uw-s0-input-track">' + buildSelectOptions(FORM_EST_METHODS) + '</select>';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label">Region <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<input type="text" class="uw-s0-input uw-s0-input-track" placeholder="Enter value">';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label">Origin <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<input type="text" class="uw-s0-input uw-s0-input-track" placeholder="Enter value">';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label">Destination <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+    html += '<input type="text" class="uw-s0-input uw-s0-input-track" placeholder="Enter value">';
+    html += '</div>';
+
+    html += '<div class="uw-s0-field">';
+    html += '<label class="uw-s0-label"><span class="uw-s0-req">*</span> Values – enter at least one data type <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
+
+    var valueTypes = [
+      { label: 'Usage value', placeholder: 'Enter usage value' },
+      { label: 'Distance value', placeholder: 'Enter distance value' },
+      { label: 'Spend value', placeholder: 'Enter spend value' }
+    ];
+    valueTypes.forEach(function (v) {
+      html += '<div class="uw-s0-value-group">';
+      html += '<span class="uw-s0-value-label">' + v.label + '</span>';
+      html += '<div class="uw-s0-value-row">';
+      html += '<input type="number" class="uw-s0-input uw-s0-value-input uw-s0-input-track" placeholder="' + v.placeholder + '">';
+      html += '<select class="uw-s0-select uw-s0-value-unit uw-s0-input-track">' + buildSelectOptions(FORM_UNITS) + '</select>';
+      html += '</div>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+    return html;
+  }
+
+  function isFormDirty() {
+    var dirty = false;
+    bodyEl.querySelectorAll('.uw-s0-input-track').forEach(function (el) {
+      if (el.tagName === 'SELECT') {
+        if (el.value !== '') dirty = true;
+      } else {
+        if (el.value !== '') dirty = true;
+      }
+    });
+    return dirty;
+  }
+
+  function clearForm() {
+    bodyEl.querySelectorAll('.uw-s0-input-track').forEach(function (el) {
+      if (el.tagName === 'SELECT') {
+        el.selectedIndex = 0;
+      } else {
+        el.value = '';
+      }
+    });
+    syncFormFooter();
+  }
+
+  function syncFormFooter() {
+    var dirty = isFormDirty();
+    var clearBtn = overlay.querySelector('.uw-s0-clear-btn');
+    var doneBtn = overlay.querySelector('.uw-s0-done-btn');
+    if (clearBtn) clearBtn.style.display = dirty ? '' : 'none';
+    if (doneBtn) doneBtn.textContent = dirty ? 'Save' : 'Done';
+  }
+
   function renderStep0() {
     var html = '';
 
-    html += '<p class="upload-wiz-desc">Add your activity files here by uploading a spreadsheet/CSV, importing it from another project, or typing in your own field. If you\'re not familiar with what this document looks like, we wrote <a href="#">a guide for you here</a>.</p>';
-    html += '<p class="upload-wiz-hint">If your files is running into validation errors, try entering your data into our downloadable excel template</p>';
-
-    html += '<div class="upload-wiz-section">';
-    html += '<div class="upload-wiz-section-header">';
-    html += '<span class="upload-wiz-section-title">Uploaded</span>';
-    html += '<div class="upload-wiz-section-actions">';
-    html += '<a href="#" data-action="type-own">A Type in your own field</a>';
-    html += '<a href="#" data-action="add-more">+ Add files</a>';
-    html += '</div>';
-    html += '</div>';
-
-    if (uploadedFiles.length === 0) {
-      html +=
-        '<div class="upload-wiz-dropzone" data-action="dropzone">' +
-          '<div class="upload-wiz-dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>' +
-          '<div class="upload-wiz-dropzone-text">Drop your Activity files here, or <a data-action="browse">browse</a></div>' +
-          '<div class="upload-wiz-dropzone-meta">Supports: pdf, xls, json, xml, csv<br>Max file size 100MB</div>' +
-        '</div>';
+    if (showManualEntry) {
+      html += buildManualEntryForm();
     } else {
-      html += buildFileListHTML(uploadedFiles, 'uploaded');
-    }
-    html += '</div>';
+      html += '<p class="upload-wiz-desc">Add your activity files here by uploading a spreadsheet/CSV, importing it from another project, or typing in your own field. If you\'re not familiar with what this document looks like, we wrote <a href="#">a guide for you here</a>.</p>';
+      html += '<p class="upload-wiz-hint">If your files is running into validation errors, try entering your data into our downloadable excel template</p>';
 
-    html += '<div class="upload-wiz-section">';
-    html += '<div class="upload-wiz-section-header">';
-    html += '<span class="upload-wiz-section-title">From other projects</span>';
-    html += '<div class="upload-wiz-section-actions">';
-    html += '<a href="#" class="upload-wiz-import-toggle" data-action="import-toggle">Import data from other projects <i class="fa-solid fa-chevron-down"></i></a>';
-    html += '</div>';
-    html += '</div>';
-    html += buildFileListHTML(importedFiles, 'imported');
-    html += '</div>';
+      html += '<div class="upload-wiz-section">';
+      html += '<div class="upload-wiz-section-header">';
+      html += '<span class="upload-wiz-section-title">Uploaded</span>';
+      html += '<div class="upload-wiz-section-actions">';
+      html += '<a href="#" data-action="type-own"><i class="fa-solid fa-pen-to-square"></i> Type in your own field</a>';
+      html += '<a href="#" data-action="add-more">+ Add files</a>';
+      html += '</div>';
+      html += '</div>';
+
+      if (uploadedFiles.length === 0) {
+        html +=
+          '<div class="upload-wiz-dropzone" data-action="dropzone">' +
+            '<div class="upload-wiz-dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>' +
+            '<div class="upload-wiz-dropzone-text">Drop your Activity files here, or <a data-action="browse">browse</a></div>' +
+            '<div class="upload-wiz-dropzone-meta">Supports: pdf, xls, json, xml, csv<br>Max file size 100MB</div>' +
+          '</div>';
+      } else {
+        html += buildFileListHTML(uploadedFiles, 'uploaded');
+      }
+      html += '</div>';
+
+      html += '<div class="upload-wiz-section">';
+      html += '<div class="upload-wiz-section-header">';
+      html += '<span class="upload-wiz-section-title">From other projects</span>';
+      html += '<div class="upload-wiz-section-actions">';
+      html += '<a href="#" class="upload-wiz-import-toggle" data-action="import-toggle">Import data from other projects <i class="fa-solid fa-chevron-down"></i></a>';
+      html += '</div>';
+      html += '</div>';
+      html += buildFileListHTML(importedFiles, 'imported');
+      html += '</div>';
+    }
 
     bodyEl.innerHTML = html;
+    updateFooterMode();
     bindStep0Events();
   }
 
   function bindStep0Events() {
+    if (showManualEntry) {
+      bodyEl.querySelectorAll('.uw-s0-input-track').forEach(function (el) {
+        el.addEventListener('input', syncFormFooter);
+        el.addEventListener('change', syncFormFooter);
+      });
+
+      var clearBtn = overlay.querySelector('.uw-s0-clear-btn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          clearForm();
+        });
+      }
+
+      var doneBtn = overlay.querySelector('.uw-s0-done-btn');
+      if (doneBtn) {
+        doneBtn.addEventListener('click', function () {
+          stepDirection = 'back';
+          showManualEntry = false;
+          render();
+        });
+      }
+      return;
+    }
+
     var dropzone = bodyEl.querySelector('[data-action="dropzone"]');
     if (dropzone) {
       dropzone.addEventListener('click', addSampleFiles);
@@ -614,6 +771,15 @@
         e.preventDefault();
         e.stopPropagation();
         addSampleFiles();
+      });
+    });
+
+    bodyEl.querySelectorAll('[data-action="type-own"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        stepDirection = 'forward';
+        showManualEntry = true;
+        render();
       });
     });
 
@@ -1123,10 +1289,12 @@
   function render() {
     updateStepTabs();
     updateFooter();
+    updateFooterMode();
     updateModalWidth();
+    var anim = stepDirection === 'back' ? 'uw-slide-right' : 'uw-slide-left';
     bodyEl.style.animation = 'none';
     void bodyEl.offsetWidth;
-    bodyEl.style.animation = '';
+    bodyEl.style.animation = anim + ' 220ms ease-in-out';
     if (currentStep === 0) renderStep0();
     else if (currentStep === 1) renderStep1();
     else renderStep2();

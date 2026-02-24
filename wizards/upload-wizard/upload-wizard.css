@@ -80,66 +80,10 @@
   color: #1d201f;
 }
 
-/* Stepper */
+/* Stepper — uses shared wizard-stepper classes from wizard-base.css */
 .upload-wiz-steps {
-  display: flex;
-  gap: 4px;
   padding: 16px 24px 0 24px;
   flex-shrink: 0;
-}
-
-.upload-wiz-stepper-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
-  cursor: pointer;
-}
-
-.upload-wiz-stepper-label {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #676f73;
-  line-height: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.upload-wiz-stepper--active .upload-wiz-stepper-label {
-  color: #1d201f;
-}
-
-.upload-wiz-stepper--complete .upload-wiz-stepper-label {
-  color: #008029;
-}
-
-.upload-wiz-stepper-check {
-  font-size: 12px;
-  color: #008029;
-}
-
-.upload-wiz-stepper-bar {
-  height: 4px;
-  border-radius: 16px;
-  background: #d5dde0;
-  overflow: hidden;
-}
-
-.upload-wiz-stepper-bar-fill {
-  height: 100%;
-  border-radius: 16px;
-}
-
-.upload-wiz-stepper--active .upload-wiz-stepper-bar-fill {
-  width: 100%;
-  background: #008029;
-}
-
-.upload-wiz-stepper--complete .upload-wiz-stepper-bar-fill {
-  width: 100%;
-  background: #003310;
 }
 
 /* Body */
@@ -151,7 +95,6 @@
   flex-direction: column;
   gap: 20px;
   min-height: 0;
-  animation: uw-fade-in 160ms ease-in-out;
 }
 
 .upload-wiz-body--split {
@@ -399,6 +342,147 @@
 }
 
 /* ========================================
+   STEP 0 — Manual entry form
+   ======================================== */
+
+/* Hide normal footer when form is active */
+.upload-wiz-footer--hidden {
+  display: none !important;
+}
+
+/* Form-mode footer */
+.uw-s0-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 14px 24px;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.uw-s0-clear-btn {
+  position: absolute;
+  left: 24px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #0075a3;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.uw-s0-clear-btn:hover {
+  text-decoration: underline;
+}
+
+.uw-s0-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.uw-s0-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.uw-s0-req {
+  color: #cc1300;
+  font-weight: 700;
+}
+
+.uw-s0-info {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: 2px;
+}
+
+.uw-s0-input,
+.uw-s0-select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d5dde0;
+  border-radius: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  background: #fff;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.uw-s0-input:focus,
+.uw-s0-select:focus {
+  border-color: #008029;
+}
+
+.uw-s0-input::placeholder {
+  color: #94a3b8;
+}
+
+.uw-s0-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%231d201f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.uw-s0-date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.uw-s0-date {
+  flex: 1;
+  min-width: 0;
+}
+
+.uw-s0-date-to {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  flex-shrink: 0;
+}
+
+.uw-s0-value-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.uw-s0-value-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.uw-s0-value-row {
+  display: flex;
+  gap: 8px;
+}
+
+.uw-s0-value-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.uw-s0-value-unit {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+/* ========================================
    STEP 2 — Columns cleanup
    ======================================== */
 
@@ -500,6 +584,16 @@
 @keyframes uw-fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+@keyframes uw-slide-left {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes uw-slide-right {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* Disclaimer text above dropdown */

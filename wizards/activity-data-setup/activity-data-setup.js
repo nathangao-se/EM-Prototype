@@ -54,7 +54,8 @@
       } else if (option === 'api') {
         // TODO: import via API flow
       } else if (option === 'campaign') {
-        // TODO: data request campaign flow
+        closeModal();
+        if (typeof window.openCampaignWizard === 'function') window.openCampaignWizard();
       }
     });
   });

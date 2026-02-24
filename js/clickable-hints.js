@@ -24,6 +24,7 @@
     '[data-action="open-columns-modal"]',
     '[data-action="open-normalize"]',
     '.activity-data-setup-card[data-option="upload"]',
+    '.activity-data-setup-card[data-option="campaign"]',
     '.cm-var-group',
     '.cm-add-variation'
   ];
