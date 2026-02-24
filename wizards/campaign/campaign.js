@@ -18,7 +18,6 @@
   // STATE
   // ===========================================
   var currentStep = 0;
-  var requestVia = 'entity'; // 'entity' | 'email' | 'both'
   var templatesChecked = false;
   var selectedActivityIdx = 0;
   var entitySelections = {};
@@ -90,7 +89,6 @@
 
   function openWizard() {
     currentStep = 0;
-    requestVia = 'entity';
     templatesChecked = false;
     selectedActivityIdx = 0;
     entitySelections = {};
@@ -240,35 +238,16 @@
 
     var stepperHTML = buildStepper(1);
 
-    var segmentedHTML =
-      '<div class="dcc-segment-row">' +
-        '<span class="dcc-segment-label">Request via</span>' +
-        '<div class="dcc-segmented">' +
-          '<button class="dcc-seg-btn' + (requestVia === 'entity' ? ' dcc-seg-btn--active' : '') + '" data-seg="entity">Entity only</button>' +
-          '<button class="dcc-seg-btn' + (requestVia === 'email' ? ' dcc-seg-btn--active' : '') + '" data-seg="email">Email only</button>' +
-          '<button class="dcc-seg-btn' + (requestVia === 'both' ? ' dcc-seg-btn--active' : '') + '" data-seg="both">Both</button>' +
-        '</div>' +
+    var headerHTML =
+      '<div class="inv-tree-header">' +
+        '<span class="inv-tree-header-entity">Entities</span>' +
+        '<span class="inv-tree-header-act">Activities</span>' +
+        '<span class="inv-tree-header-rec">Records</span>' +
       '</div>';
+    var treeHTML = '<div class="inv-tree-wrap" style="max-height:300px">' + buildEntityTree(ENTITY_TREE, 0) + '</div>';
+    var contentHTML = headerHTML + treeHTML + buildCollaboratorSection();
 
-    var contentHTML = '';
-
-    if (requestVia === 'entity' || requestVia === 'both') {
-      // Entity tree selector — reuse inv- tree classes
-      var headerHTML =
-        '<div class="inv-tree-header">' +
-          '<span class="inv-tree-header-entity">Entities</span>' +
-          '<span class="inv-tree-header-act">Activities</span>' +
-          '<span class="inv-tree-header-rec">Records</span>' +
-        '</div>';
-      var treeHTML = '<div class="inv-tree-wrap" style="max-height:300px">' + buildEntityTree(ENTITY_TREE, 0) + '</div>';
-      contentHTML += headerHTML + treeHTML;
-    }
-
-    if (requestVia === 'email' || requestVia === 'both') {
-      contentHTML += buildCollaboratorSection();
-    }
-
-    body.innerHTML = stepperHTML + segmentedHTML + contentHTML;
+    body.innerHTML = stepperHTML + contentHTML;
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
@@ -278,7 +257,6 @@
       '<button class="wizard-btn-green" id="dcc-next">Next: add emissions files</button>';
 
     bindFooterNav(0, 2);
-    bindSegmented();
     bindTreeInteractions();
   }
 
@@ -293,15 +271,6 @@
       '<input type="text" class="inv-form-input" placeholder="">' +
       '<div class="wizard-collab-tags">' + tagsHTML + '</div>' +
     '</div>';
-  }
-
-  function bindSegmented() {
-    body.querySelectorAll('.dcc-seg-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        requestVia = this.dataset.seg;
-        render();
-      });
-    });
   }
 
   // ===========================================
@@ -389,7 +358,7 @@
           '<span class="inv-review-label">Campaign name</span><span class="inv-review-value">' + esc(formData.name || '(not set)') + '</span>' +
           '<span class="inv-review-label">Start date</span><span class="inv-review-value">' + esc(formData.startDate || '(not set)') + '</span>' +
           '<span class="inv-review-label">End date</span><span class="inv-review-value">' + esc(formData.endDate || '(not set)') + '</span>' +
-          '<span class="inv-review-label">Request via</span><span class="inv-review-value" style="text-transform:capitalize">' + esc(requestVia) + '</span>' +
+          '<span class="inv-review-label">Request via</span><span class="inv-review-value">Entity &amp; Email</span>' +
         '</div>' +
       '</div>';
 
@@ -408,7 +377,7 @@
         '<div class="inv-review-title">Targets</div>' +
         '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73">' +
           entCount + ' entities selected' +
-          (collaborators.length > 0 && (requestVia === 'email' || requestVia === 'both')
+          (collaborators.length > 0
             ? ' &middot; ' + collaborators.length + ' collaborators'
             : '') +
         '</div>' +

@@ -102,46 +102,6 @@
   padding: 0 4px;
 }
 
-/* ---------- Segmented control ---------- */
-.dcc-segment-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 0;
-}
-.dcc-segment-label {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1d201f;
-  white-space: nowrap;
-}
-.dcc-segmented {
-  display: flex;
-  border: 1px solid #d5dde0;
-  border-radius: 6px;
-  overflow: hidden;
-}
-.dcc-seg-btn {
-  background: #ffffff;
-  border: none;
-  padding: 6px 16px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #676f73;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  border-right: 1px solid #d5dde0;
-}
-.dcc-seg-btn:last-child {
-  border-right: none;
-}
-.dcc-seg-btn--active {
-  background: #008029;
-  color: #ffffff;
-}
-
 /* ---------- Split view (Step 2) ---------- */
 .dcc-split-view {
   display: flex;
