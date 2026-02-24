@@ -9,6 +9,7 @@
   var modal = overlay.querySelector('.normalize-modal');
   var closeBtn = overlay.querySelector('.normalize-close-btn');
   var cardsRow = overlay.querySelector('.normalize-cards-row');
+  var catCol = overlay.querySelector('.normalize-categories');
   var leftCol = overlay.querySelector('.normalize-left');
   var rightCol = overlay.querySelector('.normalize-right');
 
@@ -19,25 +20,39 @@
     return d.innerHTML;
   }
 
-  // Top summary cards (Figma: All source data, 90-100% match, Capital goods, Mobile combustion, …)
-  var SUMMARY_CARDS = [
-    { title: 'All source data', meta: '49 unmapped activities' },
-    { title: '90-100% match', meta: '39 unmapped activities' },
-    { title: 'Capital goods', meta: '12 unmapped activities' },
-    { title: 'Mobile combustion', meta: '8 unmapped activities' }
+  // Category cards — act as parent selectors for the activity list
+  var CATEGORIES = [
+    { id: 'all',          title: 'All source data',     meta: '230 unmapped activities' },
+    { id: 'high-match',   title: '90-100% match',       meta: '39 unmapped activities' },
+    { id: 'capital',      title: 'Capital goods',        meta: '6 unmapped activities' },
+    { id: 'mobile',       title: 'Mobile combustion',    meta: '3 unmapped activities' },
+    { id: 'refrigerants', title: 'Refrigerants',         meta: '2 unmapped activities' },
+    { id: 'others',       title: 'Others',               meta: '120 unmapped activities' }
   ];
+  var activeCategory = 'all';
+  var autoMap = false;
 
-  // Unnormalized activities list (left column) — mutable state: selected, done
+  // Unnormalized activities list — mutable state: selected, done
   var ACTIVITIES_INITIAL = [
-    { name: 'Office supplies', meta: '3,420 records across 28 entities', selected: true, done: false },
-    { name: 'Diesel gas', meta: '156 instances', selected: false, done: false },
-    { name: 'Employee commutes', meta: '892 records', selected: false, done: false },
-    { name: 'Electricity', meta: '2,301 records', selected: false, done: false },
-    { name: 'Asphalt: Other - Energy recovery', meta: '14 instances', selected: false, done: false },
-    { name: 'Cryogenic Natural Gas', meta: '3 instances', selected: false, done: false },
-    { name: 'Biomass: Agricultural Residues', meta: '7 instances', selected: false, done: false }
+    { name: 'Office supplies', meta: '3,420 records across 28 entities', selected: false, done: false, category: 'capital', matchPct: 100 },
+    { name: 'Diesel gas', meta: '156 instances', selected: false, done: false, category: 'mobile', matchPct: 96 },
+    { name: 'Employee commutes', meta: '892 records', selected: false, done: false, category: 'mobile', matchPct: 98 },
+    { name: 'Electricity', meta: '2,301 records', selected: false, done: false, category: 'capital', matchPct: 100 },
+    { name: 'Asphalt: Other - Energy recovery', meta: '14 instances', selected: false, done: false, category: 'capital', matchPct: 95 },
+    { name: 'Cryogenic Natural Gas', meta: '3 instances', selected: false, done: false, category: 'refrigerants', matchPct: 98 },
+    { name: 'Biomass: Agricultural Residues', meta: '7 instances', selected: false, done: false, category: 'others', matchPct: 92 },
+    { name: 'Geothermal Energy', meta: '12 instances', selected: false, done: false, category: 'others', matchPct: 88 },
+    { name: 'Hydrogen Fuel Cells', meta: '5 instances', selected: false, done: false, category: 'others', matchPct: 82 }
   ];
   var activitiesList = [];
+
+  function getFilteredActivities() {
+    if (activeCategory === 'all') return activitiesList;
+    if (activeCategory === 'high-match') {
+      return activitiesList.filter(function (a) { return a.matchPct >= 90; });
+    }
+    return activitiesList.filter(function (a) { return a.category === activeCategory; });
+  }
 
   // Activity data match panels (right column) for selected item
   // Different recommendations per activity
@@ -76,13 +91,25 @@
       { score: 92, label: 'Biomass_agricultural (Best match)', isBest: true },
       { score: 85, label: 'Organic_waste' },
       { score: 78, label: 'Renewable_energy' }
+    ],
+    'Geothermal Energy': [
+      { score: 88, label: 'Energy_geothermal (Best match)', isBest: true },
+      { score: 76, label: 'Renewable_heat' },
+      { score: 68, label: 'District_heating' }
+    ],
+    'Hydrogen Fuel Cells': [
+      { score: 82, label: 'Fuel_hydrogen (Best match)', isBest: true },
+      { score: 74, label: 'Alternative_fuel' },
+      { score: 65, label: 'Clean_energy' }
     ]
   };
 
   function openModal() {
     console.log('[NM] openModal called');
+    activeCategory = 'all';
+    autoMap = false;
     activitiesList = ACTIVITIES_INITIAL.map(function (a) {
-      return { name: a.name, meta: a.meta, selected: a.selected, done: a.done };
+      return { name: a.name, meta: a.meta, selected: false, done: false, category: a.category, matchPct: a.matchPct };
     });
     render();
     overlay.classList.add('normalize-overlay--open');
@@ -145,32 +172,92 @@
     return nextIdx >= 0 ? activitiesList[nextIdx] : null;
   }
 
+  function renderCategories() {
+    var html = '';
+    CATEGORIES.forEach(function (c) {
+      var cls = 'normalize-category-card' + (c.id === activeCategory ? ' normalize-category-card--active' : '');
+      html += '<button class="' + cls + '" data-category="' + c.id + '">';
+      html += '<span class="normalize-category-title">' + esc(c.title) + '</span>';
+      html += '<span class="normalize-category-meta">' + esc(c.meta) + '</span>';
+      html += '</button>';
+    });
+    catCol.innerHTML = html;
+    catCol.querySelectorAll('[data-category]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activeCategory = btn.getAttribute('data-category');
+        activitiesList.forEach(function (a) { a.selected = false; });
+        renderCategories();
+        renderLeftList();
+        renderRightPanels();
+      });
+    });
+  }
+
+  function getCategoryTitle() {
+    for (var i = 0; i < CATEGORIES.length; i++) {
+      if (CATEGORIES[i].id === activeCategory) return CATEGORIES[i].title;
+    }
+    return 'All source data';
+  }
+
   function renderLeftList() {
-    var listHtml =
-      '<div class="normalize-list-header">' +
-        '<span class="normalize-list-title">Unnormalized activities:</span>' +
-        '<span class="normalize-list-meta">' + activitiesList.length + ' instances</span>' +
-      '</div>' +
-      '<div class="normalize-list">';
-    activitiesList.forEach(function (item) {
+    var filtered = getFilteredActivities();
+
+    // Header with category title + auto-map toggle
+    var html =
+      '<div class="normalize-left-header">' +
+        '<span class="normalize-left-heading">' + esc(getCategoryTitle()) + ':</span>' +
+        '<label class="normalize-automap-toggle">' +
+          '<span class="normalize-automap-label">Auto-map</span>' +
+          '<input type="checkbox" class="normalize-automap-input" ' + (autoMap ? 'checked' : '') + '>' +
+          '<span class="normalize-automap-track"><span class="normalize-automap-thumb"></span></span>' +
+        '</label>' +
+      '</div>';
+
+    // Auto-map banner
+    if (autoMap) {
+      html +=
+        '<div class="normalize-automap-banner">' +
+          '<i class="fa-light fa-circle-info normalize-automap-banner-icon"></i>' +
+          '<span>All unnormalized activities in this category will be normalized with the top match when you exit this window</span>' +
+        '</div>';
+    }
+
+    // Activity list
+    html += '<div class="normalize-list">';
+    filtered.forEach(function (item) {
       if (item.done) {
-        listHtml +=
+        html +=
           '<div class="normalize-list-item normalize-list-item--done" data-name="' + esc(item.name) + '">' +
             '<div class="normalize-list-item-name">' + esc(item.name) + ' <i class="fa-solid fa-check normalize-done-icon"></i></div>' +
             '<div class="normalize-list-item-meta">' + esc(item.meta) + '</div>' +
           '</div>';
       } else {
         var cls = 'normalize-list-item' + (item.selected ? ' normalize-list-item--selected' : '');
-        listHtml +=
+        html +=
           '<div class="' + cls + '" data-name="' + esc(item.name) + '" data-action="select-activity">' +
             '<div class="normalize-list-item-name">' + esc(item.name) + '</div>' +
             '<div class="normalize-list-item-meta">' + esc(item.meta) + '</div>' +
           '</div>';
       }
     });
-    listHtml += '</div>';
-    leftCol.innerHTML = listHtml;
+    html += '</div>';
+    leftCol.innerHTML = html;
+    leftCol.classList.toggle('normalize-left--automap', autoMap);
     bindLeftListEvents();
+
+    // Auto-map toggle event
+    var toggleInput = leftCol.querySelector('.normalize-automap-input');
+    if (toggleInput) {
+      toggleInput.addEventListener('change', function () {
+        autoMap = toggleInput.checked;
+        if (autoMap) {
+          activitiesList.forEach(function (a) { a.selected = false; });
+        }
+        renderLeftList();
+        renderRightPanels();
+      });
+    }
   }
 
   function bindLeftListEvents() {
@@ -200,9 +287,22 @@
 
   function renderRightPanels() {
     var selected = getSelectedActivity();
-    console.log('[NM] renderRightPanels called, selected activity:', selected ? selected.name : 'NONE');
+
+    // Auto-map ON: right panel is empty
+    if (autoMap) {
+      rightCol.innerHTML = '<div class="normalize-right-empty"></div>';
+      rightCol.classList.add('normalize-right--disabled');
+      return;
+    }
+    rightCol.classList.remove('normalize-right--disabled');
+
+    // No selection: progressive disclosure prompt
     if (!selected) {
-      rightCol.innerHTML = '<div class="normalize-panels-title">Select an activity to view recommendations</div>';
+      rightCol.innerHTML =
+        '<div class="normalize-right-prompt">' +
+          '<i class="fa-solid fa-arrow-left"></i>' +
+          '<span>Select an activity to view best matches</span>' +
+        '</div>';
       return;
     }
 
@@ -248,17 +348,9 @@
   }
 
   function render() {
-    // Top cards row (goals-card style)
-    var cardsHtml = '';
-    SUMMARY_CARDS.forEach(function (c) {
-      cardsHtml +=
-        '<div class="kpi-card normalize-card goals-card">' +
-          '<div class="goals-card-heading"><span class="goals-card-label">' + esc(c.title) + '</span></div>' +
-          '<p class="goals-subtitle">' + esc(c.meta) + '</p>' +
-        '</div>';
-    });
-    cardsRow.innerHTML = cardsHtml;
-
+    cardsRow.innerHTML = '';
+    cardsRow.style.display = 'none';
+    renderCategories();
     renderLeftList();
     renderRightPanels();
   }

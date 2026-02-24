@@ -24,10 +24,10 @@
   'use strict';
 
   // --- Timing ---------------------------------------------------------------
-  var ITEM_STAGGER   = 22;
-  var ITEM_DURATION  = 160;
-  var BG_DURATION    = 220;   // section backgrounds: slightly slower (RULE 2)
-  var BETWEEN_STAGES = 40;
+  var ITEM_STAGGER   = 13;
+  var ITEM_DURATION  = 96;
+  var BG_DURATION    = 132;   // section backgrounds: slightly slower (RULE 2)
+  var BETWEEN_STAGES = 24;
 
   var headerMain = document.querySelector('.header-main');
   var headerUser = document.querySelector('.header-user');

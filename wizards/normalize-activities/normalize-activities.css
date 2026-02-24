@@ -24,7 +24,7 @@
 
 .normalize-modal {
   width: 95vw;
-  max-width: 1200px;
+  max-width: 1400px;
   max-height: 85vh;
   background: #ffffff;
   border-radius: 16px;
@@ -126,11 +126,187 @@
 }
 
 .normalize-left {
-  width: 320px;
+  width: 400px;
   flex-shrink: 0;
+  flex-grow: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Left column header (category title + auto-map toggle) */
+.normalize-left-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.normalize-left-heading {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+/* Auto-map toggle switch */
+.normalize-automap-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.normalize-automap-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #41494d;
+}
+
+.normalize-automap-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.normalize-automap-track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: #cbd3d6;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.normalize-automap-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.normalize-automap-input:checked + .normalize-automap-track {
+  background: #008029;
+}
+
+.normalize-automap-input:checked + .normalize-automap-track .normalize-automap-thumb {
+  transform: translateX(16px);
+}
+
+/* Auto-map info banner */
+.normalize-automap-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #b8e0c8;
+  border-radius: 10px;
+  background: #edf7f0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #1d201f;
+  line-height: 1.45;
+}
+
+.normalize-automap-banner-icon {
+  font-size: 18px;
+  color: #008029;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Dim the activity list when auto-map is active */
+.normalize-left--automap .normalize-list {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Right panel: disabled state (auto-map ON) */
+.normalize-right--disabled {
+  background: #f5f8fa;
+  border-radius: 12px;
+}
+
+.normalize-right-empty {
+  flex: 1;
+}
+
+/* Right panel: prompt (no activity selected) */
+.normalize-right-prompt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #a0a8ab;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.normalize-right-prompt i {
+  font-size: 24px;
+}
+
+/* Category column (own scrollable list to the left of activities) */
+.normalize-categories {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  background: #fafbfc;
+  padding: 12px;
+}
+
+.normalize-category-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Nunito Sans', sans-serif;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.normalize-category-card:hover {
+  background: #f0f4f8;
+}
+
+.normalize-category-card--active {
+  background: #e8f4ec;
+  border-color: #008029;
+}
+
+.normalize-category-card--active:hover {
+  background: #ddf0e3;
+}
+
+.normalize-category-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.normalize-category-meta {
+  font-size: 11px;
+  color: #676f73;
 }
 
 .normalize-list-header {

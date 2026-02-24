@@ -4,7 +4,7 @@
 
 /* ---- Item fade (z-axis only — pure opacity, no lateral shift) ---- */
 .pt-item {
-  transition: opacity 160ms ease-in-out var(--pt-delay, 0ms);
+  transition: opacity 96ms ease-in-out var(--pt-delay, 0ms);
 }
 .pt-item--out {
   opacity: 0 !important;
@@ -16,8 +16,8 @@
 
 /* ---- Section background fade (slightly slower, bg + border only) ---- */
 .pt-bg-item {
-  transition: background-color 220ms ease-in-out var(--pt-delay, 0ms),
-              border-color 220ms ease-in-out var(--pt-delay, 0ms);
+  transition: background-color 132ms ease-in-out var(--pt-delay, 0ms),
+              border-color 132ms ease-in-out var(--pt-delay, 0ms);
 }
 .pt-bg-item--out {
   background-color: transparent !important;
@@ -33,8 +33,8 @@
    .viz-tag base transform is translate(-50%,-100%); we must preserve it
    and append the vertical offset so the pin doesn't jump sideways. */
 .viz-pin-item {
-  transition: opacity 160ms ease-in-out var(--pt-delay, 0ms),
-              transform 160ms ease-in-out var(--pt-delay, 0ms);
+  transition: opacity 96ms ease-in-out var(--pt-delay, 0ms),
+              transform 96ms ease-in-out var(--pt-delay, 0ms);
   transform: translate(-50%, -100%) translateY(0);
 }
 /* OUT: fly up and fade away */
@@ -60,7 +60,7 @@
 }
 
 .pt-dim-overlay--animate {
-  animation: pt-dim 250ms ease-in-out both;
+  animation: pt-dim 150ms ease-in-out both;
 }
 
 @keyframes pt-dim {

@@ -12,9 +12,9 @@
   const container = document.getElementById('visualization-container');
 
   // --- Transition timing (mirrors page-transition.js) ---
-  var VIZ_STAGGER  = 22;
-  var VIZ_DURATION = 160;
-  var VIZ_BETWEEN  = 40;
+  var VIZ_STAGGER  = 13;
+  var VIZ_DURATION = 96;
+  var VIZ_BETWEEN  = 24;
 
   var vizTransitioning = false;
 

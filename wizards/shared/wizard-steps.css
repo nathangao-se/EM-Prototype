@@ -1,0 +1,64 @@
+/* ========================================
+   SHARED WIZARD STEP STYLES
+   ======================================== */
+
+/* Add activity row hover */
+.ws-assign-row {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s ease;
+}
+
+.ws-assign-row--add:hover {
+  background: #eef8f0;
+}
+
+.ws-assign-row--remove:hover {
+  background: #fef2f2;
+}
+
+/* "+" circle button */
+.ws-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #d5dde0;
+  background: #ffffff;
+  cursor: pointer;
+  color: #008029;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.ws-add-btn:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+/* "x" remove button */
+.ws-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #676f73;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: color 0.12s, background 0.12s;
+}
+
+.ws-remove-btn:hover {
+  color: #991b1b;
+  background: #fef2f2;
+}

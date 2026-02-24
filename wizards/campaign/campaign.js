@@ -4,6 +4,8 @@
 
 (function () {
 
+  var WS = window.WizardSteps;
+
   // ===========================================
   // DOM
   // ===========================================
@@ -19,23 +21,26 @@
   // ===========================================
   var currentStep = 0;
   var templatesChecked = false;
-  var selectedActivityIdx = 0;
-  var entitySelections = {};
-  var entityExpanded = {};
   var formData = {
     name: '',
     startDate: '',
     endDate: '',
     prompt: 'Exact semantic and scope match: \'Fuel cell - Natural Gas\' is a direct fuel-cell'
   };
-  var collaborators = ['E. Honnig', 'J. Lee'];
 
-  var STEP_WIDTHS = [680, 680, 1000, 680];
+  var activitySelections = {};
+  var entitySelections = {};
+  var entityExpanded = {};
+  var assignEntityChecked = {};
+  var entityActivities = {};
+
+  var STEP_WIDTHS = [680, 1000, 1000, 1200, 680];
 
   var STEPS = [
     { label: 'Basic info', key: 'basic' },
-    { label: 'Campaign targets', key: 'targets' },
-    { label: 'Activities selection', key: 'activities' },
+    { label: 'Add entities', key: 'entities' },
+    { label: 'Add activities', key: 'activities' },
+    { label: 'Combine', key: 'assign' },
     { label: 'Finalize', key: 'finalize' }
   ];
 
@@ -49,14 +54,30 @@
     { name: 'Template Europe', categories: 4 }
   ];
 
-  var CAMPAIGN_ACTIVITIES = [
-    { id: 'elec',  name: 'Electricity',  color: '#008029', totalEntities: 312, selectedEntities: 312 },
-    { id: 'gas',   name: 'Natural Gas',  color: '#008029', totalEntities: 203, selectedEntities: 83 },
-    { id: 'water', name: 'Water',        color: '#0075a3', totalEntities: 382, selectedEntities: 245 },
-    { id: 'fleet', name: 'Fleet Fuel',   color: '#008029', totalEntities: 259, selectedEntities: 156 }
+  var ACTIVITIES = [
+    { id: 'sc',  name: 'Stationary combustion',           scope: 1, entities: 1223, records: 847,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'mc',  name: 'Mobile combustion',                scope: 1, entities: 1223, records: 847,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'fe',  name: 'Fugitive emissions',               scope: 1, entities: 987,  records: 634,  calc: 'GHG Protocol v3.1',  status: 'need' },
+    { id: 'pe2', name: 'Process emissions',                 scope: 1, entities: 412,  records: 283,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'pe',  name: 'Purchased electricity',             scope: 2, entities: 1223, records: 847,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'sh',  name: 'Purchased steam & heat',            scope: 2, entities: 890,  records: 612,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'pc',  name: 'Purchased cooling',                 scope: 2, entities: 345,  records: 198,  calc: 'GHG Protocol v3.1',  status: 'need' },
+    { id: 'pgs', name: 'Purchased goods & services',        scope: 3, entities: 1102, records: 4210, calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'cg',  name: 'Capital goods',                     scope: 3, entities: 578,  records: 1340, calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'fera',name: 'Fuel & energy related activities',  scope: 3, entities: 1041, records: 892,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'ut',  name: 'Upstream transportation',           scope: 3, entities: 764,  records: 2105, calc: 'RA+ Standard v2.1',  status: 'need' },
+    { id: 'wg',  name: 'Waste generated in operations',     scope: 3, entities: 923,  records: 1570, calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'bt',  name: 'Business travel',                   scope: 3, entities: 645,  records: 423,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'ec',  name: 'Employee commuting',                scope: 3, entities: 645,  records: 389,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'dt',  name: 'Downstream transportation',         scope: 3, entities: 510,  records: 1780, calc: 'GHG Protocol v3.1',  status: 'need' },
+    { id: 'usp', name: 'Use of sold products',              scope: 3, entities: 298,  records: 940,  calc: 'GHG Protocol v3.1',  status: 'need' },
+    { id: 'eol', name: 'End-of-life treatment',             scope: 3, entities: 298,  records: 467,  calc: 'GHG Protocol v3.1',  status: 'ready' },
+    { id: 'fr',  name: 'Franchises',                        scope: 3, entities: 134,  records: 312,  calc: 'RA+ Standard v2.1',  status: 'ready' },
+    { id: 'inv', name: 'Investments',                       scope: 3, entities: 89,   records: 156,  calc: 'RA+ Standard v2.1',  status: 'need' }
   ];
 
-  // Reuse the same entity tree as inventory wizard
+  ACTIVITIES.forEach(function (a) { activitySelections[a.id] = true; });
+
   var ENTITY_TREE = [
     {
       id: 'dcc-americas', name: 'Americas', total: 534, activities: 40, records: 8420,
@@ -84,15 +105,37 @@
   entityExpanded['dcc-offices'] = true;
 
   // ===========================================
+  // SHARED CONTEXT — passed to WizardSteps
+  // ===========================================
+
+  function ctx() {
+    return {
+      prefix: 'dcc',
+      body: body,
+      entityTree: ENTITY_TREE,
+      activities: ACTIVITIES,
+      entitySelections: entitySelections,
+      entityExpanded: entityExpanded,
+      activitySelections: activitySelections,
+      assignEntityChecked: assignEntityChecked,
+      entityActivities: entityActivities
+    };
+  }
+
+  // ===========================================
   // OPEN / CLOSE
   // ===========================================
 
   function openWizard() {
     currentStep = 0;
     templatesChecked = false;
-    selectedActivityIdx = 0;
     entitySelections = {};
-    collaborators = ['E. Honnig', 'J. Lee'];
+    entityExpanded = {};
+    entityExpanded['dcc-americas'] = true;
+    entityExpanded['dcc-offices'] = true;
+    ACTIVITIES.forEach(function (a) { activitySelections[a.id] = true; });
+    assignEntityChecked = {};
+    entityActivities = {};
     render();
     overlay.classList.add('wizard-overlay--open');
     document.body.style.overflow = 'hidden';
@@ -118,13 +161,18 @@
   // RENDER DISPATCHER
   // ===========================================
 
+  var STEP_HEIGHTS = ['auto', 800, 800, 800, 'auto'];
+
   function render() {
     wizardEl.style.width = (STEP_WIDTHS[currentStep] || 680) + 'px';
+    var h = STEP_HEIGHTS[currentStep] || 800;
+    wizardEl.style.height = (h === 'auto') ? 'auto' : h + 'px';
     switch (currentStep) {
       case 0: renderBasicInfo(); break;
-      case 1: renderCampaignTargets(); break;
-      case 2: renderActivitiesSelection(); break;
-      case 3: renderFinalize(); break;
+      case 1: renderAddEntities(); break;
+      case 2: renderSelectActivities(); break;
+      case 3: WS.initAssignStep(ctx()); renderAssignActivities(); break;
+      case 4: renderFinalize(); break;
     }
   }
 
@@ -140,7 +188,7 @@
       else if (i === activeIndex) cls += ' wizard-stepper-item--active';
 
       html += '<div class="' + cls + '">';
-      html += '<div class="wizard-stepper-label">' + (i + 1) + '. ' + esc(STEPS[i].label);
+      html += '<div class="wizard-stepper-label">' + (i + 1) + '. ' + WS.esc(STEPS[i].label);
       if (i < activeIndex) {
         html += ' <span class="wizard-stepper-check"><i class="fa-solid fa-check"></i></span>';
       }
@@ -165,23 +213,23 @@
       '<div class="inv-form-row">' +
         '<div class="inv-form-field" style="width:100%">' +
           '<label class="inv-form-label">Campaign name</label>' +
-          '<input type="text" class="inv-form-input" id="dcc-name" value="' + esc(formData.name) + '">' +
+          '<input type="text" class="inv-form-input" id="dcc-name" value="' + WS.esc(formData.name) + '">' +
         '</div>' +
       '</div>' +
       '<div class="inv-form-row">' +
         '<div class="inv-form-field inv-form-field--flex1">' +
           '<label class="inv-form-label">Start date</label>' +
-          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + esc(formData.startDate) + '">' +
+          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + WS.esc(formData.startDate) + '">' +
         '</div>' +
         '<div class="inv-form-field inv-form-field--flex1">' +
           '<label class="inv-form-label">End date</label>' +
-          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + esc(formData.endDate) + '">' +
+          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + WS.esc(formData.endDate) + '">' +
         '</div>' +
       '</div>' +
       '<div class="inv-form-row">' +
         '<div class="inv-form-field" style="width:100%">' +
           '<label class="inv-form-label">What do the respondents need to provide here?</label>' +
-          '<textarea class="dcc-textarea">' + esc(formData.prompt) + '</textarea>' +
+          '<textarea class="dcc-textarea">' + WS.esc(formData.prompt) + '</textarea>' +
         '</div>' +
       '</div>' +
       '<label class="dcc-checkbox-row">' +
@@ -199,11 +247,10 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="dcc-back" style="visibility:hidden">Back</button>' +
-      '<button class="wizard-btn-green" id="dcc-next">Next: add emissions files</button>';
+      '<button class="wizard-btn-green" id="dcc-next">Next: Entities to include</button>';
 
     bindFooterNav(-1, 1);
 
-    // Template checkbox toggle
     var templateCb = document.getElementById('dcc-templates-check');
     if (templateCb) {
       templateCb.addEventListener('change', function () {
@@ -219,7 +266,7 @@
       html +=
         '<div class="dcc-template-item">' +
           '<input type="checkbox" class="dcc-checkbox dcc-checkbox--small">' +
-          '<span class="dcc-template-name">' + esc(t.name) + '</span>' +
+          '<span class="dcc-template-name">' + WS.esc(t.name) + '</span>' +
           '<a href="#" class="dcc-template-preview">Preview <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px"></i></a>' +
           '<span class="dcc-template-meta">' + t.categories + ' categories</span>' +
           '<button class="dcc-template-sort"><i class="fa-solid fa-arrows-up-down" style="font-size:12px;color:#676f73"></i></button>' +
@@ -230,168 +277,110 @@
   }
 
   // ===========================================
-  // STEP 1 — CAMPAIGN TARGETS
+  // STEP 1 — ADD ENTITIES (shared)
   // ===========================================
 
-  function renderCampaignTargets() {
-    titleEl.textContent = 'Data collection campaign';
+  function renderAddEntities() {
+    titleEl.textContent = 'Data collection campaign: Entities to include';
+    var c = ctx();
 
-    var stepperHTML = buildStepper(1);
-
-    var headerHTML =
-      '<div class="inv-tree-header">' +
-        '<span class="inv-tree-header-entity">Entities</span>' +
-        '<span class="inv-tree-header-act">Activities</span>' +
-        '<span class="inv-tree-header-rec">Records</span>' +
-      '</div>';
-    var treeHTML = '<div class="inv-tree-wrap" style="max-height:300px">' + buildEntityTree(ENTITY_TREE, 0) + '</div>';
-    var contentHTML = headerHTML + treeHTML + buildCollaboratorSection();
-
-    body.innerHTML = stepperHTML + contentHTML;
+    body.innerHTML = buildStepper(1) + WS.buildStatsBar(c) + WS.buildEntitiesContent(c);
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="dcc-back">Back</button>' +
-      '<button class="wizard-btn-green" id="dcc-next">Next: add emissions files</button>';
+      '<button class="wizard-btn-green" id="dcc-next">Next: Activities to include</button>';
 
     bindFooterNav(0, 2);
-    bindTreeInteractions();
-  }
-
-  function buildCollaboratorSection() {
-    var tagsHTML = '';
-    collaborators.forEach(function (c, idx) {
-      tagsHTML += '<span class="wizard-collab-tag">' + esc(c) +
-        ' <button class="wizard-collab-tag-remove" data-collab-idx="' + idx + '"><i class="fa-solid fa-xmark"></i></button></span>';
-    });
-    return '<div style="display:flex;flex-direction:column;gap:4px;margin-top:8px">' +
-      '<label class="inv-form-label">Select collaborators from your organization</label>' +
-      '<input type="text" class="inv-form-input" placeholder="">' +
-      '<div class="wizard-collab-tags">' + tagsHTML + '</div>' +
-    '</div>';
+    WS.bindEntitiesStep(c, function () { WS.refreshStatsBar(c); });
   }
 
   // ===========================================
-  // STEP 2 — ACTIVITIES SELECTION (split view)
+  // STEP 2 — SELECT ACTIVITIES (shared)
   // ===========================================
 
-  function renderActivitiesSelection() {
-    titleEl.textContent = 'Data collection campaign';
+  function renderSelectActivities() {
+    titleEl.textContent = 'Data collection campaign: Activities to include';
+    var c = ctx();
 
-    var stepperHTML = buildStepper(2);
-
-    // Left: activity list
-    var leftHTML = '<div class="dcc-activity-list">';
-    CAMPAIGN_ACTIVITIES.forEach(function (a, idx) {
-      var isActive = idx === selectedActivityIdx;
-      leftHTML +=
-        '<div class="dcc-activity-item' + (isActive ? ' dcc-activity-item--active' : '') + '" data-act-idx="' + idx + '">' +
-          '<div class="dcc-activity-item-header">' +
-            '<span class="dcc-activity-dot" style="background:' + a.color + '"></span>' +
-            '<span class="dcc-activity-item-name">' + esc(a.name) + '</span>' +
-            '<a href="#" class="dcc-customize-link">Customize <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></a>' +
-          '</div>' +
-          '<div class="dcc-activity-item-meta">' +
-            (a.selectedEntities === a.totalEntities
-              ? 'all ' + a.totalEntities + ' entities selected'
-              : a.selectedEntities + ' out of ' + a.totalEntities + ' entities selected') +
-          '</div>' +
-        '</div>';
-    });
-    leftHTML += '</div>';
-
-    // Right: entity selection for selected activity
-    var rightHTML = '<div class="dcc-detail-panel">';
-    rightHTML += '<div class="dcc-detail-header">Entity selection</div>';
-    var headerHTML =
-      '<div class="inv-tree-header" style="font-size:13px">' +
-        '<span class="inv-tree-header-entity">Entities</span>' +
-        '<span class="inv-tree-header-act">Activities</span>' +
-        '<span class="inv-tree-header-rec">Records</span>' +
-      '</div>';
-    var treeHTML = '<div class="inv-tree-wrap" style="max-height:500px;padding:8px">' + buildEntityTree(ENTITY_TREE, 0) + '</div>';
-    rightHTML += headerHTML + treeHTML + '</div>';
-
-    var splitHTML =
-      '<div class="dcc-split-view">' +
-        '<div class="dcc-split-left">' + leftHTML + '</div>' +
-        '<div class="dcc-split-divider"></div>' +
-        '<div class="dcc-split-right">' + rightHTML + '</div>' +
-      '</div>';
-
-    body.innerHTML = stepperHTML + splitHTML;
+    body.innerHTML = buildStepper(2) + WS.buildStatsBar(c) + WS.buildActivitiesContent(c);
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="dcc-back">Back</button>' +
-      '<button class="wizard-btn-green" id="dcc-next">Next: add emissions files</button>';
+      '<button class="wizard-btn-green" id="dcc-next">Next: Add activities to entities</button>';
 
     bindFooterNav(1, 3);
-    bindTreeInteractions();
-
-    // Activity item click
-    body.querySelectorAll('.dcc-activity-item').forEach(function (el) {
-      el.addEventListener('click', function () {
-        selectedActivityIdx = parseInt(this.dataset.actIdx, 10);
-        render();
-      });
-    });
+    WS.bindActivitiesStep(c, function () { WS.refreshStatsBar(c); });
   }
 
   // ===========================================
-  // STEP 3 — FINALIZE (Review)
+  // STEP 3 — ADD ACTIVITIES TO ENTITIES (shared)
+  // ===========================================
+
+  function renderAssignActivities() {
+    titleEl.textContent = 'Data collection campaign: Add activities to entities';
+    var c = ctx();
+
+    body.innerHTML = buildStepper(3) + WS.buildStatsBar(c) + WS.buildAssignContent(c);
+
+    footer.className = 'wizard-footer';
+    footer.innerHTML =
+      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<div class="wizard-footer-spacer"></div>' +
+      '<button class="wizard-btn-outline" id="dcc-back">Back</button>' +
+      '<button class="wizard-btn-green" id="dcc-next">Next: Finalize</button>';
+
+    bindFooterNav(2, 4);
+    WS.bindAssignStep(c);
+  }
+
+  // ===========================================
+  // STEP 4 — FINALIZE
   // ===========================================
 
   function renderFinalize() {
-    titleEl.textContent = 'Data collection campaign';
+    titleEl.textContent = 'Data collection campaign: Finalize';
+    var c = ctx();
 
-    var stepperHTML = buildStepper(3);
+    var stepperHTML = buildStepper(4);
+    var statsHTML = WS.buildStatsBar(c);
 
     var reviewHTML =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Campaign details</div>' +
         '<div class="inv-review-grid">' +
-          '<span class="inv-review-label">Campaign name</span><span class="inv-review-value">' + esc(formData.name || '(not set)') + '</span>' +
-          '<span class="inv-review-label">Start date</span><span class="inv-review-value">' + esc(formData.startDate || '(not set)') + '</span>' +
-          '<span class="inv-review-label">End date</span><span class="inv-review-value">' + esc(formData.endDate || '(not set)') + '</span>' +
-          '<span class="inv-review-label">Request via</span><span class="inv-review-value">Entity &amp; Email</span>' +
+          '<span class="inv-review-label">Campaign name</span><span class="inv-review-value">' + WS.esc(formData.name || '(not set)') + '</span>' +
+          '<span class="inv-review-label">Start date</span><span class="inv-review-value">' + WS.esc(formData.startDate || '(not set)') + '</span>' +
+          '<span class="inv-review-label">End date</span><span class="inv-review-value">' + WS.esc(formData.endDate || '(not set)') + '</span>' +
         '</div>' +
       '</div>';
 
-    // Selected entities count
-    var entCount = 0;
-    function walk(nodes) {
-      nodes.forEach(function (n) {
-        if (entitySelections[n.id]) entCount += (n.total > 0 ? n.total : 1);
-        if (n.children) walk(n.children);
-      });
-    }
-    walk(ENTITY_TREE);
-
+    var entCount = WS.countEntitiesSelected(c);
     reviewHTML +=
       '<div class="inv-review-section">' +
-        '<div class="inv-review-title">Targets</div>' +
+        '<div class="inv-review-title">Entities</div>' +
         '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73">' +
-          entCount + ' entities selected' +
-          (collaborators.length > 0
-            ? ' &middot; ' + collaborators.length + ' collaborators'
-            : '') +
+          WS.numberFmt(entCount) + ' entities selected' +
         '</div>' +
       '</div>';
 
-    // Activities summary
-    var actChips = '';
-    CAMPAIGN_ACTIVITIES.forEach(function (a) {
-      actChips += '<span class="inv-review-chip"><span class="dcc-activity-dot" style="background:' + a.color + ';width:8px;height:8px;display:inline-block;border-radius:50%;margin-right:6px"></span>' + esc(a.name) + ' (' + a.selectedEntities + '/' + a.totalEntities + ')</span>';
-    });
+    var chips = WS.buildActivitiesReviewChips(c);
     reviewHTML +=
       '<div class="inv-review-section">' +
-        '<div class="inv-review-title">Activities (' + CAMPAIGN_ACTIVITIES.length + ')</div>' +
-        '<div class="inv-review-list">' + actChips + '</div>' +
+        '<div class="inv-review-title">Selected activities (' + chips.count + ')</div>' +
+        '<div class="inv-review-list">' + chips.html + '</div>' +
+      '</div>';
+
+    var assignSummary = WS.buildAssignReviewSummary(c);
+    reviewHTML +=
+      '<div class="inv-review-section">' +
+        '<div class="inv-review-title">Activity assignments</div>' +
+        '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#1d201f">' + assignSummary.totalAssignments + ' activity assignments across ' + assignSummary.entitiesWithActivities + ' entities</div>' +
       '</div>';
 
     if (templatesChecked) {
@@ -402,7 +391,7 @@
         '</div>';
     }
 
-    body.innerHTML = stepperHTML + reviewHTML;
+    body.innerHTML = stepperHTML + statsHTML + reviewHTML;
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
@@ -412,93 +401,11 @@
       '<button class="wizard-btn-green" id="dcc-next" style="min-width:180px">Launch campaign</button>';
 
     var backBtn = footer.querySelector('#dcc-back');
-    backBtn.addEventListener('click', function () { currentStep = 2; render(); });
+    backBtn.addEventListener('click', function () { currentStep = 3; render(); });
     var discardBtn = footer.querySelector('#dcc-discard');
     discardBtn.addEventListener('click', closeWizard);
     var nextBtn = footer.querySelector('#dcc-next');
     nextBtn.addEventListener('click', closeWizard);
-  }
-
-  // ===========================================
-  // ENTITY TREE (reuses inv- tree classes)
-  // ===========================================
-
-  function buildEntityTree(nodes, depth) {
-    var html = '';
-    nodes.forEach(function (node) {
-      var hasChildren = node.children && node.children.length > 0;
-      var isExpanded = entityExpanded[node.id];
-      var isChecked = entitySelections[node.id];
-      var selectedCount = countSelected(node);
-      var totalCount = node.total || countTotal(node);
-
-      html += '<div class="inv-tree-node" style="padding-left:' + (depth * 24) + 'px">';
-
-      if (hasChildren) {
-        html += '<button class="inv-tree-toggle" data-dcc-toggle="' + node.id + '">' +
-          '<i class="fa-solid fa-chevron-' + (isExpanded ? 'down' : 'right') + '"></i>' +
-          '</button>';
-      } else {
-        html += '<span class="inv-tree-toggle inv-tree-toggle--leaf"></span>';
-      }
-
-      html += '<input type="checkbox" class="inv-tree-cb" data-dcc-cb="' + node.id + '"' + (isChecked ? ' checked' : '') + '>';
-
-      html += '<span class="inv-tree-name">' + esc(node.name);
-      if (hasChildren || totalCount > 0) {
-        html += ' <span class="inv-tree-name-count">(' + selectedCount + '/' + totalCount + ')</span>';
-      }
-      html += '</span>';
-
-      html += '<span class="inv-tree-act">' + node.activities + '</span>';
-      html += '<span class="inv-tree-rec">' + numberFmt(node.records) + '</span>';
-      html += '</div>';
-
-      if (hasChildren) {
-        html += '<div class="inv-tree-children' + (isExpanded ? ' inv-tree-children--open' : '') + '" data-dcc-children="' + node.id + '">';
-        html += buildEntityTree(node.children, depth + 1);
-        html += '</div>';
-      }
-    });
-    return html;
-  }
-
-  function countSelected(node) {
-    var count = 0;
-    if (entitySelections[node.id]) count++;
-    if (node.children) {
-      node.children.forEach(function (c) { count += countSelected(c); });
-    }
-    return count;
-  }
-
-  function countTotal(node) {
-    if (node.total > 0) return node.total;
-    var count = 0;
-    if (node.children) {
-      node.children.forEach(function (c) { count += countTotal(c); });
-    }
-    return count || 1;
-  }
-
-  function bindTreeInteractions() {
-    body.querySelectorAll('[data-dcc-toggle]').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var id = this.dataset.dccToggle;
-        entityExpanded[id] = !entityExpanded[id];
-        var childrenEl = body.querySelector('[data-dcc-children="' + id + '"]');
-        var icon = this.querySelector('i');
-        if (childrenEl) childrenEl.classList.toggle('inv-tree-children--open');
-        if (icon) icon.className = entityExpanded[id] ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right';
-      });
-    });
-
-    body.querySelectorAll('[data-dcc-cb]').forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        entitySelections[this.dataset.dccCb] = this.checked;
-      });
-    });
   }
 
   // ===========================================
@@ -510,31 +417,13 @@
     var nextBtn = footer.querySelector('#dcc-next');
     var discardBtn = footer.querySelector('#dcc-discard');
 
-    if (discardBtn) {
-      discardBtn.addEventListener('click', closeWizard);
-    }
+    if (discardBtn) discardBtn.addEventListener('click', closeWizard);
     if (backBtn && backStep >= 0) {
       backBtn.addEventListener('click', function () { currentStep = backStep; render(); });
     }
-    if (nextBtn && nextStep >= 0 && nextStep <= 3) {
+    if (nextBtn && nextStep >= 0 && nextStep <= 4) {
       nextBtn.addEventListener('click', function () { currentStep = nextStep; render(); });
     }
-  }
-
-  // ===========================================
-  // UTILITIES
-  // ===========================================
-
-  function esc(str) {
-    if (!str) return '';
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  function numberFmt(n) {
-    if (typeof n !== 'number') return n;
-    return n.toLocaleString();
   }
 
 })();

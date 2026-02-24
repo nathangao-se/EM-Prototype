@@ -4,6 +4,8 @@
 
 (function () {
 
+  var WS = window.WizardSteps;
+
   // ===========================================
   // DOM
   // ===========================================
@@ -17,13 +19,13 @@
   // ===========================================
   // STATE
   // ===========================================
-  var currentStep = 0; // 0-indexed: 0=BasicInfo, 1=Entities, 2=Activities, 3=TrimActivities, 4=Review
+  var currentStep = 0;
   var consolidationChoice = 'operational';
-  var activitySelections = {};   // { activityId: true/false }
-  var entitySelections = {};     // { entityId: true/false } — Screen 3 selections
-  var entityExpanded = {};       // { entityId: true/false }
-  var trimEntitySelections = {}; // { entityId: true/false } — Screen 4 entity picks (subset of entitySelections)
-  var trimIncluded = {};         // { activityId: true/false } — activities included for selected entities
+  var activitySelections = {};
+  var entitySelections = {};
+  var entityExpanded = {};
+  var assignEntityChecked = {};
+  var entityActivities = {};
   var formData = {
     name: '',
     startDate: '01/01/2026',
@@ -38,8 +40,8 @@
   var STEPS = [
     { label: 'Basic info', key: 'basic' },
     { label: 'Add entities', key: 'entities' },
-    { label: 'Select activities', key: 'activities' },
-    { label: 'Trim activities', key: 'trim' },
+    { label: 'Add activities', key: 'activities' },
+    { label: 'Combine', key: 'assign' },
     { label: 'Review', key: 'review' }
   ];
 
@@ -48,16 +50,13 @@
   // ===========================================
 
   var ACTIVITIES = [
-    // Scope 1
     { id: 'sc',  name: 'Stationary combustion',           scope: 1, entities: 1223, records: 847,  calc: 'RA+ Standard v2.1',  status: 'ready' },
     { id: 'mc',  name: 'Mobile combustion',                scope: 1, entities: 1223, records: 847,  calc: 'RA+ Standard v2.1',  status: 'ready' },
     { id: 'fe',  name: 'Fugitive emissions',               scope: 1, entities: 987,  records: 634,  calc: 'GHG Protocol v3.1',  status: 'need' },
     { id: 'pe2', name: 'Process emissions',                 scope: 1, entities: 412,  records: 283,  calc: 'RA+ Standard v2.1',  status: 'ready' },
-    // Scope 2
     { id: 'pe',  name: 'Purchased electricity',             scope: 2, entities: 1223, records: 847,  calc: 'GHG Protocol v3.1',  status: 'ready' },
     { id: 'sh',  name: 'Purchased steam & heat',            scope: 2, entities: 890,  records: 612,  calc: 'GHG Protocol v3.1',  status: 'ready' },
     { id: 'pc',  name: 'Purchased cooling',                 scope: 2, entities: 345,  records: 198,  calc: 'GHG Protocol v3.1',  status: 'need' },
-    // Scope 3
     { id: 'pgs', name: 'Purchased goods & services',        scope: 3, entities: 1102, records: 4210, calc: 'RA+ Standard v2.1',  status: 'ready' },
     { id: 'cg',  name: 'Capital goods',                     scope: 3, entities: 578,  records: 1340, calc: 'RA+ Standard v2.1',  status: 'ready' },
     { id: 'fera',name: 'Fuel & energy related activities',  scope: 3, entities: 1041, records: 892,  calc: 'GHG Protocol v3.1',  status: 'ready' },
@@ -72,7 +71,6 @@
     { id: 'inv', name: 'Investments',                       scope: 3, entities: 89,   records: 156,  calc: 'RA+ Standard v2.1',  status: 'need' }
   ];
 
-  // Initialize activity selections (all selected by default)
   ACTIVITIES.forEach(function (a) { activitySelections[a.id] = true; });
 
   var ENTITY_TREE = [
@@ -98,47 +96,25 @@
     { id: 'apac', name: 'APAC', total: 224, activities: 9,  records: 8420, children: [] }
   ];
 
-  // Initialize entity expanded states
   entityExpanded['americas'] = true;
   entityExpanded['offices'] = true;
 
-  // Initialize trim included/excluded for demo
-  var TRIM_INCLUDED = ['fe', 'pe', 'sh', 'bt', 'pgs', 'wg', 'ec', 'eol'];
-  var TRIM_EXCLUDED = ['sc', 'mc'];
-  ACTIVITIES.forEach(function (a) { trimIncluded[a.id] = true; }); // default all included
-  TRIM_EXCLUDED.forEach(function (id) { trimIncluded[id] = false; }); // then exclude these
 
   // ===========================================
-  // TOTALS — computed dynamically from selections
+  // SHARED CONTEXT — passed to WizardSteps
   // ===========================================
-  function getTotals() {
-    // Activities: count checked items from step 1 (Select activities)
-    var totalActivities = 0;
-    ACTIVITIES.forEach(function (a) {
-      if (activitySelections[a.id]) totalActivities++;
-    });
 
-    // Entities & Records: sum from checked items in step 2 (Add entities)
-    var totalEntities = 0;
-    var totalRecords = 0;
-    function walkSelected(nodes) {
-      nodes.forEach(function (n) {
-        if (entitySelections[n.id]) {
-          // Count this node's own total (leaf count) or 1 for leaf nodes
-          totalEntities += (n.total > 0 ? n.total : 1);
-          totalRecords += n.records;
-        }
-        if (n.children && n.children.length) {
-          walkSelected(n.children);
-        }
-      });
-    }
-    walkSelected(ENTITY_TREE);
-
+  function ctx() {
     return {
-      activities: totalActivities,
-      entities: totalEntities,
-      records: totalRecords
+      prefix: 'inv',
+      body: body,
+      entityTree: ENTITY_TREE,
+      activities: ACTIVITIES,
+      entitySelections: entitySelections,
+      entityExpanded: entityExpanded,
+      activitySelections: activitySelections,
+      assignEntityChecked: assignEntityChecked,
+      entityActivities: entityActivities
     };
   }
 
@@ -173,14 +149,17 @@
   // RENDER DISPATCHER
   // ===========================================
 
+  var STEP_HEIGHTS = ['auto', 800, 800, 800, 'auto'];
+
   function render() {
-    // Update width
     wizardEl.style.width = (STEP_WIDTHS[currentStep] || 800) + 'px';
+    var h = STEP_HEIGHTS[currentStep] || 800;
+    wizardEl.style.height = (h === 'auto') ? 'auto' : h + 'px';
     switch (currentStep) {
       case 0: renderBasicInfo(); break;
       case 1: renderAddEntities(); break;
       case 2: renderSelectActivities(); break;
-      case 3: initTrimSelections(); renderTrimActivities(); break;
+      case 3: WS.initAssignStep(ctx()); renderAssignActivities(); break;
       case 4: renderReview(); break;
     }
   }
@@ -197,7 +176,7 @@
       else if (i === activeIndex) cls += ' wizard-stepper-item--active';
 
       html += '<div class="' + cls + '">';
-      html += '<div class="wizard-stepper-label">' + (i + 1) + '. ' + esc(STEPS[i].label);
+      html += '<div class="wizard-stepper-label">' + (i + 1) + '. ' + WS.esc(STEPS[i].label);
       if (i < activeIndex) {
         html += ' <span class="wizard-stepper-check"><i class="fa-solid fa-check"></i></span>';
       }
@@ -207,29 +186,6 @@
     }
     html += '</div>';
     return html;
-  }
-
-  // ===========================================
-  // STATS BAR BUILDER
-  // ===========================================
-
-  function buildStatsBar() {
-    var t = getTotals();
-    return '<div class="inv-stats-bar">' +
-      '<div class="inv-stat"><span class="inv-stat-value" id="inv-kpi-activities">' + numberFmt(t.activities) + '</span><span class="inv-stat-label">Activities</span></div>' +
-      '<div class="inv-stat"><span class="inv-stat-value" id="inv-kpi-entities">' + numberFmt(t.entities) + '</span><span class="inv-stat-label">Entities selected</span></div>' +
-      '<div class="inv-stat"><span class="inv-stat-value" id="inv-kpi-records">' + numberFmt(t.records) + '</span><span class="inv-stat-label">Records</span></div>' +
-      '</div>';
-  }
-
-  function refreshStatsBar() {
-    var t = getTotals();
-    var elAct = document.getElementById('inv-kpi-activities');
-    var elEnt = document.getElementById('inv-kpi-entities');
-    var elRec = document.getElementById('inv-kpi-records');
-    if (elAct) elAct.textContent = numberFmt(t.activities);
-    if (elEnt) elEnt.textContent = numberFmt(t.entities);
-    if (elRec) elRec.textContent = numberFmt(t.records);
   }
 
   // ===========================================
@@ -245,32 +201,32 @@
       '<div class="inv-form-row">' +
         '<div class="inv-form-field inv-form-field--w368">' +
           '<label class="inv-form-label">Inventory name</label>' +
-          '<input type="text" class="inv-form-input" id="inv-name" value="' + esc(formData.name) + '">' +
+          '<input type="text" class="inv-form-input" id="inv-name" value="' + WS.esc(formData.name) + '">' +
         '</div>' +
         '<div class="inv-form-field inv-form-field--flex1">' +
           '<label class="inv-form-label">Start date</label>' +
-          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + esc(formData.startDate) + '">' +
+          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + WS.esc(formData.startDate) + '">' +
         '</div>' +
         '<div class="inv-form-field inv-form-field--flex1">' +
           '<label class="inv-form-label">End date</label>' +
-          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + esc(formData.endDate) + '">' +
+          '<input type="text" class="inv-form-input" placeholder="mm/dd/yyyy" value="' + WS.esc(formData.endDate) + '">' +
         '</div>' +
       '</div>' +
       '<hr class="inv-form-divider">' +
       '<div class="inv-form-row">' +
         '<div class="inv-form-field inv-form-field--flex1">' +
           '<label class="inv-form-label">GHG Framework</label>' +
-          '<select class="inv-form-select"><option>' + esc(formData.framework) + '</option></select>' +
+          '<select class="inv-form-select"><option>' + WS.esc(formData.framework) + '</option></select>' +
         '</div>' +
         '<div class="inv-form-field inv-form-field--flex1">' +
           '<label class="inv-form-label">GWP Version</label>' +
-          '<select class="inv-form-select"><option>' + esc(formData.gwp) + '</option></select>' +
+          '<select class="inv-form-select"><option>' + WS.esc(formData.gwp) + '</option></select>' +
         '</div>' +
       '</div>' +
       '<div class="inv-form-row">' +
         '<div class="inv-form-field" style="width:100%">' +
           '<label class="inv-form-label">Gases Covered</label>' +
-          '<select class="inv-form-select"><option>' + esc(formData.gases) + '</option></select>' +
+          '<select class="inv-form-select"><option>' + WS.esc(formData.gases) + '</option></select>' +
         '</div>' +
       '</div>' +
       '<hr class="inv-form-divider">' +
@@ -287,11 +243,10 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Select entities</button>';
+      '<button class="wizard-btn-green" id="inv-next">Next: Select entities to include</button>';
 
     bindFooterNav(-1, 1);
 
-    // Radio binding
     body.querySelectorAll('input[name="consolidation"]').forEach(function (radio) {
       radio.addEventListener('change', function () {
         consolidationChoice = this.value;
@@ -304,364 +259,61 @@
     return '<div class="inv-radio-option">' +
       '<label class="inv-radio-row">' +
         '<input type="radio" name="consolidation" value="' + value + '" class="inv-radio"' + checked + '>' +
-        '<span class="inv-radio-label">' + esc(label) + '</span>' +
+        '<span class="inv-radio-label">' + WS.esc(label) + '</span>' +
       '</label>' +
-      '<div class="inv-radio-desc">' + esc(desc) + '</div>' +
+      '<div class="inv-radio-desc">' + WS.esc(desc) + '</div>' +
     '</div>';
   }
 
   // ===========================================
-  // STEP 1 — SELECT ACTIVITIES
-  // ===========================================
-
-  function renderSelectActivities() {
-    titleEl.textContent = 'Create new inventory: Select activities';
-
-    var stepperHTML = buildStepper(2);
-    var statsHTML = buildStatsBar();
-
-    var toolbarHTML =
-      '<div class="inv-toolbar">' +
-        '<input type="text" class="inv-search" placeholder="Search activities...">' +
-        '<button class="inv-bulk-btn">Bulk Actions <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></button>' +
-      '</div>';
-
-    var allActSelected = ACTIVITIES.every(function (a) { return activitySelections[a.id]; });
-    var tableHTML =
-      '<div class="inv-table-wrap"><table class="inv-table">' +
-        '<thead><tr>' +
-          '<th style="width:32px"><input type="checkbox" class="inv-table-checkbox" id="inv-act-select-all"' + (allActSelected ? ' checked' : '') + '></th>' +
-          '<th>Activities</th>' +
-          '<th>Status</th>' +
-          '<th style="text-align:right">Entities</th>' +
-          '<th style="text-align:right">Records</th>' +
-          '<th>Calc method</th>' +
-          '<th></th>' +
-          '<th style="width:32px"></th>' +
-        '</tr></thead><tbody>';
-
-    ACTIVITIES.forEach(function (a) {
-      var scopeClass = a.scope === 1 ? 'inv-scope-badge--s1' : a.scope === 2 ? 'inv-scope-badge--s2' : 'inv-scope-badge--s3';
-      var statusClass = a.status === 'ready' ? 'inv-status-badge--ready' : 'inv-status-badge--need';
-      var statusIcon = a.status === 'ready' ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-circle-info"></i>';
-      var statusText = a.status === 'ready' ? 'Ready' : 'Needs data';
-      var checked = activitySelections[a.id] ? ' checked' : '';
-
-      tableHTML +=
-        '<tr>' +
-          '<td><input type="checkbox" class="inv-table-checkbox" data-act-id="' + a.id + '"' + checked + '></td>' +
-          '<td>' + esc(a.name) + '</td>' +
-          '<td><span class="inv-scope-badge ' + scopeClass + '">Scope ' + a.scope + '</span></td>' +
-          '<td style="text-align:right">' + numberFmt(a.entities) + '</td>' +
-          '<td style="text-align:right">' + numberFmt(a.records) + '</td>' +
-          '<td><span class="inv-calc-select">' + esc(a.calc) + ' <i class="fa-solid fa-chevron-down"></i></span></td>' +
-          '<td><span class="inv-status-badge ' + statusClass + '">' + statusIcon + ' ' + statusText + '</span></td>' +
-          '<td><button class="inv-more-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button></td>' +
-        '</tr>';
-    });
-
-    tableHTML += '</tbody></table></div>';
-
-    body.innerHTML = stepperHTML + statsHTML + toolbarHTML + tableHTML;
-
-    footer.className = 'wizard-footer';
-    footer.innerHTML =
-      '<div class="wizard-footer-spacer"></div>' +
-      '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Trim activities</button>';
-
-    bindFooterNav(1, 3);
-
-    // Individual checkbox binding
-    body.querySelectorAll('.inv-table-checkbox[data-act-id]').forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        activitySelections[this.dataset.actId] = this.checked;
-        // Update select-all state
-        var selectAll = document.getElementById('inv-act-select-all');
-        if (selectAll) {
-          selectAll.checked = ACTIVITIES.every(function (a) { return activitySelections[a.id]; });
-        }
-        refreshStatsBar();
-      });
-    });
-
-    // Select-all checkbox
-    var selectAllAct = document.getElementById('inv-act-select-all');
-    if (selectAllAct) {
-      selectAllAct.addEventListener('change', function () {
-        var checked = this.checked;
-        ACTIVITIES.forEach(function (a) { activitySelections[a.id] = checked; });
-        body.querySelectorAll('.inv-table-checkbox[data-act-id]').forEach(function (cb) {
-          cb.checked = checked;
-        });
-        refreshStatsBar();
-      });
-    }
-  }
-
-  // ===========================================
-  // STEP 2 — ADD ENTITIES
+  // STEP 1 — ADD ENTITIES (shared)
   // ===========================================
 
   function renderAddEntities() {
-    titleEl.textContent = 'Create new inventory: Add entities';
+    titleEl.textContent = 'Create new inventory: Entities to include';
+    var c = ctx();
 
-    var stepperHTML = buildStepper(1);
-    var statsHTML = buildStatsBar();
-
-    var toolbarHTML =
-      '<div class="inv-toolbar">' +
-        '<input type="text" class="inv-search" placeholder="Search entities...">' +
-        '<button class="inv-bulk-btn">Bulk Actions <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></button>' +
-      '</div>';
-
-    var selectAllChecked = isAllEntitiesSelected() ? ' checked' : '';
-    var headerHTML =
-      '<div class="inv-tree-header">' +
-        '<span class="inv-tree-header-entity" style="display:flex;align-items:center;gap:8px">' +
-          '<input type="checkbox" class="inv-tree-cb" id="inv-select-all"' + selectAllChecked + '>' +
-          'Entities <span class="inv-tree-name-count">(selected/total)</span>' +
-        '</span>' +
-        '<span class="inv-tree-header-act">Activities</span>' +
-        '<span class="inv-tree-header-rec">Records</span>' +
-      '</div>';
-
-    var treeHTML = '<div class="inv-tree-wrap" id="inv-entity-tree-wrap">' + buildEntityTree(ENTITY_TREE, 0) + '</div>';
-
-    body.innerHTML = stepperHTML + statsHTML + toolbarHTML + headerHTML + treeHTML;
+    body.innerHTML = buildStepper(1) + WS.buildStatsBar(c) + WS.buildEntitiesContent(c);
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Select activities</button>';
+      '<button class="wizard-btn-green" id="inv-next">Next: Activities to include</button>';
 
     bindFooterNav(0, 2);
-    bindTreeInteractions();
-  }
-
-  function isAllEntitiesSelected() {
-    var all = true;
-    function walk(nodes) {
-      nodes.forEach(function (n) {
-        if (!entitySelections[n.id]) all = false;
-        if (n.children) walk(n.children);
-      });
-    }
-    walk(ENTITY_TREE);
-    return all;
-  }
-
-  function buildEntityTree(nodes, depth) {
-    var html = '';
-    nodes.forEach(function (node, idx) {
-      var hasChildren = node.children && node.children.length > 0;
-      var isExpanded = entityExpanded[node.id];
-      var isLast = idx === nodes.length - 1;
-      var isChecked = entitySelections[node.id];
-      var selectedCount = countSelected(node);
-      var totalCount = node.total || countTotal(node);
-
-      html += '<div class="inv-tree-node" data-node-id="' + node.id + '" style="padding-left:' + (depth * 24) + 'px">';
-
-      // Toggle arrow
-      if (hasChildren) {
-        html += '<button class="inv-tree-toggle" data-toggle-id="' + node.id + '">' +
-          '<i class="fa-solid fa-chevron-' + (isExpanded ? 'down' : 'right') + '"></i>' +
-          '</button>';
-      } else {
-        html += '<span class="inv-tree-toggle inv-tree-toggle--leaf"></span>';
-      }
-
-      // Checkbox
-      html += '<input type="checkbox" class="inv-tree-cb" data-cb-id="' + node.id + '"' + (isChecked ? ' checked' : '') + '>';
-
-      // Name
-      html += '<span class="inv-tree-name">' + esc(node.name);
-      if (hasChildren || totalCount > 0) {
-        html += ' <span class="inv-tree-name-count">(' + selectedCount + '/' + totalCount + ')</span>';
-      }
-      html += '</span>';
-
-      // Activities & Records
-      html += '<span class="inv-tree-act">' + node.activities + '</span>';
-      html += '<span class="inv-tree-rec">' + numberFmt(node.records) + '</span>';
-
-      html += '</div>';
-
-      // Children
-      if (hasChildren) {
-        html += '<div class="inv-tree-children' + (isExpanded ? ' inv-tree-children--open' : '') + '" data-children-id="' + node.id + '">';
-        html += buildEntityTree(node.children, depth + 1);
-        html += '</div>';
-      }
-    });
-    return html;
-  }
-
-  function countSelected(node) {
-    var count = 0;
-    if (entitySelections[node.id]) count++;
-    if (node.children) {
-      node.children.forEach(function (c) { count += countSelected(c); });
-    }
-    return count;
-  }
-
-  function countTotal(node) {
-    if (node.total > 0) return node.total;
-    var count = 0;
-    if (node.children) {
-      node.children.forEach(function (c) { count += countTotal(c); });
-    }
-    return count || 1;
-  }
-
-  // Helper: find a node by id in the tree
-  function findNode(id, nodes) {
-    for (var i = 0; i < nodes.length; i++) {
-      if (nodes[i].id === id) return nodes[i];
-      if (nodes[i].children) {
-        var found = findNode(id, nodes[i].children);
-        if (found) return found;
-      }
-    }
-    return null;
-  }
-
-  // Cascading: set all descendants to the same checked state
-  function setDescendants(node, checked, selectionMap) {
-    if (node.children) {
-      node.children.forEach(function (c) {
-        selectionMap[c.id] = checked;
-        setDescendants(c, checked, selectionMap);
-      });
-    }
-  }
-
-  // Refresh the entity tree UI checkboxes to match state
-  function refreshEntityTreeUI() {
-    body.querySelectorAll('.inv-tree-cb[data-cb-id]').forEach(function (cb) {
-      cb.checked = !!entitySelections[cb.dataset.cbId];
-    });
-    var selectAll = document.getElementById('inv-select-all');
-    if (selectAll) selectAll.checked = isAllEntitiesSelected();
-  }
-
-  function bindTreeInteractions() {
-    // Toggle expand/collapse
-    body.querySelectorAll('.inv-tree-toggle[data-toggle-id]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = this.dataset.toggleId;
-        entityExpanded[id] = !entityExpanded[id];
-        var childrenEl = body.querySelector('[data-children-id="' + id + '"]');
-        var icon = this.querySelector('i');
-        if (childrenEl) {
-          childrenEl.classList.toggle('inv-tree-children--open');
-        }
-        if (icon) {
-          icon.className = entityExpanded[id] ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right';
-        }
-      });
-    });
-
-    // Checkbox with cascading selection
-    body.querySelectorAll('.inv-tree-cb[data-cb-id]').forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        var id = this.dataset.cbId;
-        var checked = this.checked;
-        entitySelections[id] = checked;
-        // Cascade to children
-        var node = findNode(id, ENTITY_TREE);
-        if (node) setDescendants(node, checked, entitySelections);
-        refreshEntityTreeUI();
-        refreshStatsBar();
-      });
-    });
-
-    // Select All checkbox
-    var selectAll = document.getElementById('inv-select-all');
-    if (selectAll) {
-      selectAll.addEventListener('change', function () {
-        var checked = this.checked;
-        function walkAll(nodes) {
-          nodes.forEach(function (n) {
-            entitySelections[n.id] = checked;
-            if (n.children) walkAll(n.children);
-          });
-        }
-        walkAll(ENTITY_TREE);
-        refreshEntityTreeUI();
-        refreshStatsBar();
-      });
-    }
+    WS.bindEntitiesStep(c, function () { WS.refreshStatsBar(c); });
   }
 
   // ===========================================
-  // STEP 3 — TRIM / FILTER ACTIVITIES
+  // STEP 2 — SELECT ACTIVITIES (shared)
   // ===========================================
 
-  // On entering step 3, reset trim state
-  function initTrimSelections() {
-    trimEntitySelections = {};
-    // Reset all activities to included; user removes from here
-    ACTIVITIES.forEach(function (a) { trimIncluded[a.id] = true; });
+  function renderSelectActivities() {
+    titleEl.textContent = 'Create new inventory: Activities to include';
+    var c = ctx();
+
+    body.innerHTML = buildStepper(2) + WS.buildStatsBar(c) + WS.buildActivitiesContent(c);
+
+    footer.className = 'wizard-footer';
+    footer.innerHTML =
+      '<div class="wizard-footer-spacer"></div>' +
+      '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
+      '<button class="wizard-btn-green" id="inv-next">Next: Add activities to entities</button>';
+
+    bindFooterNav(1, 3);
+    WS.bindActivitiesStep(c, function () { WS.refreshStatsBar(c); });
   }
 
-  // Check if an entity (or any descendant) was selected on Screen 3
-  function isEntityEligible(node) {
-    if (entitySelections[node.id]) return true;
-    if (node.children) {
-      for (var i = 0; i < node.children.length; i++) {
-        if (isEntityEligible(node.children[i])) return true;
-      }
-    }
-    return false;
-  }
+  // ===========================================
+  // STEP 3 — ADD ACTIVITIES TO ENTITIES (shared)
+  // ===========================================
 
-  // Count how many entities are currently picked in Screen 4 trim
-  function countTrimSelected() {
-    var n = 0;
-    for (var k in trimEntitySelections) {
-      if (trimEntitySelections[k]) n++;
-    }
-    return n;
-  }
+  function renderAssignActivities() {
+    titleEl.textContent = 'Create new inventory: Add activities to entities';
+    var c = ctx();
 
-  function renderTrimActivities() {
-    titleEl.textContent = 'Create new inventory: Trim activities';
-
-    var stepperHTML = buildStepper(3);
-    var statsHTML = buildStatsBar();
-
-    // Build left entity tree
-    var leftHTML = buildFilterEntityTree(ENTITY_TREE, 0);
-
-    // Build right activity columns
-    var activityColumnsHTML = buildActivityColumns();
-
-    var numSelected = countTrimSelected();
-    var entityWord = numSelected === 1 ? 'entity' : 'entities';
-
-    var splitHTML =
-      '<div class="inv-filter-split">' +
-        '<div class="inv-filter-left">' +
-          '<div class="inv-tree-header" style="font-size:13px">' +
-            '<span class="inv-tree-header-entity">Entities</span>' +
-            '<span class="inv-tree-header-act" style="width:56px">Activities</span>' +
-            '<span class="inv-tree-header-rec" style="width:56px">Records</span>' +
-          '</div>' +
-          '<div class="inv-tree-wrap" style="padding:8px">' + leftHTML + '</div>' +
-        '</div>' +
-        '<div class="inv-filter-right">' +
-          '<div class="inv-filter-right-header">' +
-            '<input type="text" class="inv-filter-search" placeholder="Filter activities">' +
-          '</div>' +
-          '<div id="inv-activity-columns-container">' + activityColumnsHTML + '</div>' +
-        '</div>' +
-      '</div>';
-
-    body.innerHTML = stepperHTML + statsHTML + splitHTML;
+    body.innerHTML = buildStepper(3) + WS.buildStatsBar(c) + WS.buildAssignContent(c);
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
@@ -670,177 +322,7 @@
       '<button class="wizard-btn-green" id="inv-next">Next: Review</button>';
 
     bindFooterNav(2, 4);
-    bindFilterTreeInteractions();
-    bindActivityToggles();
-  }
-
-  function buildActivityColumns() {
-    var numSelected = countTrimSelected();
-
-    if (numSelected === 0) {
-      return '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73;padding:16px 0">Select entities on the left to view their activities</div>';
-    }
-
-    var includedHTML = '';
-    var excludedHTML = '';
-    ACTIVITIES.forEach(function (a) {
-      var scopeClass = a.scope === 1 ? 'inv-scope-badge--s1' : a.scope === 2 ? 'inv-scope-badge--s2' : 'inv-scope-badge--s3';
-      if (trimIncluded[a.id]) {
-        // Left column: clickable row to exclude (no checkbox)
-        includedHTML +=
-          '<div class="inv-activity-row inv-activity-row--included" data-trim-exclude-id="' + a.id + '">' +
-            '<span class="inv-activity-row-name">' + esc(a.name) + '</span>' +
-            '<span class="inv-scope-badge ' + scopeClass + '">Scope ' + a.scope + '</span>' +
-            '<button class="inv-exclude-btn">Exclude</button>' +
-          '</div>';
-      } else {
-        // Right column: no checkbox, just clickable row to restore
-        excludedHTML +=
-          '<div class="inv-activity-row inv-activity-row--excluded" data-trim-restore-id="' + a.id + '">' +
-            '<span class="inv-activity-row-name">' + esc(a.name) + '</span>' +
-            '<span class="inv-scope-badge ' + scopeClass + '">Scope ' + a.scope + '</span>' +
-            '<button class="inv-restore-btn">Restore</button>' +
-          '</div>';
-      }
-    });
-
-    if (!includedHTML) {
-      includedHTML = '<div style="font-size:13px;color:#676f73;padding:4px 0">None</div>';
-    }
-    if (!excludedHTML) {
-      excludedHTML = '<div style="font-size:13px;color:#676f73;padding:4px 0">None</div>';
-    }
-
-    return '<div class="inv-activity-columns">' +
-      '<div class="inv-activity-col" style="padding-right:16px">' +
-        '<div class="inv-activity-col-title">Activities in both entities</div>' +
-        includedHTML +
-      '</div>' +
-      '<div class="inv-activity-col" style="padding-left:16px;border-left:1px solid #d5dde0">' +
-        '<div class="inv-activity-col-title">Activities excluded from both entities</div>' +
-        excludedHTML +
-      '</div>' +
-    '</div>';
-  }
-
-  function refreshActivityColumns() {
-    var container = document.getElementById('inv-activity-columns-container');
-    if (container) {
-      container.innerHTML = buildActivityColumns();
-      bindActivityToggles();
-    }
-  }
-
-  function bindActivityToggles() {
-    // Left column: click "Exclude" to move to excluded
-    body.querySelectorAll('[data-trim-exclude-id]').forEach(function (row) {
-      row.addEventListener('click', function () {
-        trimIncluded[this.dataset.trimExcludeId] = false;
-        refreshActivityColumns();
-      });
-    });
-    // Right column: click "Restore" to move back to included
-    body.querySelectorAll('[data-trim-restore-id]').forEach(function (row) {
-      row.addEventListener('click', function () {
-        trimIncluded[this.dataset.trimRestoreId] = true;
-        refreshActivityColumns();
-      });
-    });
-  }
-
-  function buildFilterEntityTree(nodes, depth) {
-    var html = '';
-    nodes.forEach(function (node) {
-      var hasChildren = node.children && node.children.length > 0;
-      var isExpanded = entityExpanded[node.id];
-      var eligible = isEntityEligible(node);
-      var isTrimSelected = trimEntitySelections[node.id] || false;
-      var selectedCount = countSelected(node);
-      var totalCount = node.total || countTotal(node);
-
-      var disabledClass = eligible ? '' : ' opacity:0.4;';
-      html += '<div class="inv-tree-node" style="padding-left:' + (depth * 20) + 'px;font-size:13px;' + disabledClass + '">';
-
-      if (hasChildren) {
-        html += '<button class="inv-tree-toggle" data-filter-toggle-id="' + node.id + '" style="width:20px;font-size:10px">' +
-          '<i class="fa-solid fa-chevron-' + (isExpanded ? 'down' : 'right') + '"></i>' +
-          '</button>';
-      } else {
-        html += '<span class="inv-tree-toggle inv-tree-toggle--leaf" style="width:20px"></span>';
-      }
-
-      // Checkbox: disabled if not eligible from Screen 3, checked from trimEntitySelections
-      var disabledAttr = eligible ? '' : ' disabled';
-      var checkedAttr = isTrimSelected ? ' checked' : '';
-      html += '<input type="checkbox" class="inv-tree-cb" data-filter-cb-id="' + node.id + '"' + checkedAttr + disabledAttr + '>';
-
-      html += '<span class="inv-tree-name" style="font-size:13px">' + esc(node.name);
-      if (totalCount > 0) {
-        html += ' <span class="inv-tree-name-count">(' + selectedCount + '/' + totalCount + ')</span>';
-      }
-      html += '</span>';
-
-      html += '<span class="inv-tree-act" style="width:56px;font-size:13px">' + node.activities + '</span>';
-      html += '<span class="inv-tree-rec" style="width:56px;font-size:13px">' + numberFmt(node.records) + '</span>';
-
-      html += '</div>';
-
-      if (hasChildren) {
-        html += '<div class="inv-tree-children' + (isExpanded ? ' inv-tree-children--open' : '') + '" data-filter-children-id="' + node.id + '">';
-        html += buildFilterEntityTree(node.children, depth + 1);
-        html += '</div>';
-      }
-    });
-    return html;
-  }
-
-  // Refresh Screen 4 filter tree checkboxes to match state
-  function refreshFilterTreeUI() {
-    body.querySelectorAll('.inv-tree-cb[data-filter-cb-id]').forEach(function (cb) {
-      var id = cb.dataset.filterCbId;
-      var eligible = isEntityEligible(findNode(id, ENTITY_TREE) || { id: id });
-      cb.checked = !!trimEntitySelections[id];
-      cb.disabled = !eligible;
-    });
-  }
-
-  function bindFilterTreeInteractions() {
-    // Toggle expand/collapse
-    body.querySelectorAll('.inv-tree-toggle[data-filter-toggle-id]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = this.dataset.filterToggleId;
-        entityExpanded[id] = !entityExpanded[id];
-        var childrenEl = body.querySelector('[data-filter-children-id="' + id + '"]');
-        var icon = this.querySelector('i');
-        if (childrenEl) childrenEl.classList.toggle('inv-tree-children--open');
-        if (icon) icon.className = entityExpanded[id] ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right';
-      });
-    });
-
-    // Checkbox with cascading: updates trimEntitySelections, then refreshes
-    body.querySelectorAll('.inv-tree-cb[data-filter-cb-id]').forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        var id = this.dataset.filterCbId;
-        var checked = this.checked;
-        trimEntitySelections[id] = checked;
-        // Cascade to eligible children
-        var node = findNode(id, ENTITY_TREE);
-        if (node) {
-          (function cascadeFilter(n) {
-            if (n.children) {
-              n.children.forEach(function (c) {
-                if (isEntityEligible(c)) {
-                  trimEntitySelections[c.id] = checked;
-                }
-                cascadeFilter(c);
-              });
-            }
-          })(node);
-        }
-        refreshFilterTreeUI();
-        refreshActivityColumns();
-      });
-    });
+    WS.bindAssignStep(c);
   }
 
   // ===========================================
@@ -849,55 +331,47 @@
 
   function renderReview() {
     titleEl.textContent = 'Create new inventory: Review';
+    var c = ctx();
 
     var stepperHTML = buildStepper(4);
-    var statsHTML = buildStatsBar();
+    var statsHTML = WS.buildStatsBar(c);
 
-    // Basic info review
     var basicReview =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Basic information</div>' +
         '<div class="inv-review-grid">' +
-          '<span class="inv-review-label">Inventory name</span><span class="inv-review-value">' + esc(formData.name || '(not set)') + '</span>' +
-          '<span class="inv-review-label">Start date</span><span class="inv-review-value">' + esc(formData.startDate) + '</span>' +
-          '<span class="inv-review-label">End date</span><span class="inv-review-value">' + esc(formData.endDate) + '</span>' +
-          '<span class="inv-review-label">GHG Framework</span><span class="inv-review-value">' + esc(formData.framework) + '</span>' +
-          '<span class="inv-review-label">GWP Version</span><span class="inv-review-value">' + esc(formData.gwp) + '</span>' +
-          '<span class="inv-review-label">Gases</span><span class="inv-review-value">' + esc(formData.gases) + '</span>' +
-          '<span class="inv-review-label">Consolidation</span><span class="inv-review-value" style="text-transform:capitalize">' + esc(consolidationChoice) + '</span>' +
+          '<span class="inv-review-label">Inventory name</span><span class="inv-review-value">' + WS.esc(formData.name || '(not set)') + '</span>' +
+          '<span class="inv-review-label">Start date</span><span class="inv-review-value">' + WS.esc(formData.startDate) + '</span>' +
+          '<span class="inv-review-label">End date</span><span class="inv-review-value">' + WS.esc(formData.endDate) + '</span>' +
+          '<span class="inv-review-label">GHG Framework</span><span class="inv-review-value">' + WS.esc(formData.framework) + '</span>' +
+          '<span class="inv-review-label">GWP Version</span><span class="inv-review-value">' + WS.esc(formData.gwp) + '</span>' +
+          '<span class="inv-review-label">Gases</span><span class="inv-review-value">' + WS.esc(formData.gases) + '</span>' +
+          '<span class="inv-review-label">Consolidation</span><span class="inv-review-value" style="text-transform:capitalize">' + WS.esc(consolidationChoice) + '</span>' +
         '</div>' +
       '</div>';
 
-    // Activities review
-    var selectedActivities = ACTIVITIES.filter(function (a) { return activitySelections[a.id]; });
-    var actChips = '';
-    selectedActivities.forEach(function (a) {
-      var scopeClass = a.scope === 1 ? 'inv-scope-badge--s1' : a.scope === 2 ? 'inv-scope-badge--s2' : 'inv-scope-badge--s3';
-      actChips += '<span class="inv-review-chip">' + esc(a.name) + ' <span class="inv-scope-badge ' + scopeClass + '" style="margin-left:6px;font-size:11px;padding:1px 6px">S' + a.scope + '</span></span>';
-    });
+    var chips = WS.buildActivitiesReviewChips(c);
     var actReview =
       '<div class="inv-review-section">' +
-        '<div class="inv-review-title">Selected activities (' + selectedActivities.length + ')</div>' +
-        '<div class="inv-review-list">' + actChips + '</div>' +
+        '<div class="inv-review-title">Selected activities (' + chips.count + ')</div>' +
+        '<div class="inv-review-list">' + chips.html + '</div>' +
       '</div>';
 
-    // Entities review
+    var entCount = WS.countEntitiesSelected(c);
     var entitiesReview =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Entities</div>' +
-        '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73">1,241 entities selected across 3 regions (Americas, EMEA, APAC)</div>' +
+        '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73">' + WS.numberFmt(entCount) + ' entities selected</div>' +
       '</div>';
 
-    // Trim review
-    var trimmedIn = ACTIVITIES.filter(function (a) { return trimIncluded[a.id]; });
-    var trimmedOut = ACTIVITIES.filter(function (a) { return !trimIncluded[a.id]; });
-    var trimReview =
+    var assignSummary = WS.buildAssignReviewSummary(c);
+    var assignReview =
       '<div class="inv-review-section">' +
-        '<div class="inv-review-title">Activity trim</div>' +
-        '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#1d201f">' + trimmedIn.length + ' activities included, ' + trimmedOut.length + ' removed for selected entities</div>' +
+        '<div class="inv-review-title">Activity assignments</div>' +
+        '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#1d201f">' + assignSummary.totalAssignments + ' activity assignments across ' + assignSummary.entitiesWithActivities + ' entities</div>' +
       '</div>';
 
-    body.innerHTML = stepperHTML + statsHTML + basicReview + actReview + entitiesReview + trimReview;
+    body.innerHTML = stepperHTML + statsHTML + basicReview + actReview + entitiesReview + assignReview;
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
@@ -929,22 +403,6 @@
     if (nextBtn && nextStep >= 0 && nextStep <= 4) {
       nextBtn.addEventListener('click', function () { currentStep = nextStep; render(); });
     }
-  }
-
-  // ===========================================
-  // UTILITIES
-  // ===========================================
-
-  function esc(str) {
-    if (!str) return '';
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  function numberFmt(n) {
-    if (typeof n !== 'number') return n;
-    return n.toLocaleString();
   }
 
 })();
