@@ -1,0 +1,216 @@
+/* ========================================
+   UPLOAD WIZARD — Step 2: Review / collaborate
+   (review sections, collaborator tags,
+    file groups, type buttons, confirmation)
+   ======================================== */
+
+.uw-s2-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.uw-s2-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 25px;
+}
+
+/* Collaborator tag input field */
+.uw-s2-collab-field {
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #fff;
+  min-height: 32px;
+  padding: 2px 8px;
+  display: flex;
+  align-items: center;
+}
+
+.uw-s2-collab-tags {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.uw-s2-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  background: #fff;
+  border: 1px solid #1d201f;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.uw-s2-tag i {
+  font-size: 12px;
+  color: #1d201f;
+}
+
+.uw-s2-tag:hover {
+  background: #f5f8fa;
+}
+
+.uw-s2-collab-input {
+  border: none;
+  outline: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  color: #1d201f;
+  flex: 1;
+  min-width: 60px;
+  height: 28px;
+  padding: 0;
+}
+
+/* File group container */
+.uw-s2-file-group {
+  background: #f9fbfc;
+  border: 1px solid #cbcbcb;
+  border-radius: 12px;
+  padding: 4px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.uw-s2-file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  position: relative;
+}
+
+.uw-s2-file-row:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #d9d9d9;
+}
+
+.uw-s2-file-name {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uw-s2-file-size {
+  flex-shrink: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 16px;
+  text-align: right;
+}
+
+.uw-s2-file-type {
+  flex-shrink: 0;
+  width: 160px;
+  padding: 4px;
+}
+
+.uw-s2-type-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  width: 100%;
+  padding: 0 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.uw-s2-chevron {
+  font-size: 10px;
+}
+
+.uw-s2-file-menu {
+  flex-shrink: 0;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #676f73;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
+.uw-s2-file-menu:hover {
+  color: #1d201f;
+}
+
+/* Checkbox row above footer */
+.uw-s2-check-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 24px;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.uw-s2-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.uw-s2-checkbox-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.uw-s2-checkbox-input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: #676f73;
+  cursor: pointer;
+}
+
+.uw-s2-checkbox-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.4;
+}

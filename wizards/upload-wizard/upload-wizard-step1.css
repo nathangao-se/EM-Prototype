@@ -1,0 +1,674 @@
+/* ========================================
+   UPLOAD WIZARD — Step 1: Initial cleanup
+   (intro, toggle, two-col layout, file select,
+    table preview, toolbar, range chips,
+    saved sections, ExcelParser overrides,
+    columns tab, block cards)
+   ======================================== */
+
+/* Intro paragraph */
+.uw-s1-intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.uw-s1-intro p {
+  margin: 0;
+}
+
+/* Toggle row */
+.uw-s1-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  background: #f5f8fa;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.uw-s1-toggle-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+.uw-s1-toggle {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 999px;
+  background: #676f73;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  flex-shrink: 0;
+  transition: background 200ms ease;
+}
+
+.uw-s1-toggle--on {
+  background: #008029;
+}
+
+.uw-s1-toggle-handle {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 200ms ease;
+}
+
+.uw-s1-toggle--on .uw-s1-toggle-handle {
+  transform: translateX(20px);
+}
+
+/* Two-column grid layout (toggle on) */
+.uw-s1-two-col {
+  display: grid;
+  grid-template-columns: 1fr 600px;
+  grid-template-rows: auto 1fr;
+  gap: 12px 16px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  animation: uw-fade-in 220ms ease-in-out;
+}
+
+.uw-s1-header-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.uw-s1-cards-col {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Disclaimer text above dropdown */
+.uw-s1-disclaimer {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.uw-s1-file-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f5f8fa;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.uw-s1-file-select {
+  width: 100%;
+  height: 32px;
+  padding: 0 32px 0 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  background: #fff;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uw-s1-file-select:focus {
+  outline: none;
+  border-color: #008029;
+}
+
+.uw-s1-file-select-chevron {
+  position: absolute;
+  right: 22px;
+  font-size: 14px;
+  color: #1d201f;
+  pointer-events: none;
+}
+
+.uw-s1-table-preview {
+  min-height: 0;
+  border-radius: 8px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.uw-s1-map-col {
+  width: 600px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Responsive toolbar: stacked below 1000px, two-col above */
+.uw-s1-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.uw-s1-toolbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.uw-s1-toolbar-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f5f8fa;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+@media (min-width: 1000px) {
+  .uw-s1-toolbar {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .uw-s1-toolbar-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .uw-s1-toolbar-right {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.uw-s1-active-ranges {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.uw-s1-ranges-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #676f73;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.uw-s1-ranges-label--empty {
+  font-weight: 400;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+}
+
+.uw-s1-range-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #1d201f;
+  background: #f1f5f9;
+  border: 1px solid #d5dde0;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.uw-s1-range-chip:hover {
+  background: #fef2f2;
+  border-color: #cc1300;
+}
+
+.uw-s1-range-chip-x {
+  font-size: 10px;
+  color: #676f73;
+  transition: color 150ms ease;
+}
+
+.uw-s1-range-chip:hover .uw-s1-range-chip-x {
+  color: #cc1300;
+}
+
+.uw-s1-save-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* Saved section list */
+.uw-s1-section-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.uw-s1-section-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #d5dde0;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.uw-s1-section-item:last-child {
+  border-bottom: none;
+}
+
+.uw-s1-section-item:hover {
+  background: #f5f8fa;
+}
+
+.uw-s1-section-range {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #1d201f;
+}
+
+.uw-s1-section-remove {
+  background: none;
+  border: none;
+  color: #cc1300;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  opacity: 0.7;
+}
+
+.uw-s1-section-remove:hover {
+  opacity: 1;
+}
+
+/* ----------------------------------------
+   ExcelParser table overrides
+   ---------------------------------------- */
+
+/* Parser status bar */
+.ep-status {
+  padding: 6px 12px;
+  margin-bottom: 4px;
+  background: #d4edda;
+  border-radius: 4px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  color: #155724;
+  flex-shrink: 0;
+}
+
+/* Parser table wrapper */
+.ep-table-wrapper {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ep-table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+}
+
+.ep-table th,
+.ep-table td {
+  border: 1px solid #d0d0d0;
+  padding: 5px 10px;
+  text-align: left;
+  white-space: nowrap;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+}
+
+/* Corner cell (select-all) */
+.ep-table thead th:first-child {
+  background: #e0e0e0;
+  min-width: 44px;
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.ep-table thead th:first-child:hover {
+  background: #c8c8c8;
+}
+
+/* Column headers */
+.ep-table thead th {
+  background: #e9ecef;
+  font-weight: 600;
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  text-align: center;
+}
+
+.ep-table thead th:hover {
+  background: #d0d7de;
+}
+
+/* Row headers */
+.ep-table tbody td:first-child {
+  background: #e9ecef;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  min-width: 44px;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+.ep-table tbody td:first-child:hover {
+  background: #d0d7de;
+}
+
+/* Data cells */
+.ep-table tbody td {
+  cursor: cell;
+}
+
+/* Selection highlights */
+.ep-cell-selected {
+  background: #b3d9ff !important;
+}
+
+/* Preview highlights (faint) */
+.ep-cell-preview {
+  background: #e8f0fe !important;
+  transition: background 150ms ease;
+}
+
+.ep-cell-preview--intense {
+  background: #c5d9f8 !important;
+}
+
+.ep-header-selected {
+  background: #a0c8f0 !important;
+}
+
+.ep-table tbody td:not(:first-child):not(.ep-cell-selected):hover {
+  background: #f0f4ff;
+}
+
+/* Poor-fit cells — editable, highlighted */
+.ep-cell-poorfit {
+  background: #fef2f2 !important;
+  border-color: #fca5a5 !important;
+  cursor: text !important;
+  outline: none;
+}
+
+.ep-cell-poorfit:focus {
+  background: #fff !important;
+  border-color: #ef4444 !important;
+  box-shadow: inset 0 0 0 1px #ef4444;
+}
+
+/* Pagination */
+.ep-pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ep-page-btn {
+  padding: 4px 10px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ep-page-btn:hover:not(:disabled) {
+  background: #545b62;
+}
+
+.ep-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ep-page-info {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #676f73;
+}
+
+/* ----------------------------------------
+   Columns tab
+   ---------------------------------------- */
+
+.uw-s1-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.uw-s1-col-card {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+
+.uw-s1-col-card-name {
+  width: 120px;
+  flex-shrink: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 20px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.uw-s1-col-card-divider {
+  width: 1px;
+  flex-shrink: 0;
+  background: #d5dde0;
+  align-self: stretch;
+}
+
+.uw-s1-col-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uw-s1-col-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uw-s1-col-group-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+.uw-s1-col-separator {
+  height: 1px;
+  background: #d5dde0;
+}
+
+.uw-s1-col-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.uw-s1-col-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 254px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.uw-s1-col-radio input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin: 0;
+  accent-color: #676f73;
+  cursor: pointer;
+}
+
+.uw-s1-col-radio span {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+.uw-s1-col-row-desc {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+/* Block card variant (saved from table preview) */
+.uw-s1-col-card--block {
+  position: relative;
+  cursor: default;
+  transition: box-shadow 150ms ease;
+}
+
+.uw-s1-col-card--block:hover {
+  box-shadow: 0 0 0 2px #b3d9ff;
+}
+
+.uw-s1-col-card-left {
+  width: 120px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.uw-s1-col-card-range {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.3;
+}
+
+.uw-s1-col-card-tag-new {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #006621;
+  background: #e8f4ec;
+  border-radius: 999px;
+  width: fit-content;
+  line-height: 18px;
+}
+
+.uw-s1-block-delete {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #cc1300;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px;
+  opacity: 0.5;
+  transition: opacity 150ms ease;
+}
+
+.uw-s1-block-delete:hover {
+  opacity: 1;
+}
+
+.uw-s1-col-card-matched {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #006621;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.uw-s1-col-card-matched i {
+  font-size: 14px;
+  color: #008029;
+}

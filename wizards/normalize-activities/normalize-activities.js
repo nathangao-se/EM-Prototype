@@ -6,6 +6,19 @@
   var overlay = document.getElementById('normalize-overlay');
   if (!overlay) return;
 
+  ModalManager.register('normalize-modal', {
+    overlay: overlay,
+    openClass: 'normalize-overlay--open',
+    onOpen: function () {
+      activeCategory = 'all';
+      autoMap = false;
+      activitiesList = ACTIVITIES_INITIAL.map(function (a) {
+        return { name: a.name, meta: a.meta, selected: false, done: false, category: a.category, matchPct: a.matchPct };
+      });
+      render();
+    }
+  });
+
   var modal = overlay.querySelector('.normalize-modal');
   var closeBtn = overlay.querySelector('.normalize-close-btn');
   var cardsRow = overlay.querySelector('.normalize-cards-row');
@@ -13,12 +26,7 @@
   var leftCol = overlay.querySelector('.normalize-left');
   var rightCol = overlay.querySelector('.normalize-right');
 
-  function esc(str) {
-    if (!str) return '';
-    var d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
+  var esc = window.DomUtils.esc;
 
   // Category cards — act as parent selectors for the activity list
   var CATEGORIES = [
@@ -105,33 +113,17 @@
   };
 
   function openModal() {
-    console.log('[NM] openModal called');
-    activeCategory = 'all';
-    autoMap = false;
-    activitiesList = ACTIVITIES_INITIAL.map(function (a) {
-      return { name: a.name, meta: a.meta, selected: false, done: false, category: a.category, matchPct: a.matchPct };
-    });
-    render();
-    overlay.classList.add('normalize-overlay--open');
-    document.body.style.overflow = 'hidden';
-    console.log('[NM] Modal opened with', activitiesList.length, 'activities');
+    ModalManager.open('normalize-modal');
   }
 
   function closeModal() {
-    overlay.classList.remove('normalize-overlay--open');
-    document.body.style.overflow = '';
+    ModalManager.close('normalize-modal');
   }
 
   window.openNormalizeModal = openModal;
   window.closeNormalizeModal = closeModal;
 
   closeBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeModal();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('normalize-overlay--open')) closeModal();
-  });
 
   modal.querySelector('.normalize-footer .normalize-discard').addEventListener('click', function (e) {
     e.preventDefault();
@@ -261,17 +253,13 @@
   }
 
   function bindLeftListEvents() {
-    console.log('[NM] bindLeftListEvents called, found', leftCol.querySelectorAll('[data-action="select-activity"]').length, 'clickable items');
     leftCol.querySelectorAll('[data-action="select-activity"]').forEach(function (el) {
       el.addEventListener('click', function () {
         var name = el.getAttribute('data-name');
-        console.log('[NM] Activity clicked:', name);
         activitiesList.forEach(function (a) {
           a.selected = a.name === name && !a.done;
         });
-        console.log('[NM] Calling renderLeftList()');
         renderLeftList();
-        console.log('[NM] Calling renderRightPanels()');
         renderRightPanels(); // Re-render right panel when selection changes
       });
     });
@@ -307,8 +295,7 @@
     }
 
     var matchPanels = ACTIVITY_RECOMMENDATIONS[selected.name] || ACTIVITY_RECOMMENDATIONS['Office supplies'];
-    console.log('[NM] Using recommendations for:', selected.name, '- panels:', matchPanels.length);
-    
+
     var panelsHtml = 
       '<div class="normalize-panels-title">Best matching normalized activities for <strong>' + esc(selected.name) + '</strong></div>';
     

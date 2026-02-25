@@ -5,12 +5,7 @@
 
 (function () {
 
-  function esc(str) {
-    if (!str) return '';
-    var d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
+  var esc = window.DomUtils.esc;
 
   // Default activity bank per method — mirrors calc-methods METHOD_DETAILS keys
   var ACTIVITY_BANKS = {

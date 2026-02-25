@@ -10,6 +10,17 @@
   // DOM
   // ===========================================
   var overlay = document.getElementById('inv-wizard-overlay');
+  if (!overlay) return;
+
+  ModalManager.register('inventory-wizard', {
+    overlay: overlay,
+    openClass: 'wizard-overlay--open',
+    onOpen: function () {
+      currentStep = 0;
+      render();
+    }
+  });
+
   var wizardEl = overlay.querySelector('.inv-wizard');
   var titleEl = overlay.querySelector('.wizard-header-title');
   var closeBtn = overlay.querySelector('.wizard-close-btn');
@@ -136,27 +147,17 @@
   // ===========================================
 
   function openWizard() {
-    currentStep = 0;
-    render();
-    overlay.classList.add('wizard-overlay--open');
-    document.body.style.overflow = 'hidden';
+    ModalManager.open('inventory-wizard');
   }
 
   function closeWizard() {
-    overlay.classList.remove('wizard-overlay--open');
-    document.body.style.overflow = '';
+    ModalManager.close('inventory-wizard');
   }
 
   window.openInventoryWizard = openWizard;
   window.closeInventoryWizard = closeWizard;
 
   closeBtn.addEventListener('click', closeWizard);
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeWizard();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('wizard-overlay--open')) closeWizard();
-  });
 
   // ===========================================
   // RENDER DISPATCHER

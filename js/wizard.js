@@ -8,7 +8,19 @@
   // DOM
   // ===========================================
   var overlay = document.getElementById('wizard-overlay');
-  var wizard = overlay.querySelector('.wizard');
+  if (!overlay) return;
+
+  ModalManager.register('activity-wizard', {
+    overlay: overlay,
+    openClass: 'wizard-overlay--open',
+    onOpen: function () {
+      currentStep = 0;
+      filesUploaded = false;
+      emissionsUploaded = false;
+      render();
+    }
+  });
+
   var titleEl = overlay.querySelector('.wizard-header-title');
   var closeBtn = overlay.querySelector('.wizard-close-btn');
   var body = overlay.querySelector('.wizard-body');
@@ -73,29 +85,17 @@
   // ===========================================
 
   function openWizard() {
-    currentStep = 0;
-    filesUploaded = false;
-    emissionsUploaded = false;
-    render();
-    overlay.classList.add('wizard-overlay--open');
-    document.body.style.overflow = 'hidden';
+    ModalManager.open('activity-wizard');
   }
 
   function closeWizard() {
-    overlay.classList.remove('wizard-overlay--open');
-    document.body.style.overflow = '';
+    ModalManager.close('activity-wizard');
   }
 
   window.openActivityWizard = openWizard;
   window.closeActivityWizard = closeWizard;
 
   closeBtn.addEventListener('click', closeWizard);
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeWizard();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('wizard-overlay--open')) closeWizard();
-  });
 
   // ===========================================
   // RENDER DISPATCHER
@@ -447,11 +447,6 @@
     }
   }
 
-  function escapeHTML(str) {
-    if (!str) return '';
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
+  var escapeHTML = window.DomUtils.esc;
 
 })();

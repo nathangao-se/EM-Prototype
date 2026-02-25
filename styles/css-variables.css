@@ -1,0 +1,32 @@
+/* ========================================
+   CSS CUSTOM PROPERTIES — single source of truth for shared values
+   ======================================== */
+:root {
+  /* Z-index layers */
+  --z-overlay:       1000;
+  --z-overlay-high:  9000;
+  --z-overlay-top:   9100;
+  --z-page-transition: 8000;
+  --z-dev-panel:     9999;
+  --z-dev-toggle:    10000;
+
+  /* Transitions */
+  --transition-modal:    220ms ease-in-out;
+  --transition-fast:     150ms ease;
+  --transition-page-item: 96ms ease-in-out;
+  --transition-page-bg:  132ms ease-in-out;
+
+  /* Modal sizing */
+  --modal-max-height:    75vh;
+  --overlay-pad-bottom:  10vh;
+  --overlay-bg:          rgba(0, 0, 0, 0.45);
+
+  /* Colours — overlays & surfaces */
+  --surface-white:       #ffffff;
+  --border-light:        #d5dde0;
+  --hover-bg:            #f5f8fa;
+
+  /* Border radius */
+  --radius-modal:        16px;
+  --radius-btn:          8px;
+}

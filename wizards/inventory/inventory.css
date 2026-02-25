@@ -6,7 +6,7 @@
 .inv-wizard {
   width: 800px;
   height: 800px;
-  max-height: 75vh;
+  max-height: var(--modal-max-height);
   transition: width 220ms ease-in-out, height 220ms ease-in-out;
 }
 

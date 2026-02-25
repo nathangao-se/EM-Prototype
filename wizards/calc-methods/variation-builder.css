@@ -7,15 +7,15 @@
   display: flex;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 1000;
+  background: var(--overlay-bg);
+  z-index: var(--z-overlay);
   justify-content: center;
   align-items: center;
   padding-bottom: 10vh;
   box-sizing: border-box;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 220ms ease-in-out, visibility 220ms ease-in-out;
+  transition: opacity var(--transition-modal), visibility var(--transition-modal);
 }
 
 .vb-overlay--open {
@@ -26,7 +26,7 @@
 .vb-modal {
   width: 95vw;
   max-width: 680px;
-  max-height: 75vh;
+  max-height: var(--modal-max-height);
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
@@ -35,7 +35,7 @@
   overflow: hidden;
   transform: scale(0.97);
   opacity: 0;
-  transition: transform 220ms ease-in-out, opacity 220ms ease-in-out;
+  transition: transform var(--transition-modal), opacity var(--transition-modal);
 }
 
 .vb-overlay--open .vb-modal {

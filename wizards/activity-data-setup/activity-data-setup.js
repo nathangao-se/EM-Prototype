@@ -7,19 +7,21 @@
   var overlay = document.getElementById('activity-data-setup-overlay');
   if (!overlay) return;
 
-  var modal = overlay.querySelector('.activity-data-setup-modal');
+  ModalManager.register('activity-data-setup', {
+    overlay: overlay,
+    openClass: 'activity-data-setup-overlay--open'
+  });
+
   var closeBtn = overlay.querySelector('.activity-data-setup-close');
   var cancelBtn = overlay.querySelector('.activity-data-setup-cancel');
   var cards = overlay.querySelectorAll('.activity-data-setup-card');
 
   function openModal() {
-    overlay.classList.add('activity-data-setup-overlay--open');
-    document.body.style.overflow = 'hidden';
+    ModalManager.open('activity-data-setup');
   }
 
   function closeModal() {
-    overlay.classList.remove('activity-data-setup-overlay--open');
-    document.body.style.overflow = '';
+    ModalManager.close('activity-data-setup');
   }
 
   window.openActivityDataSetupModal = openModal;
@@ -27,14 +29,6 @@
 
   closeBtn.addEventListener('click', closeModal);
   cancelBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeModal();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('activity-data-setup-overlay--open')) {
-      closeModal();
-    }
-  });
 
   // Delegated: "Add files/data" button on Data management page opens this modal
   document.addEventListener('click', function (e) {

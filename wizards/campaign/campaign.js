@@ -10,6 +10,25 @@
   // DOM
   // ===========================================
   var overlay = document.getElementById('dcc-wizard-overlay');
+  if (!overlay) return;
+
+  ModalManager.register('campaign-wizard', {
+    overlay: overlay,
+    openClass: 'wizard-overlay--open',
+    onOpen: function () {
+      currentStep = 0;
+      templatesChecked = false;
+      entitySelections = {};
+      entityExpanded = {};
+      entityExpanded['dcc-americas'] = true;
+      entityExpanded['dcc-offices'] = true;
+      ACTIVITIES.forEach(function (a) { activitySelections[a.id] = true; });
+      assignEntityChecked = {};
+      entityActivities = {};
+      render();
+    }
+  });
+
   var wizardEl = overlay.querySelector('.dcc-wizard');
   var titleEl = overlay.querySelector('.wizard-header-title');
   var closeBtn = overlay.querySelector('.wizard-close-btn');
@@ -127,35 +146,17 @@
   // ===========================================
 
   function openWizard() {
-    currentStep = 0;
-    templatesChecked = false;
-    entitySelections = {};
-    entityExpanded = {};
-    entityExpanded['dcc-americas'] = true;
-    entityExpanded['dcc-offices'] = true;
-    ACTIVITIES.forEach(function (a) { activitySelections[a.id] = true; });
-    assignEntityChecked = {};
-    entityActivities = {};
-    render();
-    overlay.classList.add('wizard-overlay--open');
-    document.body.style.overflow = 'hidden';
+    ModalManager.open('campaign-wizard');
   }
 
   function closeWizard() {
-    overlay.classList.remove('wizard-overlay--open');
-    document.body.style.overflow = '';
+    ModalManager.close('campaign-wizard');
   }
 
   window.openCampaignWizard = openWizard;
   window.closeCampaignWizard = closeWizard;
 
   closeBtn.addEventListener('click', closeWizard);
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeWizard();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('wizard-overlay--open')) closeWizard();
-  });
 
   // ===========================================
   // RENDER DISPATCHER

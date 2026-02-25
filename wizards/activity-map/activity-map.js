@@ -4,12 +4,7 @@
 
 (function () {
 
-  function esc(str) {
-    if (!str) return '';
-    var d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
+  var esc = window.DomUtils.esc;
 
   // Columns normalize modal delegation
   document.addEventListener('click', function (e) {
@@ -222,50 +217,8 @@
   });
 
   // ========== TABLE DATA (from test.csv — Besana activity records) ==========
-  var TABLE_COLS = ['ID','Business Entity','Scope','Category','Activity Type','Emissions Factor','Start Date','End Date','Record Type','Description','Fuel Type','Usage Value','Usage UoM','Factor Set','Factor Set Version','\u2082e','Alerts'];
-
-  var TABLE_ROWS = [
-    ['86f7c8','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Estimate','Heating Source 6','Refinery Gas','1,000','Liter','','','',''],
-    ['dfc393','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Estimate','Heating Source 3','Liquefied Petroleum Gas','1,000','Cubic Meter','','','',''],
-    ['cd7e03','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Meter Reading','Heating Source 14','Landfill Gas','1,000','Kilogram','','','',''],
-    ['6aae5c','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Meter Reading','Heating Source 8','Heating Oil','1,000','Gallon','','','',''],
-    ['24042f','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Invoice','Heating Source 10','Petrol Stationary','1,000','Kilogram','','','',''],
-    ['c59202','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','','1/1/24','1/31/24','Meter Reading','Energy Gen.12','Natural Gas','1,003','Kilowatt-hour','','','','1 issue'],
-    ['362dcc','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Invoice','Heating Source 1','Furnace Oil','1,000','Liter','','','',''],
-    ['c7bd6c','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','','1/1/24','1/31/24','Meter Reading','Energy Gen.13','Natural Gas','1,003','Kilowatt-hour','','','','1 issue'],
-    ['6c6a5d','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','','1/1/24','1/31/24','Meter Reading','Energy Gen.11','','1,003','Kilowatt-hour','','','','1 issue'],
-    ['301976','Besana','1','','','','1/1/24','1/31/24','Invoice','Heating Source 17','','1,000','Liter','','','','1 issue'],
-    ['65f64f','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Invoice','Heating Source 18','','1,000','Liter','','','','1 issue'],
-    ['8eac9c','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','','1/1/24','1/31/24','Estimate','Mobile Comb. Source 11','','1,000','Kilogram','','','','1 issue'],
-    ['c9ac41','Besana','1','0','Stationary Combustion','Other bituminous coal','1/1/24','1/31/24','Estimate','Heating Source 12','Coal Bituminous','1,000','Short Tons','IEA','2024','18,885.91',''],
-    ['104f29','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Fuels - Gaseous fuels - CNG','1/1/24','1/31/24','Estimate','Mobile Comb. Source 12','Compressed Natural Gas','1,000','Kilogram','UK DESZN (ex-DEFRA)','2024','3.099',''],
-    ['4c8919','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','Geothermal-2024','1/1/24','1/31/24','Meter Reading','Energy Gen.4','Geothermal','1,000','Kilowatt-hour','Non-Emission Source','2024','0',''],
-    ['37cd90','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','Wind-2024','1/1/24','1/31/24','Meter Reading','Energy Gen.3','Wind','1,000','Kilowatt-hour','Non-Emission Source','2024','0',''],
-    ['818361','Besana','1','0','Stationary Combustion','Liquefied petroleum gases','1/1/24','1/31/24','Invoice','Heating Source 4','Propane','1,000','Kilogram','IEA','2024','44.953',''],
-    ['48756c','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Fuels - Gaseous fuels - CNG','1/1/24','1/31/24','Estimate','Mobile Comb. Source 1','Compressed Natural Gas','1,000','Kilogram','UK DESZN (ex-DEFRA)','2024','3.099',''],
-    ['7eb6fd','Besana','1','0','Stationary Combustion','Biomass - Wood chips','1/1/24','1/31/24','Estimate','Heating Source 18','Biomass Wood','1,000','Short Tons','UK DESZN (ex-DEFRA)','2024','1,239.31',''],
-    ['c0044d','Besana','1','0','Stationary Combustion','Biofuel - Dev diesel','1/1/24','1/31/24','Meter Reading','Heating Source 20','Diesel','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.254',''],
-    ['e47b8f','Besana','1','0','Stationary Combustion','Fuels - Gas oil','1/1/24','1/31/24','Invoice','Heating Source 22','Kerosene','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.383',''],
-    ['61e741','Besana','1','0','Stationary Combustion','Natural gas','1/1/24','1/31/24','Meter Reading','Heating Source 2','Liquefied Natural Gas','1,000','Cubic Meter','IEA','2024','8.037',''],
-    ['ae1698','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Biofuel - Dev petrol','1/1/24','1/31/24','Invoice','Mobile Comb. Source 6','Kerosene','1,000','Liter','UK DESZN (ex-DEFRA)','2024','2.921',''],
-    ['f88db6','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Estimate','Heating Source 9','Lubricant Oil','1,000','Gallon','IEA','2024','44.665',''],
-    ['5.68E+03','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Fuels - Gas oil','1/1/24','1/31/24','Estimate','Mobile Comb. Source 3','Gas Oil','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.383',''],
-    ['7dcdd9','Besana','1','0','Stationary Combustion','Petroleum coke','1/1/24','1/31/24','Invoice','Heating Source 16','Pet Coke','1,000','Short Tons','IEA','2024','10,253.57',''],
-    ['8ae196','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Upper medium - Diesel','1/1/24','1/31/24','Invoice','Mobile Comb. Source 17','Diesel','1,000','Kilometer','UK DESZN (ex-DEFRA)','2024','0.161',''],
-    ['efa448','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Large car - CNG','1/1/24','1/31/24','Estimate','Mobile Comb. Source 16','Compressed Natural Gas','1,000','Kilometer','UK DESZN (ex-DEFRA)','2024','0.237',''],
-    ['bda2ec','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Invoice','Heating Source 13','Biomass Agri. Byproducts','1,000','Kilogram','IEA','2024','12.769',''],
-    ['52a36c','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','Photovoltaic Solar-2024','1/1/24','1/31/24','Meter Reading','Energy Gen.1','Photovoltaic Solar','1,000','Kilowatt-hour','Non-Emission Source','2024','0',''],
-    ['07be92','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Biofuel - Dev diesel','1/1/24','1/31/24','Invoice','Mobile Comb. Source 2','Diesel','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.254',''],
-    ['c34679','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Biofuel - Dev petrol','1/1/24','1/31/24','Invoice','Mobile Comb. Source 4','Petrol','1,000','Liter','UK DESZN (ex-DEFRA)','2024','2.947',''],
-    ['435ac8','Besana','1','0','Stationary Combustion','Biofuel - Biodiesel ME','1/1/24','1/31/24','Meter Reading','Heating Source 23','Biodiesel','1,000','Liter','UK DESZN (ex-DEFRA)','2024','2.871',''],
-    ['47a72f','Besana','1','0','Stationary Combustion','Fuels - Fuel oil','1/1/24','1/31/24','Invoice','Heating Source 7','Fuel Oil','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.87',''],
-    ['744676','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Estimate','Heating Source 15','Butane','1,000','Kilogram','IEA','2024','13.044',''],
-    ['ba513f','Besana','1','0','Stationary Combustion','Anthracite','1/1/24','1/31/24','Meter Reading','Heating Source 11','Coal Anthracite','1,000','Short Tons','IEA','2024','19,702.37',''],
-    ['04cf5a','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Estimate','Heating Source 21','Petrol','1,000','Kilogram','IEA','2024','13.516',''],
-    ['43ebca','Besana','1','0','Stationary Combustion','Coke oven coke','1/1/24','1/31/24','Invoice','Heating Source 19','Coke Mixed Industrial','1,000','Short Tons','IEA','2024','20,595.48',''],
-    ['6e1b3f','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Aviation turbine fuel','1/1/24','1/31/24','Estimate','Mobile Comb. Source 7','Aviation Gasoline','1,000','Gallon','UK DESZN (ex-DEFRA)','2024','10.783',''],
-    ['bd9d9c','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Upper medium - Petrol','1/1/24','1/31/24','Invoice','Mobile Comb. Source 19','Petrol','1,000','Kilometer','UK DESZN (ex-DEFRA)','2024','0.19','']
-  ];
+  var TABLE_COLS = window.SampleData.ACTIVITY_TABLE_COLS;
+  var TABLE_ROWS = window.SampleData.ACTIVITY_TABLE_ROWS;
 
   /** Returns the body HTML string (dm-layout) for the Data management page. */
   function getBodyHTML() {

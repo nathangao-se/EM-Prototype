@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  var esc = window.DomUtils.esc;
 
   var EF_DATA = [
     { name: 'eGRID RFCW Electricity', source: 'eGRID',  category: 'Electricity',           region: 'RFC West (OH, WV, PA)', factor: 0.364,  unit: 'kg CO\u2082e/kWh',    year: 2024 },

@@ -26,11 +26,7 @@
   //   action: { label, icon? }
   // ------------------------------------------
 
-  function esc(str) {
-    var d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
+  var esc = window.DomUtils.esc;
 
   function buildCard(card) {
     var html = '<div class="kpi-card project-bar__card">';

@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  var esc = window.DomUtils.esc;
 
   var INVENTORIES = [
     { id: 'q4-2025', title: 'Q4 2025 Corporate Inventory', meta: 'Oct 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities',

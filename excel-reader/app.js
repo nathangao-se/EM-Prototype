@@ -491,10 +491,5 @@
     // Utilities
     // =========================================================================
 
-    function esc(s) {
-        if (!s) return "";
-        var d = document.createElement("div");
-        d.textContent = s;
-        return d.innerHTML;
-    }
+    var esc = window.DomUtils.esc;
 })();

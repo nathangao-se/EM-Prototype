@@ -9,6 +9,13 @@
   // DOM — injected once at startup
   // ===========================================
   const overlay = document.getElementById('modal-overlay');
+  if (!overlay) return;
+
+  ModalManager.register('category-modal', {
+    overlay: overlay,
+    openClass: 'modal-overlay--open'
+  });
+
   const titleEl = overlay.querySelector('.modal-header-title');
   const closeBtn = overlay.querySelector('.modal-close-btn');
   const listScroll = overlay.querySelector('.modal-list-scroll');
@@ -33,42 +40,26 @@
     currentItems = items || [];
     selectedIndex = -1;
 
-    // Header
     titleEl.textContent = categoryName;
-
-    // Render list
     renderList();
-
-    // Reset detail to placeholder
     showPlaceholder();
 
-    // Auto-select first item if available
     if (currentItems.length > 0) {
       selectItem(0);
     }
 
-    // Show
-    overlay.classList.add('modal-overlay--open');
-    document.body.style.overflow = 'hidden';
+    ModalManager.open('category-modal');
   }
 
   function closeModal() {
-    overlay.classList.remove('modal-overlay--open');
-    document.body.style.overflow = '';
+    ModalManager.close('category-modal');
   }
 
   // Expose globally so goals.js can call it
   window.openCategoryModal = openModal;
   window.closeCategoryModal = closeModal;
 
-  // Close handlers
   closeBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeModal();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('modal-overlay--open')) closeModal();
-  });
 
   // ===========================================
   // LIST RENDERING
@@ -164,10 +155,6 @@
     return status.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
   }
 
-  function escapeHTML(str) {
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
+  var escapeHTML = window.DomUtils.esc;
 
 })();

@@ -5,6 +5,8 @@
 (function() {
   const panel = document.getElementById('dev-panel');
   const toggleBtn = document.getElementById('dev-panel-toggle');
+  if (!panel || !toggleBtn) return;
+
   const options = document.querySelectorAll('.dev-panel-option[data-config]');
 
   let currentConfigId = 'global-oversight';
@@ -19,7 +21,7 @@
     panel.classList.add('dev-panel--expanded');
   });
 
-  closeBtn.addEventListener('click', () => {
+  if (closeBtn) closeBtn.addEventListener('click', () => {
     panel.classList.remove('dev-panel--expanded');
   });
 
@@ -138,7 +140,7 @@
   var combineToggle = document.getElementById('dev-toggle-combine');
   window.inventoryCombineStepEnabled = false;
 
-  combineToggle.addEventListener('click', function () {
+  if (combineToggle) combineToggle.addEventListener('click', function () {
     window.inventoryCombineStepEnabled = !window.inventoryCombineStepEnabled;
     combineToggle.classList.toggle('dev-panel-option--active', window.inventoryCombineStepEnabled);
   });
@@ -165,12 +167,7 @@
   // ===========================================
 
   window.closeAllOverlays = function () {
-    if (typeof window.closeInventoryWizard === 'function') window.closeInventoryWizard();
-    if (typeof window.closeCampaignWizard === 'function') window.closeCampaignWizard();
-    if (typeof window.closeNormalizeModal === 'function') window.closeNormalizeModal();
-    if (typeof window.closeActivityDataSetupModal === 'function') window.closeActivityDataSetupModal();
-    if (typeof window.closeUploadWizard === 'function') window.closeUploadWizard();
-    if (typeof window.closeCategoryModal === 'function') window.closeCategoryModal();
+    window.ModalManager.closeAll();
   };
 
 })();

@@ -7,7 +7,7 @@
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9999;
+  z-index: var(--z-dev-panel);
   font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
   font-size: 12px;
   display: flex;
@@ -154,7 +154,7 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 150ms ease;
-  z-index: 10000;
+  z-index: var(--z-dev-toggle);
 }
 
 .dev-panel-hint:hover::after {
@@ -175,7 +175,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 10000;
+  z-index: var(--z-dev-toggle);
   align-items: center;
   justify-content: center;
   padding: 24px;

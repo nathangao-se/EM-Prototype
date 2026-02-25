@@ -402,14 +402,16 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .dm-table {
-  width: 100%;
+  min-width: 100%;
+  width: max-content;
   border-collapse: collapse;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
-  table-layout: fixed;
+  table-layout: auto;
 }
 .dm-table th {
   text-align: left;
@@ -417,6 +419,7 @@
   font-size: 14px;
   color: #676f73;
   padding: 14px 8px;
+  white-space: nowrap;
   background: #fff;
   border-bottom: 1px solid #dfe7eb;
   white-space: nowrap;
@@ -437,6 +440,7 @@
   font-weight: 400;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

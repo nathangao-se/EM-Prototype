@@ -4,12 +4,7 @@
 
 (function () {
 
-  function esc(str) {
-    if (!str) return '';
-    var d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
+  var esc = window.DomUtils.esc;
 
   var CATEGORIES = [
     { id: 'all',        name: 'All',                    icon: 'fa-solid fa-border-all' },

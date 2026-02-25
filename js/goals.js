@@ -6,7 +6,8 @@
   
   // DOM Elements
   const goalsSection = document.querySelector('.goals');
-  
+  if (!goalsSection) return;
+
   /**
    * Render the entire goals section from config
    * @param {Object} config - The active configuration object

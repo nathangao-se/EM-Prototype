@@ -1,0 +1,467 @@
+/* ========================================
+   UPLOAD WIZARD — Step 0: Add activity files
+   (dropzone, file list, import toggle,
+    manual entry form, template catalog)
+   ======================================== */
+
+/* Drag and drop zone */
+.upload-wiz-dropzone {
+  border: 2px dashed #d5dde0;
+  border-radius: 12px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.upload-wiz-dropzone:hover,
+.upload-wiz-dropzone--active {
+  border-color: #008029;
+  background: #f8fcf9;
+}
+
+.upload-wiz-dropzone-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8f4ec;
+  border-radius: 50%;
+  color: #008029;
+  font-size: 20px;
+}
+
+.upload-wiz-dropzone-text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+}
+
+.upload-wiz-dropzone-text a {
+  color: #008029;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.upload-wiz-dropzone-meta {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  color: #676f73;
+  line-height: 1.4;
+}
+
+/* File list */
+.upload-wiz-file-list {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.upload-wiz-file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+}
+
+.upload-wiz-file-row:last-child {
+  border-bottom: none;
+}
+
+.upload-wiz-file-name {
+  flex: 1;
+  min-width: 0;
+  color: #1d201f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-wiz-file-size {
+  color: #676f73;
+  flex-shrink: 0;
+  width: 65px;
+  text-align: right;
+}
+
+.upload-wiz-file-type {
+  flex-shrink: 0;
+}
+
+.upload-wiz-file-type select {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid #d5dde0;
+  border-radius: 6px;
+  background: #fff;
+  color: #41494d;
+  cursor: pointer;
+}
+
+.upload-wiz-file-menu {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: #676f73;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
+.upload-wiz-file-menu:hover {
+  color: #1d201f;
+}
+
+/* Empty row */
+.upload-wiz-empty-row {
+  padding: 12px 14px;
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #676f73;
+}
+
+/* From other projects toggle */
+.upload-wiz-import-toggle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #008029;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.upload-wiz-import-toggle:hover {
+  text-decoration: underline;
+}
+
+/* ----------------------------------------
+   Manual entry form
+   ---------------------------------------- */
+
+/* Hide normal footer when form is active */
+.upload-wiz-footer--hidden {
+  display: none !important;
+}
+
+/* Form-mode footer */
+.uw-s0-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 14px 24px;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.uw-s0-clear-btn {
+  position: absolute;
+  left: 24px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #0075a3;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.uw-s0-clear-btn:hover {
+  text-decoration: underline;
+}
+
+.uw-s0-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.uw-s0-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.uw-s0-req {
+  color: #cc1300;
+  font-weight: 700;
+}
+
+.uw-s0-info {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: 2px;
+}
+
+.uw-s0-input,
+.uw-s0-select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d5dde0;
+  border-radius: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  background: #fff;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.uw-s0-input:focus,
+.uw-s0-select:focus {
+  border-color: #008029;
+}
+
+.uw-s0-input::placeholder {
+  color: #94a3b8;
+}
+
+.uw-s0-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%231d201f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.uw-s0-date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.uw-s0-date {
+  flex: 1;
+  min-width: 0;
+}
+
+.uw-s0-date-to {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  flex-shrink: 0;
+}
+
+.uw-s0-value-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.uw-s0-value-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.uw-s0-value-row {
+  display: flex;
+  gap: 8px;
+}
+
+.uw-s0-value-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.uw-s0-value-unit {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------
+   Template catalog
+   ---------------------------------------- */
+
+.uw-tpl-link {
+  color: #008029;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.uw-tpl-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+}
+
+.uw-tpl-done-link {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #008029;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.uw-tpl-done-link:hover {
+  text-decoration: underline;
+}
+
+.uw-tpl-done-link i {
+  font-size: 12px;
+}
+
+.uw-tpl-header-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.uw-tpl-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.uw-tpl-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #d5dde0;
+  margin-bottom: 4px;
+}
+
+.uw-tpl-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #676f73;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.uw-tpl-section-count {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.uw-tpl-row {
+  position: relative;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 220ms ease-in-out, box-shadow 220ms ease-in-out, background 220ms ease-in-out;
+}
+
+.uw-tpl-row:hover {
+  border-color: #008029;
+  box-shadow: 0 1px 4px rgba(0, 128, 41, 0.1);
+}
+
+.uw-tpl-row--downloading {
+  border-color: #008029;
+  background: #f8fcf9;
+}
+
+.uw-tpl-row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.uw-tpl-row-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.uw-tpl-badge-api {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  padding: 0 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #008029;
+  background: #e8f4ec;
+  border-radius: 3px;
+  letter-spacing: 0.3px;
+}
+
+.uw-tpl-row-subtitle {
+  margin-left: auto;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  white-space: nowrap;
+}
+
+.uw-tpl-row-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.45;
+  margin-top: 4px;
+}
+
+.uw-tpl-row-meta {
+  display: flex;
+  gap: 14px;
+  margin-top: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.uw-tpl-row-meta i {
+  font-size: 10px;
+  margin-right: 3px;
+}
+
+.uw-tpl-row-dl-feedback {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #008029;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: uw-fade-in 220ms ease-in-out;
+}
+
+.uw-tpl-row-dl-feedback i {
+  font-size: 12px;
+}

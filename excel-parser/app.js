@@ -39,11 +39,7 @@ window.ExcelParser = (function () {
     return label;
   }
 
-  function esc(s) {
-    var d = document.createElement("div");
-    d.textContent = s;
-    return d.innerHTML;
-  }
+  var esc = window.DomUtils.esc;
 
   function dataForDisplayRow(displayRow) {
     return csvData[displayRow - 1] || [];

@@ -1,0 +1,232 @@
+/* ========================================
+   UPLOAD WIZARD — Base / shared styles
+   (overlay, modal, header, stepper, body,
+    section headers, footer, swap states,
+    shared keyframes)
+   ======================================== */
+
+.upload-wiz-overlay {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  z-index: var(--z-overlay-top);
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px calc(24px + 10vh) 24px;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-modal), visibility var(--transition-modal);
+}
+
+.upload-wiz-overlay--open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.upload-wiz {
+  width: 95vw;
+  max-width: 680px;
+  max-height: var(--modal-max-height);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.97);
+  opacity: 0;
+  transition: max-width 220ms ease-in-out,
+              transform var(--transition-modal),
+              opacity var(--transition-modal);
+}
+
+.upload-wiz-overlay--open .upload-wiz {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Header */
+.upload-wiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0 24px;
+  flex-shrink: 0;
+}
+
+.upload-wiz-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d201f;
+  margin: 0;
+}
+
+.upload-wiz-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #676f73;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.upload-wiz-close:hover {
+  background: #f5f8fa;
+  color: #1d201f;
+}
+
+/* Stepper — uses shared wizard-stepper classes from wizard-base.css */
+.upload-wiz-steps {
+  padding: 16px 24px 0 24px;
+  flex-shrink: 0;
+}
+
+/* Body */
+.upload-wiz-body {
+  flex: 1;
+  overflow: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+}
+
+.upload-wiz-body--split {
+  overflow: hidden;
+}
+
+.upload-wiz-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.upload-wiz-desc a {
+  color: #008029;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.upload-wiz-hint {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Section headers */
+.upload-wiz-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.upload-wiz-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.upload-wiz-section-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.upload-wiz-section-actions a {
+  font-size: 13px;
+  font-weight: 700;
+  color: #008029;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.upload-wiz-section-actions a:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.upload-wiz-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.upload-wiz-discard {
+  font-size: 13px;
+  color: #c53030;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upload-wiz-discard:hover {
+  text-decoration: underline;
+}
+
+.upload-wiz-footer-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Placeholder for steps 2 and 3 */
+.upload-wiz-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+/* Swap states (manual entry / template catalog) — hides header + stepper */
+.upload-wiz--swap .upload-wiz-header,
+.upload-wiz--swap .upload-wiz-steps {
+  display: none;
+}
+
+/* Wider modal when preview is shown */
+.upload-wiz--wide {
+  max-width: 96vw;
+}
+
+/* Shared keyframe animations */
+@keyframes uw-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes uw-slide-left {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes uw-slide-right {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
