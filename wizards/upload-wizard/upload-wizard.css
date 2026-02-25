@@ -10,7 +10,7 @@
   z-index: 9100;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 24px 24px calc(24px + 10vh) 24px;
   box-sizing: border-box;
   opacity: 0;
   visibility: hidden;
@@ -25,7 +25,7 @@
 .upload-wiz {
   width: 95vw;
   max-width: 680px;
-  max-height: 85vh;
+  max-height: 75vh;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
@@ -111,6 +111,7 @@
 
 .upload-wiz-desc a {
   color: #008029;
+  font-weight: 700;
   text-decoration: underline;
 }
 
@@ -147,6 +148,7 @@
 
 .upload-wiz-section-actions a {
   font-size: 13px;
+  font-weight: 700;
   color: #008029;
   text-decoration: none;
   cursor: pointer;
@@ -196,7 +198,7 @@
 
 .upload-wiz-dropzone-text a {
   color: #008029;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
 }
@@ -286,6 +288,7 @@
 /* From other projects toggle */
 .upload-wiz-import-toggle {
   font-size: 13px;
+  font-weight: 700;
   color: #008029;
   text-decoration: none;
   cursor: pointer;
@@ -483,8 +486,193 @@
 }
 
 /* ========================================
+   STEP 0 — Template catalog (Version B)
+   ======================================== */
+
+.uw-tpl-link {
+  color: #008029;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.uw-tpl-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+}
+
+.uw-tpl-done-link {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #008029;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.uw-tpl-done-link:hover {
+  text-decoration: underline;
+}
+
+.uw-tpl-done-link i {
+  font-size: 12px;
+}
+
+.uw-tpl-header-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.uw-tpl-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.uw-tpl-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #d5dde0;
+  margin-bottom: 4px;
+}
+
+.uw-tpl-section-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #676f73;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.uw-tpl-section-count {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.uw-tpl-row {
+  position: relative;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 220ms ease-in-out, box-shadow 220ms ease-in-out, background 220ms ease-in-out;
+}
+
+.uw-tpl-row:hover {
+  border-color: #008029;
+  box-shadow: 0 1px 4px rgba(0, 128, 41, 0.1);
+}
+
+.uw-tpl-row--downloading {
+  border-color: #008029;
+  background: #f8fcf9;
+}
+
+.uw-tpl-row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.uw-tpl-row-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.uw-tpl-badge-api {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  padding: 0 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #008029;
+  background: #e8f4ec;
+  border-radius: 3px;
+  letter-spacing: 0.3px;
+}
+
+.uw-tpl-row-subtitle {
+  margin-left: auto;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  white-space: nowrap;
+}
+
+.uw-tpl-row-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.45;
+  margin-top: 4px;
+}
+
+.uw-tpl-row-meta {
+  display: flex;
+  gap: 14px;
+  margin-top: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.uw-tpl-row-meta i {
+  font-size: 10px;
+  margin-right: 3px;
+}
+
+.uw-tpl-row-dl-feedback {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #008029;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: uw-fade-in 220ms ease-in-out;
+}
+
+.uw-tpl-row-dl-feedback i {
+  font-size: 12px;
+}
+
+/* ========================================
    STEP 2 — Columns cleanup
    ======================================== */
+
+/* Swap states (manual entry / template catalog) — no additional height restriction */
+
+.upload-wiz--swap .upload-wiz-header,
+.upload-wiz--swap .upload-wiz-steps {
+  display: none;
+}
 
 /* Wider modal when preview is shown */
 .upload-wiz--wide {

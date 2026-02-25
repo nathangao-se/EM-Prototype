@@ -6,8 +6,8 @@
 .inv-wizard {
   width: 800px;
   height: 800px;
-  max-height: 85vh;
-  transition: width 0.25s ease;
+  max-height: 75vh;
+  transition: width 220ms ease-in-out, height 220ms ease-in-out;
 }
 
 .inv-wizard .wizard-body {
@@ -337,6 +337,86 @@
   height: 100%;
 }
 
+/* Indeterminate checkbox (set via JS .indeterminate = true) */
+.inv-table-checkbox:indeterminate {
+  background: #008029;
+  border-color: #008029;
+}
+
+.inv-table-checkbox:indeterminate::after {
+  content: '\f068';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 11px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Activity group rows */
+.inv-table-group-row td {
+  background: #f9fafb;
+  font-weight: 600;
+  border-bottom: 1px solid #d5dde0;
+}
+
+.inv-act-group-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 6px;
+  color: #1d201f;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.inv-act-group-toggle i {
+  display: inline-block;
+  transition: transform 220ms ease-in-out;
+}
+
+.inv-act-group-toggle--collapsed i {
+  transform: rotate(-90deg);
+}
+
+.inv-act-group-toggle:hover {
+  color: #008029;
+}
+
+/* Activity table row accordion */
+.inv-cell-inner {
+  max-height: 40px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height 220ms ease-in-out, opacity 180ms ease-in-out;
+}
+
+tr[data-ws-group-child] td {
+  transition: padding 220ms ease-in-out, border-color 220ms ease-in-out;
+}
+
+tr.inv-row-collapsed td {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-color: transparent !important;
+}
+
+tr.inv-row-collapsed .inv-cell-inner {
+  max-height: 0;
+  opacity: 0;
+}
+
+.inv-act-group-count {
+  color: #676f73;
+  font-weight: 400;
+  font-size: 13px;
+  margin-left: 2px;
+}
+
 /* Scope badges */
 .inv-scope-badge {
   display: inline-flex;
@@ -490,6 +570,15 @@
   visibility: hidden;
 }
 
+.inv-tree-toggle i {
+  display: inline-block;
+  transition: transform 220ms ease-in-out;
+}
+
+.inv-tree-toggle--collapsed i {
+  transform: rotate(-90deg);
+}
+
 .inv-tree-cb {
   width: 16px;
   height: 16px;
@@ -572,11 +661,15 @@
 }
 
 .inv-tree-children {
-  display: none;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 220ms ease-in-out, opacity 180ms ease-in-out;
 }
 
 .inv-tree-children--open {
-  display: block;
+  max-height: 600px;
+  opacity: 1;
 }
 
 /* Tree lines */

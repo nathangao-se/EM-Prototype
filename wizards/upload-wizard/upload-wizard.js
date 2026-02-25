@@ -129,8 +129,33 @@
     ].join('\n')
   };
 
+  // Template catalog data (Version B)
+  var TEMPLATE_CATALOG = [
+    { section: 'Scope 1 & 2 — Direct & Indirect Emissions', title: 'Scope 1 Stationary Combustion Activities', subtitle: 'Carbon · Emissions', desc: 'Direct GHG emissions from stationary combustion of fuels (natural gas, diesel, propane, etc.) at owned or controlled facilities.', api: true, cols: 15, rules: 15, imports: 42 },
+    { section: 'Scope 1 & 2 — Direct & Indirect Emissions', title: 'Scope 2 Purchased Electricity Activities', subtitle: 'Carbon · Emissions', desc: 'Indirect emissions from purchased electricity, steam, heating, and cooling. Location-based and market-based calculation support.', api: true, cols: 15, rules: 15, imports: 0 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.1 Purchased Goods & Services', subtitle: 'Carbon · Emissions', desc: 'Upstream emissions from purchased goods and services. Supports spend-based, average-data, and supplier-specific calculation methods per GHG Protocol.', api: true, cols: 14, rules: 14, imports: 28 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.2 Capital Goods', subtitle: 'Carbon · Emissions', desc: 'Cradle-to-gate emissions from capital goods purchased during the reporting period. Covers equipment, machinery, buildings, and vehicles.', api: true, cols: 13, rules: 13, imports: 8 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.3 Fuel- & Energy-Related Activities', subtitle: 'Carbon · Emissions', desc: 'Upstream emissions from fuel and energy procurement not already counted in Scope 1 or 2. Includes extraction, production, and T&D losses.', api: true, cols: 14, rules: 14, imports: 19 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.4 Upstream Transportation & Distribution', subtitle: 'Carbon · Emissions', desc: 'Emissions from transportation and distribution of purchased goods between tier 1 suppliers and the reporting company\'s operations.', api: true, cols: 15, rules: 15, imports: 24 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.5 Waste Generated in Operations', subtitle: 'Carbon · Emissions', desc: 'Emissions from third-party disposal and treatment of waste generated in the reporting company\'s operations. Covers landfill, recycling, incineration, and composting.', api: true, cols: 13, rules: 13, imports: 31 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.6 Business Travel', subtitle: 'Carbon · Emissions', desc: 'Emissions from employee business travel including flights, rail, rental cars, and hotel stays. Supports distance-based and spend-based methods.', api: true, cols: 14, rules: 14, imports: 47 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.7 Employee Commuting', subtitle: 'Carbon · Emissions', desc: 'Emissions from employees commuting between home and work. Covers transportation mode, distance, and remote work adjustments.', api: true, cols: 13, rules: 13, imports: 22 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.8 Upstream Leased Assets', subtitle: 'Carbon · Emissions', desc: 'Emissions from operation of assets leased by the reporting company (lessee). Covers office space, warehouses, and equipment leases.', api: true, cols: 12, rules: 12, imports: 6 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.9 Downstream Transportation & Distribution', subtitle: 'Carbon · Emissions', desc: 'Emissions from transportation and distribution of sold products to end consumers. Covers outbound logistics not paid for by the reporting company.', api: true, cols: 14, rules: 14, imports: 11 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.10 Processing of Sold Products', subtitle: 'Carbon · Emissions', desc: 'Emissions from processing of intermediate products sold by the reporting company. Applies when sold products require further processing before end use.', api: true, cols: 13, rules: 13, imports: 5 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.11 Use of Sold Products', subtitle: 'Carbon · Emissions', desc: 'Emissions from end-use of goods and services sold by the reporting company. Covers direct use-phase energy consumption and fugitive emissions.', api: true, cols: 14, rules: 14, imports: 9 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.12 End-of-Life Treatment of Sold Products', subtitle: 'Carbon · Emissions', desc: 'Emissions from waste disposal and treatment of products sold by the reporting company at the end of their useful life.', api: true, cols: 13, rules: 13, imports: 7 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.13 Downstream Leased Assets', subtitle: 'Carbon · Emissions', desc: 'Emissions from operation of assets owned by the reporting company and leased to other entities. Covers commercial real estate and equipment leases.', api: true, cols: 12, rules: 12, imports: 4 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.14 Franchises', subtitle: 'Carbon · Emissions', desc: 'Emissions from operation of franchises not included in Scope 1 and 2. Applicable to franchisors reporting franchisee emissions.', api: true, cols: 12, rules: 12, imports: 3 },
+    { section: 'Scope 3 — Value Chain Emissions', title: 'S3.15 Investments', subtitle: 'Carbon · Emissions', desc: 'Emissions associated with the reporting company\'s investments including equity, debt, project finance, and managed investments.', api: true, cols: 13, rules: 13, imports: 6 },
+    { section: 'Other Data Templates', title: 'Utility Bills', subtitle: 'Energy', desc: 'Monthly utility bill data for electricity, natural gas, water, steam, and chilled water. Includes account, usage, and cost columns.', api: true, cols: 12, rules: 18, imports: 64 },
+    { section: 'Other Data Templates', title: 'Facility Register', subtitle: 'Facilities', desc: 'Facility metadata, characteristics, and organizational boundary configuration. Covers location, floor area, headcount, and control type.', api: false, cols: 14, rules: 10, imports: 38 },
+    { section: 'Other Data Templates', title: 'ESG KPI Dataset', subtitle: 'Reporting', desc: 'ESG key performance indicator values aligned to GRI, SASB, CDP, TCFD, and CSRD/ESRS frameworks. Covers environmental, social, and governance metrics.', api: false, cols: 10, rules: 5, imports: 7 }
+  ];
+
   // Step 0 (add activity files) state
   var showManualEntry = false;
+  var showTemplateList = false;
 
   // Step 2 (columns cleanup) state
   var step1Tab = 'layouts';
@@ -381,6 +406,7 @@
     importedFiles = [];
     step1Tab = 'layouts';
     showManualEntry = false;
+    showTemplateList = false;
     showTablePreview = false;
     savedSections = [];
     savedRanges = [];
@@ -420,10 +446,32 @@
     closeWizard();
   });
 
+  function getVisibleSteps() {
+    if (window.uploadWizardVersion === 'a') return [0];
+    return [0, 1, 2];
+  }
+
+  function nextVisibleStep(from) {
+    var steps = getVisibleSteps();
+    for (var i = 0; i < steps.length; i++) {
+      if (steps[i] > from) return steps[i];
+    }
+    return -1;
+  }
+
+  function prevVisibleStep(from) {
+    var steps = getVisibleSteps();
+    for (var i = steps.length - 1; i >= 0; i--) {
+      if (steps[i] < from) return steps[i];
+    }
+    return -1;
+  }
+
   backBtn.addEventListener('click', function () {
-    if (currentStep > 0) {
+    var prev = prevVisibleStep(currentStep);
+    if (prev >= 0) {
       stepDirection = 'back';
-      currentStep--;
+      currentStep = prev;
       render();
     } else {
       closeWizard();
@@ -434,12 +482,13 @@
   });
 
   nextBtn.addEventListener('click', function () {
-    if (currentStep === 2) {
-      closeWizard();
-    } else if (currentStep < 2) {
+    var next = nextVisibleStep(currentStep);
+    if (next >= 0) {
       stepDirection = 'forward';
-      currentStep++;
+      currentStep = next;
       render();
+    } else {
+      closeWizard();
     }
   });
 
@@ -447,23 +496,31 @@
     var stepsContainer = overlay.querySelector('.upload-wiz-steps');
     if (!stepsContainer) return;
 
-    var stepData = [
-      { num: 1, label: 'Add activity files' },
-      { num: 2, label: 'Columns cleanup' },
-      { num: 3, label: 'Review / collaborate' }
+    var visible = getVisibleSteps();
+    if (visible.length <= 1) {
+      stepsContainer.style.display = 'none';
+      return;
+    }
+    stepsContainer.style.display = '';
+
+    var allStepData = [
+      { step: 0, label: 'Add activity files' },
+      { step: 1, label: 'Columns cleanup' },
+      { step: 2, label: 'Review / collaborate' }
     ];
 
     var html = '';
-    stepData.forEach(function (s, i) {
-      var isComplete = i < currentStep;
-      var isActive = i === currentStep;
+    visible.forEach(function (stepIdx, displayIdx) {
+      var s = allStepData[stepIdx];
+      var isComplete = visible.indexOf(currentStep) > displayIdx;
+      var isActive = stepIdx === currentStep;
       var cls = 'wizard-stepper-item';
       if (isComplete) cls += ' wizard-stepper-item--complete';
       else if (isActive) cls += ' wizard-stepper-item--active';
 
       html += '<div class="' + cls + '">';
       html += '<div class="wizard-stepper-label">';
-      html += '<span>' + s.num + '. ' + s.label + '</span>';
+      html += '<span>' + (displayIdx + 1) + '. ' + s.label + '</span>';
       if (isComplete) html += ' <span class="wizard-stepper-check"><i class="fa-solid fa-check"></i></span>';
       html += '</div>';
       html += '<div class="wizard-stepper-bar"><div class="wizard-stepper-bar-fill"></div></div>';
@@ -472,40 +529,42 @@
 
     stepsContainer.className = 'upload-wiz-steps wizard-stepper';
     stepsContainer.innerHTML = html;
-
   }
 
   function updateFooter() {
     backBtn.textContent = 'Back';
-    if (currentStep === 2) {
+    var next = nextVisibleStep(currentStep);
+    if (next < 0) {
       nextBtn.textContent = 'Complete and exit';
+    } else if (currentStep === 1) {
+      nextBtn.textContent = 'Review';
+    } else if (next === 2) {
+      nextBtn.textContent = 'Review';
     } else {
-      if (currentStep === 1) {
-        nextBtn.textContent = 'Review';
-      } else {
-        nextBtn.textContent = 'Next: add emissions files';
-      }
+      nextBtn.textContent = 'Next: add emissions files';
     }
 
-    // Toggle the normalize checkbox row
     var checkRow = overlay.querySelector('.uw-s2-check-row');
     if (checkRow) {
-      checkRow.style.display = currentStep === 2 ? 'flex' : 'none';
+      checkRow.style.display = (currentStep === 2 && getVisibleSteps().indexOf(2) >= 0) ? 'flex' : 'none';
     }
   }
 
   var footerEl = overlay.querySelector('.upload-wiz-footer');
 
   function updateModalWidth() {
+    var inSwap = currentStep === 0 && (showManualEntry || showTemplateList);
     wiz.classList.toggle('upload-wiz--wide', currentStep === 1 && showTablePreview);
+    wiz.classList.toggle('upload-wiz--swap', inSwap);
   }
 
   function updateFooterMode() {
     var inForm = currentStep === 0 && showManualEntry;
-    footerEl.classList.toggle('upload-wiz-footer--hidden', inForm);
+    var inTemplates = currentStep === 0 && showTemplateList;
+    footerEl.classList.toggle('upload-wiz-footer--hidden', inForm || inTemplates);
 
     var formFooter = overlay.querySelector('.uw-s0-form-footer');
-    if (formFooter) formFooter.style.display = inForm ? 'flex' : 'none';
+    if (formFooter) formFooter.style.display = (inForm || inTemplates) ? 'flex' : 'none';
   }
 
   // ========================================
@@ -572,6 +631,11 @@
 
   function buildManualEntryForm() {
     var html = '';
+
+    html += '<div class="uw-tpl-header">';
+    html += '<a href="#" class="uw-tpl-done-link" data-action="manual-done"><i class="fa-solid fa-arrow-left"></i> Done</a>';
+    html += '<span class="uw-tpl-header-title">Add your own field</span>';
+    html += '</div>';
 
     html += '<div class="uw-s0-field">';
     html += '<label class="uw-s0-label"><span class="uw-s0-req">*</span> Business Entity <i class="fa-solid fa-circle-info uw-s0-info"></i></label>';
@@ -670,21 +734,106 @@
     if (doneBtn) doneBtn.textContent = dirty ? 'Save' : 'Done';
   }
 
+  function renderTemplateCatalog() {
+    var html = '';
+    html += '<div class="uw-tpl-header">';
+    html += '<a href="#" class="uw-tpl-done-link" data-action="tpl-done"><i class="fa-solid fa-arrow-left"></i> Done</a>';
+    html += '<span class="uw-tpl-header-title">Download templates</span>';
+    html += '</div>';
+    var lastSection = '';
+    TEMPLATE_CATALOG.forEach(function (t, i) {
+      if (t.section !== lastSection) {
+        if (lastSection) html += '</div>';
+        lastSection = t.section;
+        var countInSection = TEMPLATE_CATALOG.filter(function (x) { return x.section === t.section; }).length;
+        html += '<div class="uw-tpl-section">';
+        html += '<div class="uw-tpl-section-header">';
+        html += '<span class="uw-tpl-section-title">' + esc(t.section) + '</span>';
+        html += '<span class="uw-tpl-section-count">' + countInSection + ' template' + (countInSection !== 1 ? 's' : '') + '</span>';
+        html += '</div>';
+      }
+      html += '<div class="uw-tpl-row" data-tpl-idx="' + i + '">';
+      html += '<div class="uw-tpl-row-top">';
+      html += '<span class="uw-tpl-row-title">' + esc(t.title) + '</span>';
+      if (t.api) html += '<span class="uw-tpl-badge-api">API</span>';
+      html += '<span class="uw-tpl-row-subtitle">' + esc(t.subtitle) + '</span>';
+      html += '</div>';
+      html += '<div class="uw-tpl-row-desc">' + esc(t.desc) + '</div>';
+      html += '<div class="uw-tpl-row-dl-feedback" style="display:none"><i class="fa-solid fa-check"></i> Downloaded</div>';
+      html += '</div>';
+    });
+    if (lastSection) html += '</div>';
+    return html;
+  }
+
+  function bindTemplateCatalogEvents() {
+    bodyEl.querySelectorAll('.uw-tpl-row').forEach(function (row) {
+      row.addEventListener('click', function () {
+        if (row.classList.contains('uw-tpl-row--downloading')) return;
+        row.classList.add('uw-tpl-row--downloading');
+        var feedback = row.querySelector('.uw-tpl-row-dl-feedback');
+        if (feedback) feedback.style.display = '';
+        setTimeout(function () {
+          row.classList.remove('uw-tpl-row--downloading');
+          if (feedback) feedback.style.display = 'none';
+        }, 1500);
+      });
+    });
+
+    var doneBtn = overlay.querySelector('.uw-s0-done-btn');
+    if (doneBtn) {
+      doneBtn.addEventListener('click', function () {
+        stepDirection = 'back';
+        showTemplateList = false;
+        render();
+      });
+    }
+
+    bodyEl.querySelectorAll('[data-action="tpl-done"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        stepDirection = 'back';
+        showTemplateList = false;
+        render();
+      });
+    });
+  }
+
   function renderStep0() {
     var html = '';
+
+    if (showTemplateList) {
+      html += renderTemplateCatalog();
+      bodyEl.innerHTML = html;
+      updateFooterMode();
+      var doneBtn = overlay.querySelector('.uw-s0-done-btn');
+      if (doneBtn) doneBtn.textContent = 'Done';
+      bindTemplateCatalogEvents();
+      return;
+    }
+
+    var isVersionB = window.uploadWizardVersion === 'b';
 
     if (showManualEntry) {
       html += buildManualEntryForm();
     } else {
-      html += '<p class="upload-wiz-desc">Add your activity files here by uploading a spreadsheet/CSV, importing it from another project, or typing in your own field. If you\'re not familiar with what this document looks like, we wrote <a href="#">a guide for you here</a>.</p>';
-      html += '<p class="upload-wiz-hint">If your files is running into validation errors, try entering your data into our downloadable excel template</p>';
+      if (isVersionB) {
+        html += '<p class="upload-wiz-desc">Add your activity files here by uploading a spreadsheet/CSV, importing it from another project, or typing in your own field. If you\'re not familiar with what this document looks like, we wrote <a href="#">a guide for you here</a>.</p>';
+        html += '<p class="upload-wiz-hint">If your files is running into validation errors, try entering your data into our <a href="#" class="uw-tpl-link" data-action="show-templates">downloadable excel template</a></p>';
+      } else {
+        html += '<p class="upload-wiz-desc">Add your activity files here by uploading a spreadsheet/CSV. You can <a href="#" class="uw-tpl-link" data-action="show-templates">download excel templates here</a></p>';
+      }
 
       html += '<div class="upload-wiz-section">';
       html += '<div class="upload-wiz-section-header">';
-      html += '<span class="upload-wiz-section-title">Uploaded</span>';
+      html += '<span class="upload-wiz-section-title">Uploaded files</span>';
       html += '<div class="upload-wiz-section-actions">';
-      html += '<a href="#" data-action="type-own"><i class="fa-solid fa-pen-to-square"></i> Type in your own field</a>';
-      html += '<a href="#" data-action="add-more">+ Add files</a>';
+      if (isVersionB) {
+        html += '<a href="#" data-action="type-own"><i class="fa-solid fa-pen-to-square"></i> Add your own field</a>';
+      }
+      if (isVersionB || uploadedFiles.length > 0) {
+        html += '<a href="#" data-action="add-more">+ Upload files</a>';
+      }
       html += '</div>';
       html += '</div>';
 
@@ -700,15 +849,17 @@
       }
       html += '</div>';
 
-      html += '<div class="upload-wiz-section">';
-      html += '<div class="upload-wiz-section-header">';
-      html += '<span class="upload-wiz-section-title">From other projects</span>';
-      html += '<div class="upload-wiz-section-actions">';
-      html += '<a href="#" class="upload-wiz-import-toggle" data-action="import-toggle">Import data from other projects <i class="fa-solid fa-chevron-down"></i></a>';
-      html += '</div>';
-      html += '</div>';
-      html += buildFileListHTML(importedFiles, 'imported');
-      html += '</div>';
+      if (isVersionB) {
+        html += '<div class="upload-wiz-section">';
+        html += '<div class="upload-wiz-section-header">';
+        html += '<span class="upload-wiz-section-title">From other projects</span>';
+        html += '<div class="upload-wiz-section-actions">';
+        html += '<a href="#" class="upload-wiz-import-toggle" data-action="import-toggle">Import data from other projects <i class="fa-solid fa-chevron-down"></i></a>';
+        html += '</div>';
+        html += '</div>';
+        html += buildFileListHTML(importedFiles, 'imported');
+        html += '</div>';
+      }
     }
 
     bodyEl.innerHTML = html;
@@ -739,6 +890,15 @@
           render();
         });
       }
+
+      bodyEl.querySelectorAll('[data-action="manual-done"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          stepDirection = 'back';
+          showManualEntry = false;
+          render();
+        });
+      });
       return;
     }
 
@@ -783,6 +943,15 @@
       });
     });
 
+    bodyEl.querySelectorAll('[data-action="show-templates"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        stepDirection = 'forward';
+        showTemplateList = true;
+        render();
+      });
+    });
+
     bodyEl.querySelectorAll('[data-action="import-toggle"]').forEach(function (a) {
       a.addEventListener('click', function (e) {
         e.preventDefault();
@@ -812,6 +981,7 @@
 
   function renderStep1() {
     var html = '';
+    var isNew = window.uploadWizardVersion === 'a';
 
     // Body — two-col when preview is on, single col otherwise
     if (showTablePreview) {
@@ -855,12 +1025,14 @@
       html += '<p>For accurate calculations, your data columns need to conform to our standard data set. We found mismatches that you\'ll need to reconcile before you continue.</p>';
       html += '<p>Your original data will be preserved in our records and will not be lost.</p>';
       html += '</div>';
-      html += '<div class="uw-s1-toggle-row">';
-      html += '<span class="uw-s1-toggle-label">Resolve ambiguous data in your files</span>';
-      html += '<button type="button" class="uw-s1-toggle uw-s1-toggle--on" data-action="toggle-preview" aria-pressed="true">';
-      html += '<span class="uw-s1-toggle-handle"></span>';
-      html += '</button>';
-      html += '</div>';
+      if (!isNew) {
+        html += '<div class="uw-s1-toggle-row">';
+        html += '<span class="uw-s1-toggle-label">Resolve ambiguous data in your files</span>';
+        html += '<button type="button" class="uw-s1-toggle uw-s1-toggle--on" data-action="toggle-preview" aria-pressed="true">';
+        html += '<span class="uw-s1-toggle-handle"></span>';
+        html += '</button>';
+        html += '</div>';
+      }
       html += '</div>';
 
       // Bottom-left: table preview
@@ -878,12 +1050,14 @@
       html += '<p>For accurate calculations, your data columns need to conform to our standard data set. We found mismatches that you\'ll need to reconcile before you continue.</p>';
       html += '<p>Your original data will be preserved in our records and will not be lost.</p>';
       html += '</div>';
-      html += '<div class="uw-s1-toggle-row">';
-      html += '<span class="uw-s1-toggle-label">Resolve ambiguous data in your files</span>';
-      html += '<button type="button" class="uw-s1-toggle" data-action="toggle-preview" aria-pressed="false">';
-      html += '<span class="uw-s1-toggle-handle"></span>';
-      html += '</button>';
-      html += '</div>';
+      if (!isNew) {
+        html += '<div class="uw-s1-toggle-row">';
+        html += '<span class="uw-s1-toggle-label">Resolve ambiguous data in your files</span>';
+        html += '<button type="button" class="uw-s1-toggle" data-action="toggle-preview" aria-pressed="false">';
+        html += '<span class="uw-s1-toggle-handle"></span>';
+        html += '</button>';
+        html += '</div>';
+      }
       html += renderColumnsTab();
     }
 

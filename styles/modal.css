@@ -11,6 +11,8 @@
   z-index: 1000;
   justify-content: center;
   align-items: center;
+  padding-bottom: 10vh;
+  box-sizing: border-box;
   opacity: 0;
   visibility: hidden;
   transition: opacity 220ms ease-in-out, visibility 220ms ease-in-out;
@@ -25,8 +27,8 @@
 .modal {
   width: 88vw;
   max-width: 1100px;
-  height: 78vh;
-  max-height: 85vh;
+  height: 75vh;
+  max-height: 75vh;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);

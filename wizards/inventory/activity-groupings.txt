@@ -1,0 +1,41 @@
+ACTIVITY GROUPING SCHEMAS
+=========================
+Copy the desired ACTIVITY_GROUPS array into inventory.js.
+All versions use the same tree interactions (expand/collapse, parent checkbox propagation).
+Activity IDs reference the ACTIVITIES array in inventory.js.
+
+──────────────────────────────────────────────────
+OPTION A — By Scope (3 groups)
+──────────────────────────────────────────────────
+
+var ACTIVITY_GROUPS = [
+  { id: 'scope1', name: 'Direct emissions', scope: 1, activityIds: ['sc', 'mc', 'fe', 'pe2'] },
+  { id: 'scope2', name: 'Energy indirect', scope: 2, activityIds: ['pe', 'sh', 'pc'] },
+  { id: 'scope3', name: 'Value chain', scope: 3, activityIds: ['pgs', 'cg', 'fera', 'ut', 'wg', 'bt', 'ec', 'dt', 'usp', 'eol', 'fr', 'inv'] }
+];
+
+
+──────────────────────────────────────────────────
+OPTION B — By Scope, Scope 3 split upstream/downstream (4 groups)  [DEFAULT]
+──────────────────────────────────────────────────
+
+var ACTIVITY_GROUPS = [
+  { id: 'scope1', name: 'Direct emissions', scope: 1, activityIds: ['sc', 'mc', 'fe', 'pe2'] },
+  { id: 'scope2', name: 'Energy indirect', scope: 2, activityIds: ['pe', 'sh', 'pc'] },
+  { id: 'scope3up', name: 'Upstream', scope: 3, activityIds: ['pgs', 'cg', 'fera', 'ut', 'wg', 'bt', 'ec'] },
+  { id: 'scope3down', name: 'Downstream', scope: 3, activityIds: ['dt', 'usp', 'eol', 'fr', 'inv'] }
+];
+
+
+──────────────────────────────────────────────────
+OPTION C — By Operational category (6 groups)
+──────────────────────────────────────────────────
+
+var ACTIVITY_GROUPS = [
+  { id: 'combust', name: 'Combustion & process', scope: 1, activityIds: ['sc', 'mc', 'pe2', 'fe'] },
+  { id: 'energy', name: 'Purchased energy', scope: 2, activityIds: ['pe', 'sh', 'pc'] },
+  { id: 'supply', name: 'Supply chain', scope: 3, activityIds: ['pgs', 'cg', 'fera'] },
+  { id: 'transport', name: 'Transportation & logistics', scope: 3, activityIds: ['ut', 'dt'] },
+  { id: 'people', name: 'People', scope: 3, activityIds: ['bt', 'ec'] },
+  { id: 'products', name: 'Products & investments', scope: 3, activityIds: ['usp', 'eol', 'fr', 'inv', 'wg'] }
+];

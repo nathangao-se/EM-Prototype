@@ -39,8 +39,8 @@
 
   var STEPS = [
     { label: 'Basic info', key: 'basic' },
-    { label: 'Add entities', key: 'entities' },
-    { label: 'Add activities', key: 'activities' },
+    { label: 'Org boundaries', key: 'entities' },
+    { label: 'Ops boundaries', key: 'activities' },
     { label: 'Combine', key: 'assign' },
     { label: 'Review', key: 'review' }
   ];
@@ -72,6 +72,17 @@
   ];
 
   ACTIVITIES.forEach(function (a) { activitySelections[a.id] = true; });
+
+  // Activity grouping — Option B (see activity-groupings.txt for alternatives)
+  var ACTIVITY_GROUPS = [
+    { id: 'scope1', name: 'Direct emissions', scope: 1, activityIds: ['sc', 'mc', 'fe', 'pe2'] },
+    { id: 'scope2', name: 'Energy indirect', scope: 2, activityIds: ['pe', 'sh', 'pc'] },
+    { id: 'scope3up', name: 'Upstream', scope: 3, activityIds: ['pgs', 'cg', 'fera', 'ut', 'wg', 'bt', 'ec'] },
+    { id: 'scope3down', name: 'Downstream', scope: 3, activityIds: ['dt', 'usp', 'eol', 'fr', 'inv'] }
+  ];
+
+  var activityGroupExpanded = {};
+  ACTIVITY_GROUPS.forEach(function (g) { activityGroupExpanded[g.id] = true; });
 
   var ENTITY_TREE = [
     {
@@ -113,6 +124,8 @@
       entitySelections: entitySelections,
       entityExpanded: entityExpanded,
       activitySelections: activitySelections,
+      activityGroups: ACTIVITY_GROUPS,
+      activityGroupExpanded: activityGroupExpanded,
       assignEntityChecked: assignEntityChecked,
       entityActivities: entityActivities
     };
@@ -165,19 +178,54 @@
   }
 
   // ===========================================
+  // COMBINE-STEP TOGGLE HELPERS
+  // ===========================================
+
+  function isCombineEnabled() {
+    return window.inventoryCombineStepEnabled !== false;
+  }
+
+  function getVisibleSteps() {
+    var visible = [];
+    for (var i = 0; i < STEPS.length; i++) {
+      if (i === 3 && !isCombineEnabled()) continue;
+      visible.push({ index: i, label: STEPS[i].label });
+    }
+    return visible;
+  }
+
+  function nextVisibleStep(from) {
+    var visible = getVisibleSteps();
+    for (var i = 0; i < visible.length; i++) {
+      if (visible[i].index > from) return visible[i].index;
+    }
+    return -1;
+  }
+
+  function prevVisibleStep(from) {
+    var visible = getVisibleSteps();
+    for (var i = visible.length - 1; i >= 0; i--) {
+      if (visible[i].index < from) return visible[i].index;
+    }
+    return -1;
+  }
+
+  // ===========================================
   // STEPPER BUILDER
   // ===========================================
 
   function buildStepper(activeIndex) {
+    var visible = getVisibleSteps();
     var html = '<div class="wizard-stepper">';
-    for (var i = 0; i < STEPS.length; i++) {
+    for (var i = 0; i < visible.length; i++) {
+      var step = visible[i];
       var cls = 'wizard-stepper-item';
-      if (i < activeIndex) cls += ' wizard-stepper-item--complete';
-      else if (i === activeIndex) cls += ' wizard-stepper-item--active';
+      if (step.index < activeIndex) cls += ' wizard-stepper-item--complete';
+      else if (step.index === activeIndex) cls += ' wizard-stepper-item--active';
 
       html += '<div class="' + cls + '">';
-      html += '<div class="wizard-stepper-label">' + (i + 1) + '. ' + WS.esc(STEPS[i].label);
-      if (i < activeIndex) {
+      html += '<div class="wizard-stepper-label">' + (i + 1) + '. ' + WS.esc(step.label);
+      if (step.index < activeIndex) {
         html += ' <span class="wizard-stepper-check"><i class="fa-solid fa-check"></i></span>';
       }
       html += '</div>';
@@ -243,7 +291,7 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Select entities to include</button>';
+      '<button class="wizard-btn-green" id="inv-next">Next: Org boundaries</button>';
 
     bindFooterNav(-1, 1);
 
@@ -270,7 +318,7 @@
   // ===========================================
 
   function renderAddEntities() {
-    titleEl.textContent = 'Create new inventory: Entities to include';
+    titleEl.textContent = 'Create new inventory: Org boundaries';
     var c = ctx();
 
     body.innerHTML = buildStepper(1) + WS.buildStatsBar(c) + WS.buildEntitiesContent(c);
@@ -279,7 +327,7 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Activities to include</button>';
+      '<button class="wizard-btn-green" id="inv-next">Next: Ops boundaries</button>';
 
     bindFooterNav(0, 2);
     WS.bindEntitiesStep(c, function () { WS.refreshStatsBar(c); });
@@ -290,18 +338,21 @@
   // ===========================================
 
   function renderSelectActivities() {
-    titleEl.textContent = 'Create new inventory: Activities to include';
+    titleEl.textContent = 'Create new inventory: Ops boundaries';
     var c = ctx();
 
     body.innerHTML = buildStepper(2) + WS.buildStatsBar(c) + WS.buildActivitiesContent(c);
+
+    var nxt = nextVisibleStep(2);
+    var nextLabel = isCombineEnabled() ? 'Next: Combine' : 'Next: Review';
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
-      '<button class="wizard-btn-green" id="inv-next">Next: Add activities to entities</button>';
+      '<button class="wizard-btn-green" id="inv-next">' + nextLabel + '</button>';
 
-    bindFooterNav(1, 3);
+    bindFooterNav(1, nxt);
     WS.bindActivitiesStep(c, function () { WS.refreshStatsBar(c); });
   }
 
@@ -373,6 +424,8 @@
 
     body.innerHTML = stepperHTML + statsHTML + basicReview + actReview + entitiesReview + assignReview;
 
+    var prev = prevVisibleStep(4);
+
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
@@ -380,7 +433,7 @@
       '<button class="wizard-btn-green" id="inv-next" style="min-width:180px">Complete setup</button>';
 
     var backBtn = footer.querySelector('#inv-back');
-    backBtn.addEventListener('click', function () { currentStep = 3; render(); });
+    backBtn.addEventListener('click', function () { currentStep = prev; render(); });
 
     var nextBtn = footer.querySelector('#inv-next');
     nextBtn.addEventListener('click', function () { closeWizard(); });

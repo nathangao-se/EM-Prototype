@@ -312,11 +312,11 @@
       <div class="uw-s2-check-row" style="display:none">
         <label class="uw-s2-checkbox-label">
           <span class="uw-s2-checkbox-box"><input type="checkbox" class="uw-s2-checkbox-input" /></span>
-          <span class="uw-s2-checkbox-text">Take me directly to normalization after completion (May take dedicated work time)</span>
+          <span class="uw-s2-checkbox-text">Take me directly to normalization after completion</span>
         </label>
       </div>
       <div class="upload-wiz-footer">
-        <a href="#" class="upload-wiz-discard"><i class="fa-solid fa-trash"></i> Discard files and exit</a>
+        <a href="#" class="upload-wiz-discard"><i class="fa-solid fa-trash"></i> Discard work</a>
         <div class="upload-wiz-footer-actions">
           <button type="button" class="btn btn-outline upload-wiz-back">Back</button>
           <button type="button" class="btn btn-primary upload-wiz-next">Next: add emissions files</button>
@@ -329,16 +329,70 @@
     </div>
   </div>
 
+  <!-- ========== LANDING SELECTION MODAL ========== -->
+  <div id="landing-selection-overlay" class="landing-sel-overlay landing-sel-overlay--open">
+    <div class="landing-sel-modal">
+      <div class="landing-sel-title">Select a view</div>
+      <div class="landing-sel-options">
+        <button class="landing-sel-option" data-landing="deliverables">
+          <span class="landing-sel-option-label">See 2/25 deliverables</span>
+          <span class="landing-sel-option-desc">Upload files via template and create inventory flow</span>
+        </button>
+        <button class="landing-sel-option" data-landing="global-admin">
+          <span class="landing-sel-option-label">Admin concept</span>
+          <span class="landing-sel-option-desc">Global admin view</span>
+        </button>
+        <button class="landing-sel-option" data-landing="site-manager">
+          <span class="landing-sel-option-label">Admin concept</span>
+          <span class="landing-sel-option-desc">Individual site manager view</span>
+        </button>
+        <button class="landing-sel-option" data-landing="app-shell">
+          <span class="landing-sel-option-label">Older nav view</span>
+          <span class="landing-sel-option-desc">Side navigation layout</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== DELIVERABLES PAGE (empty canvas with two wizards) ========== -->
+  <div id="deliverables-page" class="deliverables-page" style="display:none">
+    <div class="deliverables-wizard-pair">
+      <div class="deliverables-wizard-slot">
+        <div class="deliverables-slot-label">Upload files via template</div>
+        <button class="btn btn-primary deliverables-launch-btn" data-wizard="upload">Open upload wizard</button>
+      </div>
+      <div class="deliverables-wizard-slot">
+        <div class="deliverables-slot-label">Create inventory flow</div>
+        <button class="btn btn-primary deliverables-launch-btn" data-wizard="inventory">Open inventory wizard</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ========== DEV PANEL ========== -->
   <div id="dev-panel" class="dev-panel dev-panel--expanded">
-    <button id="dev-panel-toggle" class="dev-panel-toggle">× Dev</button>
+    <button id="dev-panel-toggle" class="dev-panel-toggle">☰ Dev</button>
     <div class="dev-panel-content">
+      <button id="dev-panel-close" class="dev-panel-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
       <div class="dev-panel-section">
         <div class="dev-panel-label">Perspective</div>
         <div class="dev-panel-options">
+          <button class="dev-panel-option" data-config="deliverables">2/24 deliverables</button>
           <button class="dev-panel-option dev-panel-option--active" data-config="global-oversight">Global Admin</button>
           <button class="dev-panel-option" data-config="site-manager">Site Manager</button>
-          <button class="dev-panel-option" data-config="app-shell">App Shell</button>
+          <button class="dev-panel-option" data-config="app-shell">Older side nav view</button>
+        </div>
+      </div>
+      <div class="dev-panel-section">
+        <div class="dev-panel-label">Inventory wizard</div>
+        <div class="dev-panel-options">
+          <button class="dev-panel-option" id="dev-toggle-combine">Combine step</button>
+        </div>
+      </div>
+      <div class="dev-panel-section">
+        <div class="dev-panel-label">Upload wizard</div>
+        <div class="dev-panel-options">
+          <button class="dev-panel-option dev-panel-option--active" id="dev-upload-version-a" data-upload-version="a">New</button>
+          <button class="dev-panel-option" id="dev-upload-version-b" data-upload-version="b">Old</button>
         </div>
       </div>
       <div class="dev-panel-section" style="display:none;">

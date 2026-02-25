@@ -31,13 +31,17 @@
   color: #145224;
 }
 
+.dev-panel--expanded .dev-panel-toggle {
+  display: none;
+}
+
 .dev-panel-content {
   display: none;
+  position: relative;
   background: #edf7f0;
   border: 1px solid #a3d4b5;
   border-radius: 6px;
   padding: 12px 16px;
-  margin-bottom: 8px;
   min-width: 200px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -46,6 +50,29 @@
   display: flex;
   gap: 20px;
   align-items: flex-start;
+}
+
+.dev-panel-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #a3d4b5;
+  border-radius: 4px;
+  color: #3a6b4a;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dev-panel-close:hover {
+  background: #c8e5d2;
+  color: #145224;
 }
 
 .dev-panel-section {
@@ -137,4 +164,134 @@
 /* Hide dev panel on sub-pages (activity data, calc methods, etc.) */
 .app-container--page ~ .dev-panel {
   display: none;
+}
+
+/* ========================================
+   LANDING SELECTION MODAL
+   ======================================== */
+
+.landing-sel-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.landing-sel-overlay--open {
+  display: flex;
+}
+
+.landing-sel-modal {
+  background: #edf7f0;
+  border: 1px solid #a3d4b5;
+  border-radius: 12px;
+  padding: 28px 32px;
+  min-width: 420px;
+  max-width: 520px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+}
+
+.landing-sel-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a5c2e;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.landing-sel-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.landing-sel-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #dceee3;
+  color: #1a5c2e;
+  border: 1px solid #a3d4b5;
+  border-radius: 8px;
+  padding: 14px 18px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.landing-sel-option:hover {
+  background: #008029;
+  color: #fff;
+  border-color: #006622;
+}
+
+.landing-sel-option:hover .landing-sel-option-desc {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.landing-sel-option-label {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.landing-sel-option-desc {
+  font-size: 12px;
+  font-weight: 400;
+  color: #3a6b4a;
+  line-height: 1.3;
+  transition: color 0.15s ease;
+}
+
+/* ========================================
+   DELIVERABLES PAGE
+   ======================================== */
+
+.deliverables-page {
+  position: fixed;
+  inset: 0;
+  background: #f5f8fa;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deliverables-wizard-pair {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.deliverables-wizard-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 48px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.deliverables-slot-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+.deliverables-launch-btn {
+  min-width: 200px;
 }
