@@ -24,6 +24,8 @@ window.ExcelParser = (function () {
 
   var onSelectionChange = null;
 
+  var poorFitCells = {};
+
   var sampleCSV = "";
 
   function colLabelFor(index) {
@@ -135,6 +137,7 @@ window.ExcelParser = (function () {
 
     totalPages = Math.max(1, Math.ceil(csvData.length / PAGE_SIZE));
     currentPage = 0;
+    poorFitCells = {};
     clearSelection();
     renderTable();
   }
@@ -166,7 +169,11 @@ window.ExcelParser = (function () {
       parts.push('<td data-rowheader="' + r + '">' + r + "</td>");
       for (var cc = 0; cc < numCols; cc++) {
         var val = (rowData[cc] !== undefined) ? rowData[cc] : "";
-        parts.push('<td data-r="' + r + '" data-c="' + cc + '">' + esc(val) + "</td>");
+        var pfKey = r + ',' + cc;
+        var isPoorFit = poorFitCells[pfKey];
+        var cls = isPoorFit ? ' class="ep-cell-poorfit"' : '';
+        var editable = isPoorFit ? ' contenteditable="true" spellcheck="false"' : '';
+        parts.push('<td data-r="' + r + '" data-c="' + cc + '"' + cls + editable + '>' + esc(val) + "</td>");
       }
       parts.push("</tr>");
     }
@@ -260,6 +267,24 @@ window.ExcelParser = (function () {
         applyRange(1, totalDataRows(), Math.min(anchorCol, col), Math.max(anchorCol, col));
       }
     });
+
+    // Editable cell blur — sync back to data
+    var editables = container.querySelectorAll('.ep-cell-poorfit[contenteditable]');
+    for (var ei = 0; ei < editables.length; ei++) {
+      editables[ei].addEventListener('blur', function () {
+        var r = parseInt(this.getAttribute('data-r'), 10);
+        var c = parseInt(this.getAttribute('data-c'), 10);
+        if (csvData[r - 1]) {
+          csvData[r - 1][c] = this.textContent;
+        }
+      });
+      editables[ei].addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+      });
+      editables[ei].addEventListener('mousedown', function (e) {
+        e.stopPropagation();
+      });
+    }
 
     // Pagination
     var prevBtn = container.querySelector('[data-ep-action="prev"]');
@@ -456,6 +481,19 @@ window.ExcelParser = (function () {
     intensifyPreview: intensifyPreview,
     dimPreview: dimPreview,
     getHeaderBlockEnd: getHeaderBlockEnd,
+    markPoorFit: function (row, col) {
+      poorFitCells[row + ',' + col] = true;
+    },
+    markPoorFitBatch: function (cells) {
+      for (var i = 0; i < cells.length; i++) {
+        poorFitCells[cells[i][0] + ',' + cells[i][1]] = true;
+      }
+      renderTable();
+    },
+    clearPoorFit: function () {
+      poorFitCells = {};
+      renderTable();
+    },
     destroy: function () { if (container) container.innerHTML = ""; container = null; }
   };
 })();

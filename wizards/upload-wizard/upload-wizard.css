@@ -1034,6 +1034,7 @@
   border: 1px solid #d5dde0;
   border-radius: 8px;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ep-table {
@@ -1124,6 +1125,20 @@
 
 .ep-table tbody td:not(:first-child):not(.ep-cell-selected):hover {
   background: #f0f4ff;
+}
+
+/* Poor-fit cells — editable, highlighted */
+.ep-cell-poorfit {
+  background: #fef2f2 !important;
+  border-color: #fca5a5 !important;
+  cursor: text !important;
+  outline: none;
+}
+
+.ep-cell-poorfit:focus {
+  background: #fff !important;
+  border-color: #ef4444 !important;
+  box-shadow: inset 0 0 0 1px #ef4444;
 }
 
 /* Pagination */

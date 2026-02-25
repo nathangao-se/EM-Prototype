@@ -73,13 +73,27 @@
   function filterRowsByScope(scopeLabel) {
     var scopeNum = parseFloat(scopeLabel.replace('Scope ', ''));
     return TABLE_ROWS.filter(function (r) {
-      if (scopeNum === 3) return r.scope >= 3;
-      return r.scope === scopeNum;
+      var s = parseFloat(r[2]);
+      if (scopeNum === 3) return s >= 3;
+      return s === scopeNum;
     });
   }
 
+  function buildTableHTML(rows) {
+    var html = '<thead><tr>';
+    TABLE_COLS.forEach(function (col) { html += '<th>' + esc(col) + '</th>'; });
+    html += '<th></th></tr></thead><tbody>';
+    rows.forEach(function (r) {
+      html += '<tr>';
+      r.forEach(function (cell) { html += '<td>' + esc(cell) + '</td>'; });
+      html += '<td><button class="dm-more"><i class="fa-solid fa-ellipsis-vertical"></i></button></td>';
+      html += '</tr>';
+    });
+    html += '</tbody>';
+    return html;
+  }
+
   function renderScopeTable(scopeLabel, rightPanel) {
-    var rows = filterRowsByScope(scopeLabel);
     var html = '';
     html += '<div class="dm-table-wrap">';
     html += '<h3 class="dm-view-title">' + esc(scopeLabel) + ' activities</h3>';
@@ -91,21 +105,8 @@
     html += '</div>';
     html += '<div class="dm-table-scroll">';
     html += '<table class="dm-table">';
-    html += '<thead><tr>';
-    html += '<th>Normalized name</th><th>Original name</th><th>Entity</th><th>Source file</th><th>Author</th><th>Updated</th><th></th>';
-    html += '</tr></thead><tbody>';
-    rows.forEach(function (r) {
-      html += '<tr>';
-      html += '<td>' + esc(r.normalizedName) + '</td>';
-      html += '<td>' + esc(r.originalName) + '</td>';
-      html += '<td>' + esc(r.entity) + '</td>';
-      html += '<td><a href="#" class="dm-source-link">' + esc(r.sourceFile) + '</a></td>';
-      html += '<td>' + esc(r.author) + '</td>';
-      html += '<td>' + esc(r.updated) + '</td>';
-      html += '<td><button class="dm-more"><i class="fa-solid fa-ellipsis-vertical"></i></button></td>';
-      html += '</tr>';
-    });
-    html += '</tbody></table>';
+    html += buildTableHTML(TABLE_ROWS);
+    html += '</table>';
     html += '</div>';
     html += '</div>';
     rightPanel.innerHTML = html;
@@ -137,23 +138,8 @@
     html += '</div>';
     html += '<div class="dm-table-scroll">';
     html += '<table class="dm-table">';
-    html += '<thead><tr>';
-    html += '<th>Normalized name</th><th>Original name</th><th>Entity</th><th>Scope</th><th>Source file</th><th>Author</th><th>Updated</th><th></th>';
-    html += '</tr></thead><tbody>';
-    TABLE_ROWS.forEach(function (r) {
-      var scopeClass = r.scope === 1 ? 'dm-scope-1' : r.scope === 2 ? 'dm-scope-2' : 'dm-scope-3';
-      html += '<tr>';
-      html += '<td>' + esc(r.normalizedName) + '</td>';
-      html += '<td>' + esc(r.originalName) + '</td>';
-      html += '<td>' + esc(r.entity) + '</td>';
-      html += '<td><span class="dm-scope-pill ' + scopeClass + '">' + esc(r.scopeLabel) + '</span></td>';
-      html += '<td>' + esc(r.sourceFile) + '</td>';
-      html += '<td>' + esc(r.author) + '</td>';
-      html += '<td>' + esc(r.updated) + '</td>';
-      html += '<td><button class="dm-more"><i class="fa-solid fa-ellipsis-vertical"></i></button></td>';
-      html += '</tr>';
-    });
-    html += '</tbody></table>';
+    html += buildTableHTML(TABLE_ROWS);
+    html += '</table>';
     html += '</div>';
     html += '</div>';
     rightPanel.innerHTML = html;
@@ -235,53 +221,50 @@
     }
   });
 
-  // ========== TABLE DATA ==========
+  // ========== TABLE DATA (from test.csv — Besana activity records) ==========
+  var TABLE_COLS = ['ID','Business Entity','Scope','Category','Activity Type','Emissions Factor','Start Date','End Date','Record Type','Description','Fuel Type','Usage Value','Usage UoM','Factor Set','Factor Set Version','\u2082e','Alerts'];
+
   var TABLE_ROWS = [
-    // Scope 1
-    { normalizedName: 'Natural-gas', originalName: 'Natural-gas', entity: 'New York office', scope: 1, scopeLabel: 'Scope 1', sourceFile: 'Scope 1 HP - EF Matched.xl...', author: 'J. Reinhardt', updated: '1/4/2026' },
-    { normalizedName: 'Diesel fuel', originalName: 'Diesel gas', entity: 'Boston regional HQ', scope: 1, scopeLabel: 'Scope 1', sourceFile: 'Scope 1 HP - EF Matched.xl...', author: 'R. Arsalan', updated: '1/16/2026' },
-    { normalizedName: 'Gas consumption', originalName: 'Natural gas', entity: 'San Francisco branch', scope: 1, scopeLabel: 'Scope 1', sourceFile: 'Scope 1 HP - EF Matched.xl...', author: 'M. Johnson', updated: '2/15/2026' },
-    { normalizedName: 'Cooling systems', originalName: 'Refrigeration', entity: 'Miami branch', scope: 1, scopeLabel: 'Scope 1', sourceFile: 'Scope 1 HP - EF Matched.xl...', author: 'C. Smith', updated: '4/5/2026' },
-    { normalizedName: 'Fleet fuel', originalName: 'Fleet gasoline', entity: 'Dallas office', scope: 1, scopeLabel: 'Scope 1', sourceFile: 'Scope 1 HP - EF Matched.xl...', author: 'T. Nguyen', updated: '4/18/2026' },
-    { normalizedName: 'Propane heating', originalName: 'LPG use', entity: 'Denver office', scope: 1, scopeLabel: 'Scope 1', sourceFile: 'Scope 1 HP - EF Matched.xl...', author: 'K. Watts', updated: '5/2/2026' },
-    // Scope 2
-    { normalizedName: 'Electric power', originalName: 'Electricity', entity: 'Chicago office', scope: 2, scopeLabel: 'Scope 2', sourceFile: 'Scope 2 HP - EF Matched.xl...', author: 'L. Patel', updated: '2/10/2026' },
-    { normalizedName: 'Water consumption', originalName: 'Water usage', entity: 'Seattle office', scope: 2, scopeLabel: 'Scope 2', sourceFile: 'Scope 2 HP - EF Matched.xl...', author: 'B. Lee', updated: '3/20/2026' },
-    { normalizedName: 'Purchased electricity', originalName: 'Grid power', entity: 'Houston branch', scope: 2, scopeLabel: 'Scope 2', sourceFile: 'Scope 2 HP - EF Matched.xl...', author: 'A. Rivera', updated: '3/28/2026' },
-    { normalizedName: 'District heating', originalName: 'Steam purchase', entity: 'Boston regional HQ', scope: 2, scopeLabel: 'Scope 2', sourceFile: 'Scope 2 HP - EF Matched.xl...', author: 'R. Arsalan', updated: '4/10/2026' },
-    { normalizedName: 'Chilled water', originalName: 'Cooling supply', entity: 'Phoenix office', scope: 2, scopeLabel: 'Scope 2', sourceFile: 'Scope 2 HP - EF Matched.xl...', author: 'E. Harris', updated: '4/22/2026' },
-    // Scope 3 (general)
-    { normalizedName: 'Travel expenses', originalName: 'Business travel', entity: 'Los Angeles headqu...', scope: 3, scopeLabel: 'Scope 3', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'A. Thompson', updated: '3/1/2026' },
-    { normalizedName: 'Printing materials', originalName: 'Paper usage', entity: 'Denver office', scope: 3, scopeLabel: 'Scope 3', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'D. Kim', updated: '4/12/2026' },
-    { normalizedName: 'Waste management', originalName: 'Waste disposal', entity: 'Phoenix office', scope: 3, scopeLabel: 'Scope 3', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'E. Harris', updated: '5/1/2026' },
-    // Scope 3.1 – Purchased goods
-    { normalizedName: 'Office supplies', originalName: 'Office materials', entity: 'New York office', scope: 3.1, scopeLabel: 'Scope 3.1', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'J. Reinhardt', updated: '2/5/2026' },
-    { normalizedName: 'IT equipment', originalName: 'Computer hardware', entity: 'Chicago office', scope: 3.1, scopeLabel: 'Scope 3.1', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'L. Patel', updated: '3/14/2026' },
-    { normalizedName: 'Furniture', originalName: 'Office furniture', entity: 'Seattle office', scope: 3.1, scopeLabel: 'Scope 3.1', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'B. Lee', updated: '4/1/2026' },
-    // Scope 3.2 – Capital goods
-    { normalizedName: 'HVAC systems', originalName: 'AC units', entity: 'Miami branch', scope: 3.2, scopeLabel: 'Scope 3.2', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'C. Smith', updated: '1/20/2026' },
-    { normalizedName: 'Solar panels', originalName: 'PV installation', entity: 'Phoenix office', scope: 3.2, scopeLabel: 'Scope 3.2', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'E. Harris', updated: '3/8/2026' },
-    // Scope 3.3 – Fuel & energy related
-    { normalizedName: 'T&D losses', originalName: 'Grid losses', entity: 'New York office', scope: 3.3, scopeLabel: 'Scope 3.3', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'J. Reinhardt', updated: '2/18/2026' },
-    { normalizedName: 'WTT electricity', originalName: 'Upstream elec', entity: 'Chicago office', scope: 3.3, scopeLabel: 'Scope 3.3', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'L. Patel', updated: '3/22/2026' },
-    { normalizedName: 'WTT natural gas', originalName: 'Upstream gas', entity: 'San Francisco branch', scope: 3.3, scopeLabel: 'Scope 3.3', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'M. Johnson', updated: '4/5/2026' },
-    // Scope 3.4 – Upstream transport
-    { normalizedName: 'Inbound freight', originalName: 'Supplier shipping', entity: 'Dallas office', scope: 3.4, scopeLabel: 'Scope 3.4', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'T. Nguyen', updated: '2/28/2026' },
-    { normalizedName: 'Courier services', originalName: 'Package delivery', entity: 'Los Angeles headqu...', scope: 3.4, scopeLabel: 'Scope 3.4', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'A. Thompson', updated: '3/15/2026' },
-    // Scope 3.5 – Waste in operations
-    { normalizedName: 'Landfill waste', originalName: 'Waste to landfill', entity: 'Houston branch', scope: 3.5, scopeLabel: 'Scope 3.5', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'A. Rivera', updated: '3/10/2026' },
-    { normalizedName: 'Recycled materials', originalName: 'Recycling', entity: 'Denver office', scope: 3.5, scopeLabel: 'Scope 3.5', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'D. Kim', updated: '4/8/2026' },
-    { normalizedName: 'Composted waste', originalName: 'Organic waste', entity: 'Seattle office', scope: 3.5, scopeLabel: 'Scope 3.5', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'B. Lee', updated: '4/20/2026' },
-    // Scope 3.6 – Business travel
-    { normalizedName: 'Air travel', originalName: 'Flights', entity: 'New York office', scope: 3.6, scopeLabel: 'Scope 3.6', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'J. Reinhardt', updated: '2/12/2026' },
-    { normalizedName: 'Hotel stays', originalName: 'Accommodation', entity: 'Los Angeles headqu...', scope: 3.6, scopeLabel: 'Scope 3.6', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'A. Thompson', updated: '3/5/2026' },
-    // Scope 3.7 – Employee commuting
-    { normalizedName: 'Commute trips', originalName: 'Employee commutes', entity: 'Boston regional HQ', scope: 3.7, scopeLabel: 'Scope 3.7', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'R. Arsalan', updated: '1/16/2026' },
-    { normalizedName: 'Remote work', originalName: 'WFH energy', entity: 'Chicago office', scope: 3.7, scopeLabel: 'Scope 3.7', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'L. Patel', updated: '2/22/2026' },
-    { normalizedName: 'Public transit', originalName: 'Metro/bus use', entity: 'New York office', scope: 3.7, scopeLabel: 'Scope 3.7', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'J. Reinhardt', updated: '3/18/2026' },
-    // Scope 3.8 – Upstream leased assets
-    { normalizedName: 'Leased offices', originalName: 'Rented spaces', entity: 'San Francisco branch', scope: 3.8, scopeLabel: 'Scope 3.8', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'M. Johnson', updated: '2/8/2026' },
-    { normalizedName: 'Leased vehicles', originalName: 'Rental fleet', entity: 'Dallas office', scope: 3.8, scopeLabel: 'Scope 3.8', sourceFile: 'Scope 3 HP - EF Matched.xl...', author: 'T. Nguyen', updated: '3/25/2026' }
+    ['86f7c8','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Estimate','Heating Source 6','Refinery Gas','1,000','Liter','','','',''],
+    ['dfc393','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Estimate','Heating Source 3','Liquefied Petroleum Gas','1,000','Cubic Meter','','','',''],
+    ['cd7e03','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Meter Reading','Heating Source 14','Landfill Gas','1,000','Kilogram','','','',''],
+    ['6aae5c','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Meter Reading','Heating Source 8','Heating Oil','1,000','Gallon','','','',''],
+    ['24042f','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Invoice','Heating Source 10','Petrol Stationary','1,000','Kilogram','','','',''],
+    ['c59202','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','','1/1/24','1/31/24','Meter Reading','Energy Gen.12','Natural Gas','1,003','Kilowatt-hour','','','','1 issue'],
+    ['362dcc','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Invoice','Heating Source 1','Furnace Oil','1,000','Liter','','','',''],
+    ['c7bd6c','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','','1/1/24','1/31/24','Meter Reading','Energy Gen.13','Natural Gas','1,003','Kilowatt-hour','','','','1 issue'],
+    ['6c6a5d','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','','1/1/24','1/31/24','Meter Reading','Energy Gen.11','','1,003','Kilowatt-hour','','','','1 issue'],
+    ['301976','Besana','1','','','','1/1/24','1/31/24','Invoice','Heating Source 17','','1,000','Liter','','','','1 issue'],
+    ['65f64f','Besana','1','0','Stationary Combustion','','1/1/24','1/31/24','Invoice','Heating Source 18','','1,000','Liter','','','','1 issue'],
+    ['8eac9c','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','','1/1/24','1/31/24','Estimate','Mobile Comb. Source 11','','1,000','Kilogram','','','','1 issue'],
+    ['c9ac41','Besana','1','0','Stationary Combustion','Other bituminous coal','1/1/24','1/31/24','Estimate','Heating Source 12','Coal Bituminous','1,000','Short Tons','IEA','2024','18,885.91',''],
+    ['104f29','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Fuels - Gaseous fuels - CNG','1/1/24','1/31/24','Estimate','Mobile Comb. Source 12','Compressed Natural Gas','1,000','Kilogram','UK DESZN (ex-DEFRA)','2024','3.099',''],
+    ['4c8919','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','Geothermal-2024','1/1/24','1/31/24','Meter Reading','Energy Gen.4','Geothermal','1,000','Kilowatt-hour','Non-Emission Source','2024','0',''],
+    ['37cd90','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','Wind-2024','1/1/24','1/31/24','Meter Reading','Energy Gen.3','Wind','1,000','Kilowatt-hour','Non-Emission Source','2024','0',''],
+    ['818361','Besana','1','0','Stationary Combustion','Liquefied petroleum gases','1/1/24','1/31/24','Invoice','Heating Source 4','Propane','1,000','Kilogram','IEA','2024','44.953',''],
+    ['48756c','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Fuels - Gaseous fuels - CNG','1/1/24','1/31/24','Estimate','Mobile Comb. Source 1','Compressed Natural Gas','1,000','Kilogram','UK DESZN (ex-DEFRA)','2024','3.099',''],
+    ['7eb6fd','Besana','1','0','Stationary Combustion','Biomass - Wood chips','1/1/24','1/31/24','Estimate','Heating Source 18','Biomass Wood','1,000','Short Tons','UK DESZN (ex-DEFRA)','2024','1,239.31',''],
+    ['c0044d','Besana','1','0','Stationary Combustion','Biofuel - Dev diesel','1/1/24','1/31/24','Meter Reading','Heating Source 20','Diesel','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.254',''],
+    ['e47b8f','Besana','1','0','Stationary Combustion','Fuels - Gas oil','1/1/24','1/31/24','Invoice','Heating Source 22','Kerosene','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.383',''],
+    ['61e741','Besana','1','0','Stationary Combustion','Natural gas','1/1/24','1/31/24','Meter Reading','Heating Source 2','Liquefied Natural Gas','1,000','Cubic Meter','IEA','2024','8.037',''],
+    ['ae1698','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Biofuel - Dev petrol','1/1/24','1/31/24','Invoice','Mobile Comb. Source 6','Kerosene','1,000','Liter','UK DESZN (ex-DEFRA)','2024','2.921',''],
+    ['f88db6','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Estimate','Heating Source 9','Lubricant Oil','1,000','Gallon','IEA','2024','44.665',''],
+    ['5.68E+03','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Fuels - Gas oil','1/1/24','1/31/24','Estimate','Mobile Comb. Source 3','Gas Oil','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.383',''],
+    ['7dcdd9','Besana','1','0','Stationary Combustion','Petroleum coke','1/1/24','1/31/24','Invoice','Heating Source 16','Pet Coke','1,000','Short Tons','IEA','2024','10,253.57',''],
+    ['8ae196','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Upper medium - Diesel','1/1/24','1/31/24','Invoice','Mobile Comb. Source 17','Diesel','1,000','Kilometer','UK DESZN (ex-DEFRA)','2024','0.161',''],
+    ['efa448','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Large car - CNG','1/1/24','1/31/24','Estimate','Mobile Comb. Source 16','Compressed Natural Gas','1,000','Kilometer','UK DESZN (ex-DEFRA)','2024','0.237',''],
+    ['bda2ec','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Invoice','Heating Source 13','Biomass Agri. Byproducts','1,000','Kilogram','IEA','2024','12.769',''],
+    ['52a36c','Besana','1','Cat 3: Fuel & Energy','On-site Energy Generation','Photovoltaic Solar-2024','1/1/24','1/31/24','Meter Reading','Energy Gen.1','Photovoltaic Solar','1,000','Kilowatt-hour','Non-Emission Source','2024','0',''],
+    ['07be92','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Biofuel - Dev diesel','1/1/24','1/31/24','Invoice','Mobile Comb. Source 2','Diesel','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.254',''],
+    ['c34679','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Biofuel - Dev petrol','1/1/24','1/31/24','Invoice','Mobile Comb. Source 4','Petrol','1,000','Liter','UK DESZN (ex-DEFRA)','2024','2.947',''],
+    ['435ac8','Besana','1','0','Stationary Combustion','Biofuel - Biodiesel ME','1/1/24','1/31/24','Meter Reading','Heating Source 23','Biodiesel','1,000','Liter','UK DESZN (ex-DEFRA)','2024','2.871',''],
+    ['47a72f','Besana','1','0','Stationary Combustion','Fuels - Fuel oil','1/1/24','1/31/24','Invoice','Heating Source 7','Fuel Oil','1,000','Liter','UK DESZN (ex-DEFRA)','2024','3.87',''],
+    ['744676','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Estimate','Heating Source 15','Butane','1,000','Kilogram','IEA','2024','13.044',''],
+    ['ba513f','Besana','1','0','Stationary Combustion','Anthracite','1/1/24','1/31/24','Meter Reading','Heating Source 11','Coal Anthracite','1,000','Short Tons','IEA','2024','19,702.37',''],
+    ['04cf5a','Besana','1','0','Stationary Combustion','Non-specified oil products','1/1/24','1/31/24','Estimate','Heating Source 21','Petrol','1,000','Kilogram','IEA','2024','13.516',''],
+    ['43ebca','Besana','1','0','Stationary Combustion','Coke oven coke','1/1/24','1/31/24','Invoice','Heating Source 19','Coke Mixed Industrial','1,000','Short Tons','IEA','2024','20,595.48',''],
+    ['6e1b3f','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Aviation turbine fuel','1/1/24','1/31/24','Estimate','Mobile Comb. Source 7','Aviation Gasoline','1,000','Gallon','UK DESZN (ex-DEFRA)','2024','10.783',''],
+    ['bd9d9c','Besana','1','Cat 1: Purchased Goods','Mobile Combustion','Upper medium - Petrol','1/1/24','1/31/24','Invoice','Mobile Comb. Source 19','Petrol','1,000','Kilometer','UK DESZN (ex-DEFRA)','2024','0.19','']
   ];
 
   /** Returns the body HTML string (dm-layout) for the Data management page. */
@@ -343,23 +326,8 @@
     html += '</div>';
     html += '<div class="dm-table-scroll">';
     html += '<table class="dm-table">';
-    html += '<thead><tr>';
-    html += '<th>Normalized name</th><th>Original name</th><th>Entity</th><th>Scope</th><th>Source file</th><th>Author</th><th>Updated</th><th></th>';
-    html += '</tr></thead><tbody>';
-    TABLE_ROWS.forEach(function (r) {
-      var scopeClass = r.scope === 1 ? 'dm-scope-1' : r.scope === 2 ? 'dm-scope-2' : 'dm-scope-3';
-      html += '<tr>';
-      html += '<td>' + esc(r.normalizedName) + '</td>';
-      html += '<td>' + esc(r.originalName) + '</td>';
-      html += '<td>' + esc(r.entity) + '</td>';
-      html += '<td><span class="dm-scope-pill ' + scopeClass + '">' + esc(r.scopeLabel) + '</span></td>';
-      html += '<td>' + esc(r.sourceFile) + '</td>';
-      html += '<td>' + esc(r.author) + '</td>';
-      html += '<td>' + esc(r.updated) + '</td>';
-      html += '<td><button class="dm-more"><i class="fa-solid fa-ellipsis-vertical"></i></button></td>';
-      html += '</tr>';
-    });
-    html += '</tbody></table>';
+    html += buildTableHTML(TABLE_ROWS);
+    html += '</table>';
     html += '</div>';
     html += '</div>';
     html += '</div>';
