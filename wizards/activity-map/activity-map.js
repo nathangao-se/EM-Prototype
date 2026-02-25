@@ -74,19 +74,33 @@
     });
   }
 
+  function rowHasError(r) {
+    for (var i = 0; i < REQUIRED_COL_IDX.length; i++) {
+      if (!r[REQUIRED_COL_IDX[i]].trim()) return true;
+    }
+    return false;
+  }
+
   function buildTableHTML(rows) {
     var html = '<thead><tr>';
+    html += '<th class="dm-col-flag"></th>';
+    html += '<th class="dm-col-check"><input type="checkbox" class="dm-checkbox dm-checkbox-all"></th>';
     TABLE_COLS.forEach(function (col) { html += '<th>' + esc(col) + '</th>'; });
     html += '<th></th></tr></thead><tbody>';
     rows.forEach(function (r) {
+      var hasErr = rowHasError(r);
       html += '<tr>';
+      html += '<td class="dm-col-flag">';
+      if (hasErr) html += '<i class="fa-solid fa-triangle-exclamation dm-flag-error"></i>';
+      html += '</td>';
+      html += '<td class="dm-col-check"><input type="checkbox" class="dm-checkbox"></td>';
       r.forEach(function (cell, ci) {
         var isEmpty = REQUIRED_COL_IDX.indexOf(ci) !== -1 && !cell.trim();
         var ctrl = COL_CONTROL[ci] || '';
         if (isEmpty) {
           html += '<td class="dm-cell-error" data-row-id="' + esc(r[0]) + '" data-col-idx="' + ci + '"';
           if (ctrl) html += ' data-control="' + ctrl + '"';
-          html += '><span class="dm-cell-error-label">&mdash;</span></td>';
+          html += '><div class="dm-cell-error-inner"><span class="dm-cell-error-label">&mdash;</span></div></td>';
         } else {
           html += '<td>' + esc(cell) + '</td>';
         }
@@ -215,7 +229,7 @@
       html += '<div class="dm-file-meta">';
       html += '<span class="dm-file-time">' + esc(f.time) + '</span>';
       if (f.state === 'warning') {
-        html += '<span class="dm-file-chip-warn"><i class="fa-regular fa-circle-exclamation"></i> ' + f.errors + ' errors / ' + esc(f.records) + ' recs</span>';
+        html += '<span class="dm-file-chip-warn"><i class="fa-solid fa-circle-exclamation"></i> ' + f.errors + ' errors / ' + esc(f.records) + ' recs</span>';
       } else if (f.state === 'failed') {
         html += '<span class="dm-file-chip-error"><i class="fa-solid fa-triangle-exclamation"></i> File did not load</span>';
       } else {
@@ -349,19 +363,74 @@
   function commitValue(td, rowId, colIdx, value) {
     var row = findRowByID(rowId);
     if (row) row[colIdx] = value;
-    td.className = '';
-    td.removeAttribute('data-control');
-    td.removeAttribute('data-row-id');
-    td.removeAttribute('data-col-idx');
-    td.innerHTML = esc(value);
+    td.classList.remove('dm-cell-editing');
+    td.classList.remove('dm-cell-error');
+    td.classList.add('dm-cell-corrected');
+    td.innerHTML = '<div class="dm-cell-corrected-inner">' + esc(value) + '</div>';
   }
 
   function revertCell(td) {
     td.classList.remove('dm-cell-editing');
     var ctrl = td.querySelector('.dm-inline-ctrl');
     if (ctrl) ctrl.remove();
-    var label = td.querySelector('.dm-cell-error-label');
-    if (label) label.style.display = '';
+    var inner = td.querySelector('.dm-cell-error-inner');
+    if (inner) inner.style.display = '';
+    var corrInner = td.querySelector('.dm-cell-corrected-inner');
+    if (corrInner) corrInner.style.display = '';
+  }
+
+  function closeActivePopover() {
+    var existing = document.querySelector('.dm-popover');
+    if (existing) {
+      var ownerTd = existing._ownerTd;
+      existing.remove();
+      if (ownerTd) revertCell(ownerTd);
+    }
+  }
+
+  function spawnPopoverDropdown(td, rowId, colIdx, colName) {
+    closeActivePopover();
+    td.classList.add('dm-cell-editing');
+    var inner = td.querySelector('.dm-cell-error-inner');
+    if (inner) inner.style.display = 'none';
+    var corrInner = td.querySelector('.dm-cell-corrected-inner');
+    if (corrInner) corrInner.style.display = 'none';
+
+    var options = DROPDOWN_OPTIONS[colName] || [];
+    var pop = document.createElement('div');
+    pop.className = 'dm-popover';
+    pop._ownerTd = td;
+
+    var html = '<div class="dm-popover-header">' + esc(colName) + '</div>';
+    html += '<div class="dm-popover-list">';
+    options.forEach(function (opt) {
+      html += '<button class="dm-popover-item" data-value="' + esc(opt) + '">' + esc(opt) + '</button>';
+    });
+    html += '</div>';
+    pop.innerHTML = html;
+
+    document.body.appendChild(pop);
+
+    var rect = td.getBoundingClientRect();
+    pop.style.top = (rect.bottom + 4) + 'px';
+    pop.style.left = rect.left + 'px';
+
+    var popRect = pop.getBoundingClientRect();
+    if (popRect.right > window.innerWidth - 8) {
+      pop.style.left = Math.max(8, rect.right - popRect.width) + 'px';
+    }
+    if (popRect.bottom > window.innerHeight - 8) {
+      pop.style.top = (rect.top - popRect.height - 4) + 'px';
+    }
+
+    pop.querySelectorAll('.dm-popover-item').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var val = btn.getAttribute('data-value');
+        pop.remove();
+        commitValue(td, rowId, colIdx, val);
+      });
+    });
   }
 
   function spawnInlineControl(td) {
@@ -371,58 +440,76 @@
     var rowId = td.getAttribute('data-row-id');
     var colName = TABLE_COLS[colIdx];
 
+    if (control === 'dropdown') {
+      spawnPopoverDropdown(td, rowId, colIdx, colName);
+      return;
+    }
+
     td.classList.add('dm-cell-editing');
-    var label = td.querySelector('.dm-cell-error-label');
-    if (label) label.style.display = 'none';
+    var inner = td.querySelector('.dm-cell-error-inner');
+    if (inner) inner.style.display = 'none';
+    var corrInner = td.querySelector('.dm-cell-corrected-inner');
+    if (corrInner) corrInner.style.display = 'none';
 
     var el;
-    if (control === 'dropdown') {
-      el = document.createElement('select');
-      el.className = 'dm-inline-ctrl dm-inline-select';
-      var ph = document.createElement('option');
-      ph.value = '';
-      ph.textContent = 'Select\u2026';
-      el.appendChild(ph);
-      (DROPDOWN_OPTIONS[colName] || []).forEach(function (opt) {
-        var o = document.createElement('option');
-        o.value = opt;
-        o.textContent = opt;
-        el.appendChild(o);
-      });
-      el.addEventListener('change', function () { commitValue(td, rowId, colIdx, el.value); });
-      el.addEventListener('blur', function () { if (!el.value) revertCell(td); });
-    } else if (control === 'date') {
+    if (control === 'date') {
       el = document.createElement('input');
       el.type = 'date';
-      el.className = 'dm-inline-ctrl dm-inline-date';
+      el.className = 'dm-inline-ctrl dm-inline-date dm-inline-overlay';
       el.addEventListener('change', function () {
+        el.remove();
         commitValue(td, rowId, colIdx, formatDateFromInput(el.value));
       });
       el.addEventListener('blur', function () {
-        setTimeout(function () { if (!el.value) revertCell(td); }, 120);
+        setTimeout(function () {
+          if (!el.value) { el.remove(); revertCell(td); }
+        }, 120);
       });
     } else if (control === 'number') {
       el = document.createElement('input');
       el.type = 'text';
       el.inputMode = 'numeric';
       el.placeholder = '0';
-      el.className = 'dm-inline-ctrl dm-inline-number';
+      el.className = 'dm-inline-ctrl dm-inline-number dm-inline-overlay';
       el.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); if (el.value.trim()) commitValue(td, rowId, colIdx, el.value.trim()); }
+        if (e.key === 'Enter') { e.preventDefault(); if (el.value.trim()) { el.remove(); commitValue(td, rowId, colIdx, el.value.trim()); } }
       });
       el.addEventListener('blur', function () {
-        if (el.value.trim()) commitValue(td, rowId, colIdx, el.value.trim());
-        else revertCell(td);
+        if (el.value.trim()) { el.remove(); commitValue(td, rowId, colIdx, el.value.trim()); }
+        else { el.remove(); revertCell(td); }
       });
     }
 
-    if (el) { td.appendChild(el); el.focus(); }
+    if (el) {
+      document.body.appendChild(el);
+      var rect = td.getBoundingClientRect();
+      el.style.top = rect.top + 'px';
+      el.style.left = rect.left + 'px';
+      el.style.height = rect.height + 'px';
+      el.focus();
+      if (control === 'date' && el.showPicker) {
+        try { el.showPicker(); } catch (_) {}
+      }
+    }
   }
 
   document.addEventListener('click', function (e) {
-    var cell = e.target.closest('.dm-cell-error[data-control]');
+    var pop = document.querySelector('.dm-popover');
+    if (pop && !pop.contains(e.target) && !e.target.closest('[data-control="dropdown"]')) {
+      closeActivePopover();
+    }
+    var cell = e.target.closest('.dm-cell-error[data-control], .dm-cell-corrected[data-control]');
     if (cell && !cell.classList.contains('dm-cell-editing')) {
       spawnInlineControl(cell);
+    }
+  });
+
+  document.addEventListener('change', function (e) {
+    if (e.target.classList.contains('dm-checkbox-all')) {
+      var table = e.target.closest('.dm-table');
+      if (!table) return;
+      var checked = e.target.checked;
+      table.querySelectorAll('tbody .dm-checkbox').forEach(function (cb) { cb.checked = checked; });
     }
   });
 

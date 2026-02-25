@@ -419,7 +419,8 @@
 .dm-table {
   min-width: 100%;
   width: max-content;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   table-layout: auto;
@@ -429,16 +430,57 @@
   font-weight: 600;
   font-size: 14px;
   color: #676f73;
-  padding: 14px 8px;
+  padding: 14px 12px;
   white-space: nowrap;
   background: #fff;
   border-bottom: 1px solid #dfe7eb;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   position: sticky;
   top: 0;
+  z-index: 2;
+}
+
+/* Frozen flag + checkbox columns */
+.dm-col-flag {
+  width: 36px;
+  text-align: center;
+  padding-left: 8px !important;
+  padding-right: 4px !important;
+  position: sticky;
+  left: 0;
   z-index: 1;
+  background: #fff;
+}
+.dm-col-check {
+  width: 36px;
+  text-align: center;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  position: sticky;
+  left: 36px;
+  z-index: 1;
+  background: #fff;
+}
+th.dm-col-flag,
+th.dm-col-check {
+  z-index: 3;
+  text-align: center;
+}
+.dm-table tbody tr:hover .dm-col-flag,
+.dm-table tbody tr:hover .dm-col-check {
+  background: #f9fbfc;
+}
+.dm-flag-error {
+  color: #cc1300;
+  font-size: 14px;
+}
+.dm-checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #0075a3;
 }
 .dm-table th:last-child,
 .dm-table td:last-child {
@@ -454,7 +496,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .dm-table tr:last-child td {
   border-bottom: none;
@@ -512,18 +553,35 @@
 }
 
 /* ---------- Erroneous / missing-value cells ---------- */
-.dm-cell-error {
-  background: #fef2f2;
-  border-left: 3px solid #dc2626;
-}
 .dm-cell-error[data-control] {
   cursor: pointer;
+}
+.dm-cell-error-inner {
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+  padding: 4px 8px;
+  border-radius: 2px;
+  display: block;
 }
 .dm-cell-error-label {
   color: #dc2626;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 0.02em;
+}
+
+/* Corrected cells — blue accent, still editable */
+.dm-cell-corrected {
+  cursor: pointer;
+}
+.dm-cell-corrected-inner {
+  background: #eff6ff;
+  border-left: 3px solid #0075a3;
+  padding: 4px 8px;
+  border-radius: 2px;
+  display: block;
+  color: #0075a3;
+  font-weight: 600;
 }
 
 /* ---------- Inline editing controls (error cell click-to-fix) ---------- */
@@ -547,7 +605,60 @@
   border-color: #0075a3;
   box-shadow: 0 0 0 2px rgba(0, 117, 163, 0.15);
 }
-.dm-inline-select { min-width: 140px; }
+.dm-inline-overlay {
+  position: fixed;
+  z-index: 9999;
+  min-width: 140px;
+  width: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+/* ---------- Popover dropdown (replaces native select for error cells) ---------- */
+.dm-popover {
+  position: fixed;
+  z-index: 9999;
+  min-width: 200px;
+  max-width: 320px;
+  max-height: 280px;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.dm-popover-header {
+  padding: 10px 14px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #676f73;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.dm-popover-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.dm-popover-item {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  cursor: pointer;
+}
+.dm-popover-item:hover {
+  background: #f0f4f8;
+}
 .dm-inline-date   { min-width: 130px; }
 .dm-inline-number { min-width: 80px; }
 
