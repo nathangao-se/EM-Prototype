@@ -27,6 +27,7 @@
 .ac-modal {
   width: fit-content;
   max-width: 92vw;
+  height: var(--modal-max-height);
   max-height: var(--modal-max-height);
   background: #ffffff;
   border-radius: 16px;

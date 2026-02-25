@@ -80,28 +80,31 @@
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  padding: 0 8px 8px;
+  padding: 4px 0;
+  overflow: clip;
 }
 
 .dm-filter-row {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 16px 8px;
+  padding: 12px 16px;
   position: relative;
 }
 .dm-filter-row::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 8px;
-  right: 8px;
+  left: 16px;
+  right: 16px;
   height: 1px;
   background: #d5dde0;
 }
 .dm-filter-row:last-of-type::after {
   display: none;
+}
+.dm-filter-row--active {
+  background: #dfe7eb;
 }
 
 .dm-filter-content {
@@ -115,7 +118,15 @@
 .dm-filter-title-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
+}
+
+.dm-filter-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .dm-filter-title {
@@ -498,6 +509,130 @@
 .dm-more:hover {
   background: #f1f5f9;
   color: #1d201f;
+}
+
+/* ---------- Erroneous / missing-value cells ---------- */
+.dm-cell-error {
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+}
+.dm-cell-error[data-control] {
+  cursor: pointer;
+}
+.dm-cell-error-label {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Inline editing controls (error cell click-to-fix) ---------- */
+.dm-cell-editing {
+  padding: 4px 6px !important;
+  background: #fff5f5;
+}
+.dm-inline-ctrl {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  border: 1px solid #dc2626;
+  border-radius: 4px;
+  padding: 4px 6px;
+  background: #ffffff;
+  color: #1d201f;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.dm-inline-ctrl:focus {
+  border-color: #0075a3;
+  box-shadow: 0 0 0 2px rgba(0, 117, 163, 0.15);
+}
+.dm-inline-select { min-width: 140px; }
+.dm-inline-date   { min-width: 130px; }
+.dm-inline-number { min-width: 80px; }
+
+/* ---------- Empty state ---------- */
+.dm-empty-state {
+  padding: 32px 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+}
+
+/* ---------- File cards (left panel) ---------- */
+.dm-file-card {
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dm-file-card[data-action] { cursor: pointer; }
+.dm-file-card:hover { background: #f9fbfc; }
+
+.dm-file-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 25px;
+}
+
+.dm-file-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 28px;
+}
+.dm-file-time {
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.dm-file-stats {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+  color: #676f73;
+  text-align: right;
+  white-space: nowrap;
+}
+.dm-file-chip-warn,
+.dm-file-chip-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.dm-file-chip-warn {
+  background: #fef7ec;
+  border: 1px solid #e8a736;
+  color: #a35b00;
+}
+.dm-file-chip-warn i {
+  font-size: 14px;
+  color: #a35b00;
+}
+.dm-file-chip-error {
+  background: #ffdfdb;
+  border: 1px solid #ff9e94;
+  color: #cc1300;
+}
+.dm-file-chip-error i {
+  font-size: 14px;
+  color: #cc1300;
 }
 
 /* =============================================

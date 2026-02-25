@@ -128,6 +128,14 @@
           window.openUploadWizard();
         } else if (wizard === 'inventory' && typeof window.openInventoryWizard === 'function') {
           window.openInventoryWizard();
+        } else if (wizard === 'activity-map') {
+          deactivateDeliverables();
+          if (typeof window.getActivityMapPageContent === 'function' && typeof window.runPageTransition === 'function') {
+            var pageContent = window.getActivityMapPageContent();
+            window.runPageTransition({ triggerEl: btn, pageContent: pageContent, title: 'Activity Data', onExit: function () {
+              activateDeliverables();
+            }});
+          }
         }
       });
     });

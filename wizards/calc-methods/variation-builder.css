@@ -26,6 +26,7 @@
 .vb-modal {
   width: 95vw;
   max-width: 680px;
+  height: var(--modal-max-height);
   max-height: var(--modal-max-height);
   background: #fff;
   border-radius: 16px;

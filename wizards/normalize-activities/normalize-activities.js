@@ -11,7 +11,7 @@
     openClass: 'normalize-overlay--open',
     onOpen: function () {
       activeCategory = 'all';
-      autoMap = false;
+      autoMapByCategory = {};
       activitiesList = ACTIVITIES_INITIAL.map(function (a) {
         return { name: a.name, meta: a.meta, selected: false, done: false, category: a.category, matchPct: a.matchPct };
       });
@@ -38,7 +38,7 @@
     { id: 'others',       title: 'Others',               meta: '120 unmapped activities' }
   ];
   var activeCategory = 'all';
-  var autoMap = false;
+  var autoMapByCategory = {};
 
   // Unnormalized activities list — mutable state: selected, done
   var ACTIVITIES_INITIAL = [
@@ -192,8 +192,13 @@
     return 'All source data';
   }
 
+  function isAutoMapped() {
+    return !!autoMapByCategory[activeCategory];
+  }
+
   function renderLeftList() {
     var filtered = getFilteredActivities();
+    var catAutoMap = isAutoMapped();
 
     // Header with category title + auto-map toggle
     var html =
@@ -201,13 +206,13 @@
         '<span class="normalize-left-heading">' + esc(getCategoryTitle()) + ':</span>' +
         '<label class="normalize-automap-toggle">' +
           '<span class="normalize-automap-label">Auto-map</span>' +
-          '<input type="checkbox" class="normalize-automap-input" ' + (autoMap ? 'checked' : '') + '>' +
+          '<input type="checkbox" class="normalize-automap-input" ' + (catAutoMap ? 'checked' : '') + '>' +
           '<span class="normalize-automap-track"><span class="normalize-automap-thumb"></span></span>' +
         '</label>' +
       '</div>';
 
     // Auto-map banner
-    if (autoMap) {
+    if (catAutoMap) {
       html +=
         '<div class="normalize-automap-banner">' +
           '<i class="fa-light fa-circle-info normalize-automap-banner-icon"></i>' +
@@ -235,15 +240,15 @@
     });
     html += '</div>';
     leftCol.innerHTML = html;
-    leftCol.classList.toggle('normalize-left--automap', autoMap);
+    leftCol.classList.toggle('normalize-left--automap', catAutoMap);
     bindLeftListEvents();
 
-    // Auto-map toggle event
+    // Auto-map toggle event (per category)
     var toggleInput = leftCol.querySelector('.normalize-automap-input');
     if (toggleInput) {
       toggleInput.addEventListener('change', function () {
-        autoMap = toggleInput.checked;
-        if (autoMap) {
+        autoMapByCategory[activeCategory] = toggleInput.checked;
+        if (toggleInput.checked) {
           activitiesList.forEach(function (a) { a.selected = false; });
         }
         renderLeftList();
@@ -276,8 +281,8 @@
   function renderRightPanels() {
     var selected = getSelectedActivity();
 
-    // Auto-map ON: right panel is empty
-    if (autoMap) {
+    // Auto-map ON for this category: right panel is empty
+    if (isAutoMapped()) {
       rightCol.innerHTML = '<div class="normalize-right-empty"></div>';
       rightCol.classList.add('normalize-right--disabled');
       return;
