@@ -145,12 +145,18 @@
   // INVENTORY WIZARD — COMBINE STEP TOGGLE
   // ===========================================
 
-  var combineToggle = document.getElementById('dev-toggle-combine');
   window.inventoryCombineStepEnabled = false;
-
-  if (combineToggle) combineToggle.addEventListener('click', function () {
-    window.inventoryCombineStepEnabled = !window.inventoryCombineStepEnabled;
-    combineToggle.classList.toggle('dev-panel-option--active', window.inventoryCombineStepEnabled);
+  var combineStepBtns = document.querySelectorAll('[data-combine-step]');
+  combineStepBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var val = btn.getAttribute('data-combine-step');
+      var enabled = val === 'on';
+      if (enabled === window.inventoryCombineStepEnabled) return;
+      window.inventoryCombineStepEnabled = enabled;
+      combineStepBtns.forEach(function (b) {
+        b.classList.toggle('dev-panel-option--active', b.getAttribute('data-combine-step') === val);
+      });
+    });
   });
 
   // ===========================================
@@ -166,6 +172,23 @@
       window.uploadWizardVersion = ver;
       uploadVersionBtns.forEach(function (b) {
         b.classList.toggle('dev-panel-option--active', b.getAttribute('data-upload-version') === ver);
+      });
+    });
+  });
+
+  // ===========================================
+  // ACTIVITY DATA PAGE — VERSION TOGGLE
+  // ===========================================
+
+  window.activityDataVersion = 'old';
+  var activityVersionBtns = document.querySelectorAll('[data-activity-version]');
+  activityVersionBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var ver = btn.getAttribute('data-activity-version');
+      if (ver === window.activityDataVersion) return;
+      window.activityDataVersion = ver;
+      activityVersionBtns.forEach(function (b) {
+        b.classList.toggle('dev-panel-option--active', b.getAttribute('data-activity-version') === ver);
       });
     });
   });

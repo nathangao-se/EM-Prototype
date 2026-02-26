@@ -28,7 +28,6 @@
 .upload-wiz {
   width: 95vw;
   max-width: 680px;
-  height: var(--modal-max-height);
   max-height: var(--modal-max-height);
   background: #ffffff;
   border-radius: 16px;

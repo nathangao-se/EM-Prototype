@@ -86,7 +86,7 @@
     html += '<th class="dm-col-flag"></th>';
     html += '<th class="dm-col-check"><input type="checkbox" class="dm-checkbox dm-checkbox-all"></th>';
     TABLE_COLS.forEach(function (col) { html += '<th>' + esc(col) + '</th>'; });
-    html += '<th></th></tr></thead><tbody>';
+    html += '<th class="dm-col-actions"></th></tr></thead><tbody>';
     rows.forEach(function (r) {
       var hasErr = rowHasError(r);
       html += '<tr>';
@@ -105,7 +105,7 @@
           html += '<td>' + esc(cell) + '</td>';
         }
       });
-      html += '<td><button class="dm-more"><i class="fa-solid fa-ellipsis-vertical"></i></button></td>';
+      html += '<td class="dm-col-actions"><button class="dm-more"><i class="fa-solid fa-ellipsis-vertical"></i></button></td>';
       html += '</tr>';
     });
     html += '</tbody>';
@@ -210,19 +210,25 @@
 
     html += '</div>';
 
-    // ---- Files card (single card, Data summary on top, files below) ----
+    // ---- Sort control ----
+    html += '<div class="dm-sort-control">';
+    html += '<div class="dm-sort-label">Sort</div>';
+    html += '<div class="dm-sort-row">';
+    html += '<div class="dm-segmented">';
+    html += '<button class="dm-segmented-item' + (fileSortKey === 'name' ? ' dm-segmented-item--active' : '') + '" data-sort="name">Name</button>';
+    html += '<button class="dm-segmented-item' + (fileSortKey === 'records' ? ' dm-segmented-item--active' : '') + '" data-sort="records">Records</button>';
+    html += '<button class="dm-segmented-item' + (fileSortKey === 'uploaded' ? ' dm-segmented-item--active' : '') + '" data-sort="uploaded">Uploaded</button>';
+    html += '</div>';
+    html += '<button class="dm-sort-dir-btn" data-action="toggle-sort-dir"><i class="fa-solid ' + (fileSortAsc ? 'fa-arrow-up' : 'fa-arrow-down') + '"></i></button>';
+    html += '</div>';
+    html += '</div>';
+
+    // ---- Files card ----
     html += '<div class="dm-filter-card">';
 
-    html += '<div class="dm-filter-row' + (activeFileIdx === -1 ? ' dm-filter-row--active' : '') + '" data-action="select-summary" style="cursor:pointer">';
-    html += '<div class="dm-filter-content">';
-    html += '<div class="dm-file-title">Data summary</div>';
-    html += '<div class="dm-file-meta">';
-    html += '<span class="dm-file-time">' + TABLE_ROWS.length + ' total recs</span>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
-
-    FILE_ITEMS.forEach(function (f, fi) {
+    var sortedIndices = getSortedFileIndices();
+    sortedIndices.forEach(function (fi) {
+      var f = FILE_ITEMS[fi];
       html += '<div class="dm-filter-row' + (activeFileIdx === fi ? ' dm-filter-row--active' : '') + '" data-action="select-file" data-file-idx="' + fi + '" style="cursor:pointer">';
       html += '<div class="dm-filter-content">';
       html += '<div class="dm-file-title">' + esc(f.name) + '</div>';
@@ -244,12 +250,29 @@
     return html;
   }
 
-  // File selection + category overview click delegation
+  function refreshFileList(contextEl) {
+    var layout = contextEl ? contextEl.closest('.dm-layout') : document.querySelector('.pt-page-section .dm-layout') || document.querySelector('.dm-layout');
+    if (!layout) return;
+    var leftPanel = layout.querySelector('.dm-left');
+    if (leftPanel) leftPanel.innerHTML = buildDefaultLeftPanel();
+  }
+
+  // File selection + sort + category overview click delegation
   document.addEventListener('click', function (e) {
-    var summaryEl = e.target.closest('[data-action="select-summary"]');
-    if (summaryEl) {
-      e.preventDefault();
-      selectFile(-1, summaryEl);
+    var segBtn = e.target.closest('.dm-segmented-item[data-sort]');
+    if (segBtn) {
+      var newKey = segBtn.getAttribute('data-sort');
+      if (newKey !== fileSortKey) {
+        fileSortKey = newKey;
+        fileSortAsc = true;
+      }
+      refreshFileList(segBtn);
+      return;
+    }
+    var dirBtn = e.target.closest('[data-action="toggle-sort-dir"]');
+    if (dirBtn) {
+      fileSortAsc = !fileSortAsc;
+      refreshFileList(dirBtn);
       return;
     }
     var fileEl = e.target.closest('[data-action="select-file"]');
@@ -278,13 +301,33 @@
 
   // ========== FILE ITEMS — left-panel file cards ==========
   var FILE_ITEMS = [
-    { name: 'North America Q4 2024.xlsx',  time: '15 mins ago', records: '4.5k', errors: 120, state: 'warning', rows: [0, 14],  entity: 'Besana' },
-    { name: 'Southern Europe FY2024.xlsx', time: '2 hrs ago',   records: '3.2k', errors: 0,   state: 'ok',      rows: [14, 27], entity: 'Meridian' },
-    { name: 'Asia Pacific Q4 2024.csv',    time: '1 day ago',   records: '',     errors: 0,   state: 'failed',  rows: null,     entity: null },
-    { name: 'East Africa 2024.xlsx',       time: '3 hrs ago',   records: '1.8k', errors: 0,   state: 'ok',      rows: [27, 40], entity: 'Northwind' }
+    { name: 'North America Q4 2024.xlsx',  time: '15 mins ago', timeVal: 15,   records: '4.5k', recordsVal: 4500, errors: 120, state: 'warning', rows: [0, 14],  entity: 'Besana' },
+    { name: 'Southern Europe FY2024.xlsx', time: '2 hrs ago',   timeVal: 120,  records: '3.2k', recordsVal: 3200, errors: 0,   state: 'ok',      rows: [14, 27], entity: 'Meridian' },
+    { name: 'Asia Pacific Q4 2024.csv',    time: '1 day ago',   timeVal: 1440, records: '',     recordsVal: 0,    errors: 0,   state: 'failed',  rows: null,     entity: null },
+    { name: 'East Africa 2024.xlsx',       time: '3 hrs ago',   timeVal: 180,  records: '1.8k', recordsVal: 1800, errors: 0,   state: 'ok',      rows: [27, 40], entity: 'Northwind' }
   ];
 
-  var activeFileIdx = -1;
+  var activeFileIdx = 0;
+  var fileSortKey = 'name';
+  var fileSortAsc = true;
+
+  function getSortedFileIndices() {
+    var indices = [];
+    for (var i = 0; i < FILE_ITEMS.length; i++) indices.push(i);
+    indices.sort(function (a, b) {
+      var fa = FILE_ITEMS[a], fb = FILE_ITEMS[b];
+      var cmp = 0;
+      if (fileSortKey === 'name') {
+        cmp = fa.name.localeCompare(fb.name);
+      } else if (fileSortKey === 'records') {
+        cmp = fa.recordsVal - fb.recordsVal;
+      } else if (fileSortKey === 'uploaded') {
+        cmp = fa.timeVal - fb.timeVal;
+      }
+      return fileSortAsc ? cmp : -cmp;
+    });
+    return indices;
+  }
 
   // ========== ERROR DETECTION — required columns + control types ==========
   var REQUIRED_COL_NAMES = ['Activity Type','Fuel Type','Start Date','End Date','Record Type','Business Entity','Usage Value'];
@@ -331,8 +374,6 @@
     leftPanel.querySelectorAll('[data-action="select-file"]').forEach(function (el) {
       el.classList.toggle('dm-filter-row--active', parseInt(el.getAttribute('data-file-idx'), 10) === idx);
     });
-    var summaryRow = leftPanel.querySelector('[data-action="select-summary"]');
-    if (summaryRow) summaryRow.classList.toggle('dm-filter-row--active', idx === -1);
 
     var rows, title;
     if (idx === -1) {

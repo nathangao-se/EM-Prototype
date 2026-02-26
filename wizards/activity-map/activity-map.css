@@ -73,6 +73,78 @@
   flex-shrink: 0;
 }
 
+/* ---------- Sort control ---------- */
+.dm-sort-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dm-sort-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+}
+.dm-sort-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dm-segmented {
+  flex: 1;
+  display: flex;
+  height: 32px;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  background: #fff;
+  padding: 4px;
+  gap: 4px;
+}
+.dm-segmented-item {
+  flex: 1;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dm-segmented-item:hover {
+  background: #f0f4f8;
+}
+.dm-segmented-item--active {
+  background: #dbf5ff;
+}
+.dm-segmented-item--active:hover {
+  background: #cceeff;
+}
+.dm-sort-dir-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  background: #f5f8fa;
+  color: #676f73;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.dm-sort-dir-btn:hover {
+  background: #e2e8f0;
+  color: #1d201f;
+}
+
 /* ---------- Left column filter card (single card, rows with dividers) ---------- */
 .dm-filter-card {
   background: #ffffff;
@@ -482,10 +554,22 @@ th.dm-col-check {
   cursor: pointer;
   accent-color: #0075a3;
 }
-.dm-table th:last-child,
-.dm-table td:last-child {
+.dm-col-actions {
   width: 40px;
   text-align: center;
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: #fff;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+th.dm-col-actions {
+  z-index: 3;
+  text-align: center;
+}
+.dm-table tbody tr:hover .dm-col-actions {
+  background: #f9fbfc;
 }
 .dm-table td {
   padding: 10px 12px;
