@@ -121,44 +121,36 @@
     return { name: f.name, sub: sub };
   }
 
-  function buildToolbarHTML(heading) {
+  function buildToolbarHTML() {
     var html = '';
-    if (isNewVersion()) {
-      var info = getActiveFileSummary();
-      html += '<div class="dm-toolbar dm-toolbar--new">';
-      var otherCount = FILE_ITEMS.length - 1;
-      html += '<button class="dm-file-btn" data-action="toggle-files-panel">';
-      html += '<div class="dm-file-btn-text">';
-      html += '<span class="dm-file-btn-name">' + esc(info.name) + '</span>';
-      html += '<span class="dm-file-btn-sub">' + esc(info.sub) + '</span>';
-      html += '</div>';
-      html += '<span class="dm-file-btn-link">See ' + otherCount + ' other file' + (otherCount !== 1 ? 's' : '') + '</span>';
-      html += '</button>';
-      html += '<div class="dm-toolbar-inner">';
-      html += '<div class="dm-toolbar-start">';
-      html += '<input type="text" class="dm-search dm-search--sm" placeholder="Search business entity">';
-      html += '<button class="dm-tbtn"><i class="fa-solid fa-filter"></i> Filters <span class="dm-badge">2</span></button>';
-      html += '</div>';
-      html += '<div class="dm-toolbar-end">';
-      html += '<button class="dm-tbtn"><i class="fa-solid fa-table-columns"></i> Columns <i class="fa-solid fa-chevron-down dm-tbtn-chev"></i></button>';
-      html += '<button class="dm-tbtn"><i class="fa-solid fa-download"></i> Export</button>';
-      html += '</div>';
-      html += '</div>';
-      html += '</div>';
-    } else {
-      html += '<h3 class="dm-view-title">' + (heading || 'All data list') + '</h3>';
-      html += '<div class="dm-toolbar">';
-      html += '<input type="text" class="dm-search" placeholder="Search">';
-      html += '<button class="dm-btn dm-btn-outline"><i class="fa-solid fa-sliders"></i> Filter</button>';
-      html += '</div>';
-    }
+    var info = getActiveFileSummary();
+    html += '<div class="dm-toolbar dm-toolbar--new">';
+    var otherCount = FILE_ITEMS.length - 1;
+    html += '<button class="dm-file-btn" data-action="toggle-files-panel">';
+    html += '<div class="dm-file-btn-text">';
+    html += '<span class="dm-file-btn-name">' + esc(info.name) + '</span>';
+    html += '<span class="dm-file-btn-sub">' + esc(info.sub) + '</span>';
+    html += '</div>';
+    html += '<span class="dm-file-btn-link">See ' + otherCount + ' other file' + (otherCount !== 1 ? 's' : '') + '</span>';
+    html += '</button>';
+    html += '<div class="dm-toolbar-inner">';
+    html += '<div class="dm-toolbar-start">';
+    html += '<input type="text" class="dm-search dm-search--sm" placeholder="Search business entity">';
+    html += '<button class="dm-tbtn"><i class="fa-solid fa-filter"></i> Filters <span class="dm-badge">2</span></button>';
+    html += '</div>';
+    html += '<div class="dm-toolbar-end">';
+    html += '<button class="dm-tbtn"><i class="fa-solid fa-table-columns"></i> Columns <i class="fa-solid fa-chevron-down dm-tbtn-chev"></i></button>';
+    html += '<button class="dm-tbtn"><i class="fa-solid fa-download"></i> Export</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
     return html;
   }
 
   function renderScopeTable(scopeLabel, rightPanel) {
     var html = '';
     html += '<div class="dm-table-wrap">';
-    html += buildToolbarHTML(esc(scopeLabel) + ' activities');
+    html += buildToolbarHTML();
     html += '<div class="dm-table-scroll">';
     html += '<table class="dm-table">';
     html += buildTableHTML(TABLE_ROWS);
@@ -180,47 +172,29 @@
     renderScopeTable(scope, rightPanel);
   }
 
-  function restoreDataListView(rightPanel, rows, title) {
+  function restoreDataListView(rightPanel, rows) {
     if (!rightPanel) return;
     var data = rows || TABLE_ROWS;
-    var heading = title || 'All data list';
 
-    if (isNewVersion()) {
-      var toolbar = rightPanel.querySelector('.dm-toolbar--new');
-      if (toolbar) {
-        var info = getActiveFileSummary();
-        var nameEl = toolbar.querySelector('.dm-file-btn-name');
-        var subEl = toolbar.querySelector('.dm-file-btn-sub');
-        if (nameEl) nameEl.textContent = info.name;
-        if (subEl) subEl.textContent = info.sub;
-      }
-      var wrap = rightPanel.querySelector('.dm-table-wrap');
-      if (wrap) {
-        if (data.length === 0) {
-          wrap.innerHTML = '<div class="dm-empty-state">No records available for this file.</div>';
-        } else {
-          var inner = '<div class="dm-table-scroll">';
-          inner += '<table class="dm-table">';
-          inner += buildTableHTML(data);
-          inner += '</table></div>';
-          wrap.innerHTML = inner;
-        }
-      }
-    } else {
-      var html = '';
-      html += '<div class="dm-table-wrap">';
-      html += buildToolbarHTML(heading);
+    var toolbar = rightPanel.querySelector('.dm-toolbar--new');
+    if (toolbar) {
+      var info = getActiveFileSummary();
+      var nameEl = toolbar.querySelector('.dm-file-btn-name');
+      var subEl = toolbar.querySelector('.dm-file-btn-sub');
+      if (nameEl) nameEl.textContent = info.name;
+      if (subEl) subEl.textContent = info.sub;
+    }
+    var wrap = rightPanel.querySelector('.dm-table-wrap');
+    if (wrap) {
       if (data.length === 0) {
-        html += '<div class="dm-empty-state">No records available for this file.</div>';
+        wrap.innerHTML = '<div class="dm-empty-state">No records available for this file.</div>';
       } else {
-        html += '<div class="dm-table-scroll">';
-        html += '<table class="dm-table">';
-        html += buildTableHTML(data);
-        html += '</table>';
-        html += '</div>';
+        var inner = '<div class="dm-table-scroll">';
+        inner += '<table class="dm-table">';
+        inner += buildTableHTML(data);
+        inner += '</table></div>';
+        wrap.innerHTML = inner;
       }
-      html += '</div>';
-      rightPanel.innerHTML = html;
     }
   }
 
@@ -231,45 +205,13 @@
     var rightPanel = layout.querySelector('.dm-right');
     if (!leftPanel) return;
 
-    leftPanel.innerHTML = buildDefaultLeftPanel(isNewVersion() ? { hideUnnormalized: true } : null);
+    leftPanel.innerHTML = buildDefaultLeftPanel();
     restoreDataListView(rightPanel);
   }
 
-  function buildDefaultLeftPanel(opts) {
-    var hideUnnormalized = opts && opts.hideUnnormalized;
+
+  function buildDefaultLeftPanel() {
     var html = '';
-
-    if (!hideUnnormalized) {
-      html += '<div class="dm-filter-card">';
-
-      html += '<div class="dm-filter-row">';
-      html += '<div class="dm-filter-content">';
-      html += '<div class="dm-filter-title-row">';
-      html += '<span class="dm-filter-title">Unnormalized Columns</span>';
-      html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
-      html += '</div>';
-      html += '<div class="dm-filter-meta-row">';
-      html += '<span class="dm-filter-meta">6 instances</span>';
-      html += '<a href="#" class="dm-filter-link" data-action="open-columns-modal">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
-      html += '</div>';
-      html += '</div>';
-      html += '</div>';
-
-      html += '<div class="dm-filter-row">';
-      html += '<div class="dm-filter-content">';
-      html += '<div class="dm-filter-title-row">';
-      html += '<span class="dm-filter-title">Unnormalized data</span>';
-      html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
-      html += '</div>';
-      html += '<div class="dm-filter-meta-row">';
-      html += '<span class="dm-filter-meta">1,249 records</span>';
-      html += '<a href="#" class="dm-filter-link" data-action="open-normalize">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
-      html += '</div>';
-      html += '</div>';
-      html += '</div>';
-
-      html += '</div>';
-    }
 
     // ---- Sort control ----
     html += '<div class="dm-sort-control">';
@@ -315,7 +257,7 @@
     var layout = contextEl ? contextEl.closest('.dm-layout') : document.querySelector('.pt-page-section .dm-layout') || document.querySelector('.dm-layout');
     if (!layout) return;
     var leftPanel = layout.querySelector('.dm-left') || layout.querySelector('.dm-popout-body');
-    if (leftPanel) leftPanel.innerHTML = buildDefaultLeftPanel(isNewVersion() ? { hideUnnormalized: true } : null);
+    if (leftPanel) leftPanel.innerHTML = buildDefaultLeftPanel();
   }
 
   // File selection + sort + category overview click delegation
@@ -682,21 +624,13 @@
     html += '<div class="goals-progress-segment goals-progress-pending" style="width:86%"></div>';
     html += '</div>';
     html += '<div class="goals-actions">';
+    if (!isNewVersion()) {
+      html += '<button class="btn btn-outline btn-small" data-action="open-columns-modal"><i class="fa-solid fa-triangle-exclamation"></i> Normalize columns</button>';
+      html += '<button class="btn btn-outline btn-small" data-action="open-normalize"><i class="fa-solid fa-triangle-exclamation"></i> Normalize data</button>';
+      html += '<span style="flex:1"></span>';
+    }
     html += '<button class="btn btn-outline btn-small" data-action="open-activity-data-setup">+ Add files/data</button>';
     html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-book"></i> Rules library</button>';
-    html += '</div>';
-    html += '</div>';
-    return html;
-  }
-
-  function buildTableArea(rows) {
-    var data = rows || TABLE_ROWS;
-    var html = '<div class="dm-table-wrap">';
-    html += buildToolbarHTML();
-    html += '<div class="dm-table-scroll">';
-    html += '<table class="dm-table">';
-    html += buildTableHTML(data);
-    html += '</table>';
     html += '</div>';
     html += '</div>';
     return html;
@@ -706,63 +640,35 @@
     return window.activityDataVersion === 'new';
   }
 
-  function buildPopoutHTML(panelOpts) {
+  function buildPopoutHTML() {
     var html = '';
     html += '<div class="dm-popout-anchor">';
     html += '<div class="dm-popout-panel" style="display:none">';
-    if (!isNewVersion()) {
-      html += '<div class="dm-popout-header">';
-      html += '<span class="dm-popout-title">Files &amp; data</span>';
-      html += '<button class="dm-popout-close" data-action="close-files-panel"><i class="fa-solid fa-xmark"></i></button>';
-      html += '</div>';
-    }
     html += '<div class="dm-popout-body">';
-    html += buildDefaultLeftPanel(panelOpts);
+    html += buildDefaultLeftPanel();
     html += '</div>';
     html += '</div>';
     html += '</div>';
     return html;
   }
 
-  function buildPageLayout(panelOpts) {
+  function buildPageLayout() {
     var html = '';
     html += '<div class="dm-top-row">';
-    if (!isNewVersion()) {
-      html += '<div class="dm-files-trigger kpi-card goals-card" data-action="toggle-files-panel">';
-      html += '<div class="goals-card-heading"><span class="goals-card-label">Files &amp; data</span></div>';
-      html += '<div class="goals-metric">';
-      html += '<span class="goals-metric-value">' + FILE_ITEMS.length + '</span>';
-      html += '<span class="goals-metric-label">Files</span>';
-      html += '<span class="goals-metric-value">' + TABLE_ROWS.length + '</span>';
-      html += '<span class="goals-metric-label">Records</span>';
-      html += '</div>';
-      html += '<div class="goals-actions">';
-      html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-chevron-down"></i> View files</button>';
-      html += '</div>';
-      html += '</div>';
-    }
     html += buildKPICards();
     html += '</div>';
 
-    if (!isNewVersion()) {
-      html += buildPopoutHTML(panelOpts);
-    }
-
     html += '<div class="dm-bottom">';
     html += '<div class="dm-right dm-right--full">';
-    if (isNewVersion()) {
-      html += buildToolbarHTML();
-      html += buildPopoutHTML(panelOpts);
-      html += '<div class="dm-table-wrap dm-table-wrap--no-top">';
-      html += '<div class="dm-table-scroll">';
-      html += '<table class="dm-table">';
-      html += buildTableHTML(TABLE_ROWS);
-      html += '</table>';
-      html += '</div>';
-      html += '</div>';
-    } else {
-      html += buildTableArea();
-    }
+    html += buildToolbarHTML();
+    html += buildPopoutHTML();
+    html += '<div class="dm-table-wrap dm-table-wrap--no-top">';
+    html += '<div class="dm-table-scroll">';
+    html += '<table class="dm-table">';
+    html += buildTableHTML(TABLE_ROWS);
+    html += '</table>';
+    html += '</div>';
+    html += '</div>';
     html += '</div>';
     html += '</div>';
     return html;
@@ -772,7 +678,7 @@
   function getBodyHTML() {
     var html = '<h1 class="dm-page-title">Activity data</h1>';
     html += '<div class="dm-layout">';
-    html += buildPageLayout(isNewVersion() ? { hideUnnormalized: true } : null);
+    html += buildPageLayout();
     html += '</div>';
     return html;
   }

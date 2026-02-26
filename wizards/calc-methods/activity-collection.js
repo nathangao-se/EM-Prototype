@@ -247,7 +247,7 @@
     });
 
     overlay.addEventListener('click', function (e) {
-      if (e.target.closest('[data-ac-action="exit"]') || e.target === overlay) {
+      if (e.target.closest('[data-ac-action="exit"]')) {
         overlay.classList.remove('ac-overlay--open');
         setTimeout(function () { overlay.remove(); }, 200);
         return;

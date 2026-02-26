@@ -18,10 +18,6 @@ window.ModalManager = (function () {
     var entry = { id: id, overlay: overlay, openClass: openClass, onOpen: onOpen, onClose: onClose };
     registry[id] = entry;
 
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) close(id);
-    });
-
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && overlay.classList.contains(openClass)) close(id);
     });

@@ -348,7 +348,14 @@
   });
 
   nextBtn.addEventListener('click', function () {
-    closeWizard();
+    var next = nextVisibleStep(ctx.currentStep);
+    if (next >= 0) {
+      ctx.stepDirection = 'forward';
+      ctx.currentStep = next;
+      render();
+    } else {
+      closeWizard();
+    }
   });
 
   // ── Stepper ─────────────────────────────────────────────────────
@@ -395,9 +402,13 @@
   // ── Footer ──────────────────────────────────────────────────────
 
   function updateFooter() {
-    backBtn.textContent = 'Cancel';
+    var visible = getVisibleSteps();
+    var isFirst = visible.indexOf(ctx.currentStep) === 0;
+    var isLast = visible.indexOf(ctx.currentStep) === visible.length - 1;
+
+    backBtn.textContent = isFirst ? 'Cancel' : 'Back';
     backBtn.style.visibility = '';
-    nextBtn.textContent = 'Save';
+    nextBtn.textContent = isLast ? 'Save' : 'Next';
     discardLink.style.display = 'none';
 
     var checkRow = overlay.querySelector('.uw-s2-check-row');
