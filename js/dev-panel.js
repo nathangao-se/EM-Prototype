@@ -180,7 +180,7 @@
   // ACTIVITY DATA PAGE — VERSION TOGGLE
   // ===========================================
 
-  window.activityDataVersion = 'old';
+  window.activityDataVersion = 'new';
   var activityVersionBtns = document.querySelectorAll('[data-activity-version]');
   activityVersionBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {

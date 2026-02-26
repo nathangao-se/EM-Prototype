@@ -112,14 +112,52 @@
     return html;
   }
 
+  function getActiveFileSummary() {
+    var f = FILE_ITEMS[activeFileIdx];
+    if (!f) return { name: 'All files', sub: TABLE_ROWS.length + ' records' };
+    var sub = '';
+    if (f.errors) sub += f.errors + ' errors / ';
+    sub += (f.records || '0') + ' records';
+    return { name: f.name, sub: sub };
+  }
+
+  function buildToolbarHTML(heading) {
+    var html = '';
+    if (isNewVersion()) {
+      var info = getActiveFileSummary();
+      html += '<div class="dm-toolbar dm-toolbar--new">';
+      html += '<button class="dm-file-btn" data-action="toggle-files-panel">';
+      html += '<div class="dm-file-btn-text">';
+      html += '<span class="dm-file-btn-name">' + esc(info.name) + '</span>';
+      html += '<span class="dm-file-btn-sub">' + esc(info.sub) + '</span>';
+      html += '</div>';
+      html += '</button>';
+      html += '<div class="dm-toolbar-inner">';
+      html += '<div class="dm-toolbar-start">';
+      html += '<input type="text" class="dm-search dm-search--sm" placeholder="Search business entity">';
+      html += '<button class="dm-tbtn"><i class="fa-solid fa-filter"></i> Filters <span class="dm-badge">2</span></button>';
+      html += '</div>';
+      html += '<div class="dm-toolbar-end">';
+      html += '<button class="dm-tbtn"><i class="fa-regular fa-bookmark"></i> Save view <i class="fa-solid fa-chevron-down dm-tbtn-chev"></i></button>';
+      html += '<button class="dm-tbtn"><i class="fa-solid fa-table-columns"></i> Columns <i class="fa-solid fa-chevron-down dm-tbtn-chev"></i></button>';
+      html += '<button class="dm-tbtn"><i class="fa-solid fa-download"></i> Export</button>';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+    } else {
+      html += '<h3 class="dm-view-title">' + (heading || 'All data list') + '</h3>';
+      html += '<div class="dm-toolbar">';
+      html += '<input type="text" class="dm-search" placeholder="Search">';
+      html += '<button class="dm-btn dm-btn-outline"><i class="fa-solid fa-sliders"></i> Filter</button>';
+      html += '</div>';
+    }
+    return html;
+  }
+
   function renderScopeTable(scopeLabel, rightPanel) {
     var html = '';
     html += '<div class="dm-table-wrap">';
-    html += '<h3 class="dm-view-title">' + esc(scopeLabel) + ' activities</h3>';
-    html += '<div class="dm-toolbar">';
-    html += '<input type="text" class="dm-search" placeholder="Search">';
-    html += '<button class="dm-btn dm-btn-outline"><i class="fa-solid fa-sliders"></i> Filter</button>';
-    html += '</div>';
+    html += buildToolbarHTML(esc(scopeLabel) + ' activities');
     html += '<div class="dm-table-scroll">';
     html += '<table class="dm-table">';
     html += buildTableHTML(TABLE_ROWS);
@@ -147,11 +185,7 @@
     var heading = title || 'All data list';
     var html = '';
     html += '<div class="dm-table-wrap">';
-    html += '<h3 class="dm-view-title">' + heading + '</h3>';
-    html += '<div class="dm-toolbar">';
-    html += '<input type="text" class="dm-search" placeholder="Search">';
-    html += '<button class="dm-btn dm-btn-outline"><i class="fa-solid fa-sliders"></i> Filter</button>';
-    html += '</div>';
+    html += buildToolbarHTML(heading);
     if (data.length === 0) {
       html += '<div class="dm-empty-state">No records available for this file.</div>';
     } else {
@@ -172,43 +206,45 @@
     var rightPanel = layout.querySelector('.dm-right');
     if (!leftPanel) return;
 
-    leftPanel.innerHTML = buildDefaultLeftPanel();
+    leftPanel.innerHTML = buildDefaultLeftPanel(isNewVersion() ? { hideUnnormalized: true } : null);
     restoreDataListView(rightPanel);
   }
 
-  function buildDefaultLeftPanel() {
+  function buildDefaultLeftPanel(opts) {
+    var hideUnnormalized = opts && opts.hideUnnormalized;
     var html = '';
 
-    // ---- Unnormalized sections card (always on top) ----
-    html += '<div class="dm-filter-card">';
+    if (!hideUnnormalized) {
+      html += '<div class="dm-filter-card">';
 
-    html += '<div class="dm-filter-row">';
-    html += '<div class="dm-filter-content">';
-    html += '<div class="dm-filter-title-row">';
-    html += '<span class="dm-filter-title">Unnormalized Columns</span>';
-    html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
-    html += '</div>';
-    html += '<div class="dm-filter-meta-row">';
-    html += '<span class="dm-filter-meta">6 instances</span>';
-    html += '<a href="#" class="dm-filter-link" data-action="open-columns-modal">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
+      html += '<div class="dm-filter-row">';
+      html += '<div class="dm-filter-content">';
+      html += '<div class="dm-filter-title-row">';
+      html += '<span class="dm-filter-title">Unnormalized Columns</span>';
+      html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
+      html += '</div>';
+      html += '<div class="dm-filter-meta-row">';
+      html += '<span class="dm-filter-meta">6 instances</span>';
+      html += '<a href="#" class="dm-filter-link" data-action="open-columns-modal">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
 
-    html += '<div class="dm-filter-row">';
-    html += '<div class="dm-filter-content">';
-    html += '<div class="dm-filter-title-row">';
-    html += '<span class="dm-filter-title">Unnormalized data</span>';
-    html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
-    html += '</div>';
-    html += '<div class="dm-filter-meta-row">';
-    html += '<span class="dm-filter-meta">1,249 records</span>';
-    html += '<a href="#" class="dm-filter-link" data-action="open-normalize">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
+      html += '<div class="dm-filter-row">';
+      html += '<div class="dm-filter-content">';
+      html += '<div class="dm-filter-title-row">';
+      html += '<span class="dm-filter-title">Unnormalized data</span>';
+      html += '<i class="fa-solid fa-triangle-exclamation dm-filter-warn-icon"></i>';
+      html += '</div>';
+      html += '<div class="dm-filter-meta-row">';
+      html += '<span class="dm-filter-meta">1,249 records</span>';
+      html += '<a href="#" class="dm-filter-link" data-action="open-normalize">Normalize <i class="fa-solid fa-chevron-right"></i></a>';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
 
-    html += '</div>';
+      html += '</div>';
+    }
 
     // ---- Sort control ----
     html += '<div class="dm-sort-control">';
@@ -254,7 +290,7 @@
     var layout = contextEl ? contextEl.closest('.dm-layout') : document.querySelector('.pt-page-section .dm-layout') || document.querySelector('.dm-layout');
     if (!layout) return;
     var leftPanel = layout.querySelector('.dm-left') || layout.querySelector('.dm-popout-body');
-    if (leftPanel) leftPanel.innerHTML = buildDefaultLeftPanel();
+    if (leftPanel) leftPanel.innerHTML = buildDefaultLeftPanel(isNewVersion() ? { hideUnnormalized: true } : null);
   }
 
   // File selection + sort + category overview click delegation
@@ -542,13 +578,15 @@
       closeActivePopover();
     }
 
-    var triggerCard = e.target.closest('[data-action="toggle-files-panel"]');
-    if (triggerCard) {
-      var panel = document.querySelector('.dm-popout-panel');
+    var triggerEl = e.target.closest('[data-action="toggle-files-panel"]');
+    if (triggerEl) {
+      var panel = triggerEl.closest('.dm-table-wrap')
+        ? triggerEl.closest('.dm-table-wrap').querySelector('.dm-popout-panel')
+        : document.querySelector('.dm-popout-panel');
+      if (!panel) panel = document.querySelector('.dm-popout-panel');
       if (panel) {
         var open = panel.style.display !== 'none';
         panel.style.display = open ? 'none' : '';
-        triggerCard.classList.toggle('dm-files-trigger--open', !open);
       }
       return;
     }
@@ -556,16 +594,14 @@
     if (closeBtn) {
       var panel = document.querySelector('.dm-popout-panel');
       if (panel) panel.style.display = 'none';
-      var trig = document.querySelector('.dm-files-trigger');
-      if (trig) trig.classList.remove('dm-files-trigger--open');
       return;
     }
 
-    var openPopout = document.querySelector('.dm-popout-panel[style=""],.dm-popout-panel:not([style*="display: none"])');
-    if (openPopout && openPopout.style.display !== 'none' && !openPopout.contains(e.target) && !e.target.closest('.dm-files-trigger')) {
+    var openPopout = document.querySelector('.dm-popout-panel');
+    if (openPopout && openPopout.style.display !== 'none'
+        && !openPopout.contains(e.target)
+        && !e.target.closest('[data-action="toggle-files-panel"]')) {
       openPopout.style.display = 'none';
-      var trig2 = document.querySelector('.dm-files-trigger');
-      if (trig2) trig2.classList.remove('dm-files-trigger--open');
     }
 
     var cell = e.target.closest('.dm-cell-error[data-control], .dm-cell-corrected[data-control]');
@@ -625,11 +661,7 @@
   function buildTableArea(rows) {
     var data = rows || TABLE_ROWS;
     var html = '<div class="dm-table-wrap">';
-    html += '<h3 class="dm-view-title">All data list</h3>';
-    html += '<div class="dm-toolbar">';
-    html += '<input type="text" class="dm-search" placeholder="Search">';
-    html += '<button class="dm-btn dm-btn-outline"><i class="fa-solid fa-sliders"></i> Filter</button>';
-    html += '</div>';
+    html += buildToolbarHTML();
     html += '<div class="dm-table-scroll">';
     html += '<table class="dm-table">';
     html += buildTableHTML(data);
@@ -639,48 +671,12 @@
     return html;
   }
 
-  /** OLD version — left column + right table side by side */
-  function getBodyHTMLOld() {
-    var html = '<h1 class="dm-page-title">Activity data</h1>';
-    html += '<div class="dm-layout">';
-    html += '<div class="dm-top-row">';
-    html += buildKPICards();
-    html += '</div>';
-
-    html += '<div class="dm-bottom">';
-    html += '<div class="dm-left">';
-    html += buildDefaultLeftPanel();
-    html += '</div>';
-    html += '<div class="dm-right">';
-    html += buildTableArea();
-    html += '</div>';
-    html += '</div>';
-
-    html += '</div>';
-    return html;
+  function isNewVersion() {
+    return window.activityDataVersion === 'new';
   }
 
-  /** NEW version — left column hidden behind a popout card in the KPI row */
-  function getBodyHTMLNew() {
-    var html = '<h1 class="dm-page-title">Activity data</h1>';
-    html += '<div class="dm-layout">';
-
-    html += '<div class="dm-top-row">';
-    html += '<div class="dm-files-trigger kpi-card goals-card" data-action="toggle-files-panel">';
-    html += '<div class="goals-card-heading"><span class="goals-card-label">Files &amp; data</span></div>';
-    html += '<div class="goals-metric">';
-    html += '<span class="goals-metric-value">' + FILE_ITEMS.length + '</span>';
-    html += '<span class="goals-metric-label">Files</span>';
-    html += '<span class="goals-metric-value">' + TABLE_ROWS.length + '</span>';
-    html += '<span class="goals-metric-label">Records</span>';
-    html += '</div>';
-    html += '<div class="goals-actions">';
-    html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-chevron-down"></i> View files</button>';
-    html += '</div>';
-    html += '</div>';
-    html += buildKPICards();
-    html += '</div>';
-
+  function buildPopoutHTML(panelOpts) {
+    var html = '';
     html += '<div class="dm-popout-anchor">';
     html += '<div class="dm-popout-panel" style="display:none">';
     html += '<div class="dm-popout-header">';
@@ -688,25 +684,64 @@
     html += '<button class="dm-popout-close" data-action="close-files-panel"><i class="fa-solid fa-xmark"></i></button>';
     html += '</div>';
     html += '<div class="dm-popout-body">';
-    html += buildDefaultLeftPanel();
+    html += buildDefaultLeftPanel(panelOpts);
     html += '</div>';
     html += '</div>';
     html += '</div>';
+    return html;
+  }
+
+  function buildPageLayout(panelOpts) {
+    var html = '';
+    html += '<div class="dm-top-row">';
+    if (!isNewVersion()) {
+      html += '<div class="dm-files-trigger kpi-card goals-card" data-action="toggle-files-panel">';
+      html += '<div class="goals-card-heading"><span class="goals-card-label">Files &amp; data</span></div>';
+      html += '<div class="goals-metric">';
+      html += '<span class="goals-metric-value">' + FILE_ITEMS.length + '</span>';
+      html += '<span class="goals-metric-label">Files</span>';
+      html += '<span class="goals-metric-value">' + TABLE_ROWS.length + '</span>';
+      html += '<span class="goals-metric-label">Records</span>';
+      html += '</div>';
+      html += '<div class="goals-actions">';
+      html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-chevron-down"></i> View files</button>';
+      html += '</div>';
+      html += '</div>';
+    }
+    html += buildKPICards();
+    html += '</div>';
+
+    if (!isNewVersion()) {
+      html += buildPopoutHTML(panelOpts);
+    }
 
     html += '<div class="dm-bottom">';
     html += '<div class="dm-right dm-right--full">';
-    html += buildTableArea();
+    if (isNewVersion()) {
+      html += buildToolbarHTML();
+      html += buildPopoutHTML(panelOpts);
+      html += '<div class="dm-table-wrap dm-table-wrap--no-top">';
+      html += '<div class="dm-table-scroll">';
+      html += '<table class="dm-table">';
+      html += buildTableHTML(TABLE_ROWS);
+      html += '</table>';
+      html += '</div>';
+      html += '</div>';
+    } else {
+      html += buildTableArea();
+    }
     html += '</div>';
-    html += '</div>';
-
     html += '</div>';
     return html;
   }
 
   /** Returns the body HTML string (dm-layout) for the Data management page. */
   function getBodyHTML() {
-    if (window.activityDataVersion === 'new') return getBodyHTMLNew();
-    return getBodyHTMLOld();
+    var html = '<h1 class="dm-page-title">Activity data</h1>';
+    html += '<div class="dm-layout">';
+    html += buildPageLayout(isNewVersion() ? { hideUnnormalized: true } : null);
+    html += '</div>';
+    return html;
   }
 
   /**

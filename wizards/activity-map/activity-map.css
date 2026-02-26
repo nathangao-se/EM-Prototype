@@ -450,6 +450,138 @@
   border-bottom: 1px solid #d5dde0;
   flex-shrink: 0;
 }
+.dm-toolbar--new {
+  padding: 4px;
+  gap: 0;
+  align-items: stretch;
+  border: 1px solid #d5dde0;
+  border-radius: 12px 12px 0 0;
+  background: #ffffff;
+  flex-shrink: 0;
+  border-bottom: none;
+}
+.dm-table-wrap--no-top {
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* File selector button — oversized via toolbar padding */
+.dm-file-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  width: 320px;
+  flex-shrink: 0;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Nunito Sans', sans-serif;
+  position: relative;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.06);
+}
+.dm-file-btn:hover {
+  background: #f9fbfc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.dm-file-btn-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.dm-file-btn-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dm-file-btn-sub {
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Toolbar inner (right of file button) */
+.dm-toolbar-inner {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 8px;
+}
+.dm-toolbar-start {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dm-toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Small toolbar buttons (28px) */
+.dm-tbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #090b0c;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.dm-tbtn:hover {
+  background: #f5f8fa;
+}
+.dm-tbtn-chev {
+  font-size: 10px;
+  color: #676f73;
+}
+
+/* Dark badge counter */
+.dm-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #293033;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* Compact search */
+.dm-search--sm {
+  width: 199px;
+  flex: none;
+  height: 28px;
+  font-size: 14px;
+}
 .dm-search {
   flex: 1;
   min-width: 120px;
@@ -946,7 +1078,7 @@ th.dm-col-actions {
   text-align: right;
 }
 
-/* ---------- NEW version — popout files panel ---------- */
+/* ---------- Popout files panel ---------- */
 .dm-files-trigger {
   cursor: pointer;
   transition: box-shadow 0.15s ease;
@@ -954,18 +1086,16 @@ th.dm-col-actions {
 .dm-files-trigger:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
-.dm-files-trigger--open {
-  outline: 2px solid #0075a3;
-}
 
 .dm-popout-anchor {
   position: relative;
   flex-shrink: 0;
   z-index: 50;
+  height: 0;
 }
 .dm-popout-panel {
   position: absolute;
-  top: 0;
+  top: 4px;
   left: 0;
   width: 332px;
   max-height: 60vh;
@@ -1022,5 +1152,6 @@ th.dm-col-actions {
 .dm-right--full {
   flex: 1;
   max-width: 100%;
+  gap: 0;
 }
 
