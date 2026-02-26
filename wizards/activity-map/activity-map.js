@@ -132,7 +132,7 @@
   function showCategoryView(contextEl, activeScope) {
     var layout = contextEl ? contextEl.closest('.dm-layout') : document.querySelector('.pt-page-section .dm-layout') || document.querySelector('.dm-layout');
     if (!layout) return;
-    var leftPanel = layout.querySelector('.dm-left');
+    var leftPanel = layout.querySelector('.dm-left') || layout.querySelector('.dm-popout-body');
     var rightPanel = layout.querySelector('.dm-right');
     if (!leftPanel || !rightPanel) return;
 
@@ -168,7 +168,7 @@
   function restoreDefaultLeftPanel(contextEl) {
     var layout = contextEl ? contextEl.closest('.dm-layout') : document.querySelector('.pt-page-section .dm-layout') || document.querySelector('.dm-layout');
     if (!layout) return;
-    var leftPanel = layout.querySelector('.dm-left');
+    var leftPanel = layout.querySelector('.dm-left') || layout.querySelector('.dm-popout-body');
     var rightPanel = layout.querySelector('.dm-right');
     if (!leftPanel) return;
 
@@ -253,7 +253,7 @@
   function refreshFileList(contextEl) {
     var layout = contextEl ? contextEl.closest('.dm-layout') : document.querySelector('.pt-page-section .dm-layout') || document.querySelector('.dm-layout');
     if (!layout) return;
-    var leftPanel = layout.querySelector('.dm-left');
+    var leftPanel = layout.querySelector('.dm-left') || layout.querySelector('.dm-popout-body');
     if (leftPanel) leftPanel.innerHTML = buildDefaultLeftPanel();
   }
 
@@ -365,15 +365,17 @@
   function selectFile(idx, contextEl) {
     var layout = contextEl ? contextEl.closest('.dm-layout') : document.querySelector('.dm-layout');
     if (!layout) return;
-    var leftPanel = layout.querySelector('.dm-left');
+    var leftPanel = layout.querySelector('.dm-left') || layout.querySelector('.dm-popout-body');
     var rightPanel = layout.querySelector('.dm-right');
-    if (!leftPanel || !rightPanel) return;
+    if (!rightPanel) return;
 
     activeFileIdx = idx;
 
-    leftPanel.querySelectorAll('[data-action="select-file"]').forEach(function (el) {
-      el.classList.toggle('dm-filter-row--active', parseInt(el.getAttribute('data-file-idx'), 10) === idx);
-    });
+    if (leftPanel) {
+      leftPanel.querySelectorAll('[data-action="select-file"]').forEach(function (el) {
+        el.classList.toggle('dm-filter-row--active', parseInt(el.getAttribute('data-file-idx'), 10) === idx);
+      });
+    }
 
     var rows, title;
     if (idx === -1) {
@@ -539,6 +541,33 @@
     if (pop && !pop.contains(e.target) && !e.target.closest('[data-control="dropdown"]')) {
       closeActivePopover();
     }
+
+    var triggerCard = e.target.closest('[data-action="toggle-files-panel"]');
+    if (triggerCard) {
+      var panel = document.querySelector('.dm-popout-panel');
+      if (panel) {
+        var open = panel.style.display !== 'none';
+        panel.style.display = open ? 'none' : '';
+        triggerCard.classList.toggle('dm-files-trigger--open', !open);
+      }
+      return;
+    }
+    var closeBtn = e.target.closest('[data-action="close-files-panel"]');
+    if (closeBtn) {
+      var panel = document.querySelector('.dm-popout-panel');
+      if (panel) panel.style.display = 'none';
+      var trig = document.querySelector('.dm-files-trigger');
+      if (trig) trig.classList.remove('dm-files-trigger--open');
+      return;
+    }
+
+    var openPopout = document.querySelector('.dm-popout-panel[style=""],.dm-popout-panel:not([style*="display: none"])');
+    if (openPopout && openPopout.style.display !== 'none' && !openPopout.contains(e.target) && !e.target.closest('.dm-files-trigger')) {
+      openPopout.style.display = 'none';
+      var trig2 = document.querySelector('.dm-files-trigger');
+      if (trig2) trig2.classList.remove('dm-files-trigger--open');
+    }
+
     var cell = e.target.closest('.dm-cell-error[data-control], .dm-cell-corrected[data-control]');
     if (cell && !cell.classList.contains('dm-cell-editing')) {
       spawnInlineControl(cell);
@@ -554,12 +583,8 @@
     }
   });
 
-  /** Returns the body HTML string (dm-layout) for the Data management page. */
-  function getBodyHTML() {
-    var html = '<h1 class="dm-page-title">Activity data</h1>';
-    html += '<div class="dm-layout">';
-
-    html += '<div class="dm-top-row">';
+  function buildKPICards() {
+    var html = '';
     html += '<div class="kpi-card goals-card">';
     html += '<div class="goals-card-heading"><span class="goals-card-label">Active campaigns</span></div>';
     html += '<div class="goals-metric">';
@@ -594,15 +619,12 @@
     html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-book"></i> Rules library</button>';
     html += '</div>';
     html += '</div>';
-    html += '</div>';
+    return html;
+  }
 
-    html += '<div class="dm-bottom">';
-    html += '<div class="dm-left">';
-    html += buildDefaultLeftPanel();
-    html += '</div>';
-
-    html += '<div class="dm-right">';
-    html += '<div class="dm-table-wrap">';
+  function buildTableArea(rows) {
+    var data = rows || TABLE_ROWS;
+    var html = '<div class="dm-table-wrap">';
     html += '<h3 class="dm-view-title">All data list</h3>';
     html += '<div class="dm-toolbar">';
     html += '<input type="text" class="dm-search" placeholder="Search">';
@@ -610,16 +632,81 @@
     html += '</div>';
     html += '<div class="dm-table-scroll">';
     html += '<table class="dm-table">';
-    html += buildTableHTML(TABLE_ROWS);
+    html += buildTableHTML(data);
     html += '</table>';
     html += '</div>';
     html += '</div>';
-    html += '</div>';
-
-    html += '</div>';
-    html += '</div>';
-
     return html;
+  }
+
+  /** OLD version — left column + right table side by side */
+  function getBodyHTMLOld() {
+    var html = '<h1 class="dm-page-title">Activity data</h1>';
+    html += '<div class="dm-layout">';
+    html += '<div class="dm-top-row">';
+    html += buildKPICards();
+    html += '</div>';
+
+    html += '<div class="dm-bottom">';
+    html += '<div class="dm-left">';
+    html += buildDefaultLeftPanel();
+    html += '</div>';
+    html += '<div class="dm-right">';
+    html += buildTableArea();
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  /** NEW version — left column hidden behind a popout card in the KPI row */
+  function getBodyHTMLNew() {
+    var html = '<h1 class="dm-page-title">Activity data</h1>';
+    html += '<div class="dm-layout">';
+
+    html += '<div class="dm-top-row">';
+    html += '<div class="dm-files-trigger kpi-card goals-card" data-action="toggle-files-panel">';
+    html += '<div class="goals-card-heading"><span class="goals-card-label">Files &amp; data</span></div>';
+    html += '<div class="goals-metric">';
+    html += '<span class="goals-metric-value">' + FILE_ITEMS.length + '</span>';
+    html += '<span class="goals-metric-label">Files</span>';
+    html += '<span class="goals-metric-value">' + TABLE_ROWS.length + '</span>';
+    html += '<span class="goals-metric-label">Records</span>';
+    html += '</div>';
+    html += '<div class="goals-actions">';
+    html += '<button class="btn btn-outline btn-small"><i class="fa-solid fa-chevron-down"></i> View files</button>';
+    html += '</div>';
+    html += '</div>';
+    html += buildKPICards();
+    html += '</div>';
+
+    html += '<div class="dm-popout-anchor">';
+    html += '<div class="dm-popout-panel" style="display:none">';
+    html += '<div class="dm-popout-header">';
+    html += '<span class="dm-popout-title">Files &amp; data</span>';
+    html += '<button class="dm-popout-close" data-action="close-files-panel"><i class="fa-solid fa-xmark"></i></button>';
+    html += '</div>';
+    html += '<div class="dm-popout-body">';
+    html += buildDefaultLeftPanel();
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '<div class="dm-bottom">';
+    html += '<div class="dm-right dm-right--full">';
+    html += buildTableArea();
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  /** Returns the body HTML string (dm-layout) for the Data management page. */
+  function getBodyHTML() {
+    if (window.activityDataVersion === 'new') return getBodyHTMLNew();
+    return getBodyHTMLOld();
   }
 
   /**

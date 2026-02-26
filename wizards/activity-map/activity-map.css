@@ -946,3 +946,81 @@ th.dm-col-actions {
   text-align: right;
 }
 
+/* ---------- NEW version — popout files panel ---------- */
+.dm-files-trigger {
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+.dm-files-trigger:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.dm-files-trigger--open {
+  outline: 2px solid #0075a3;
+}
+
+.dm-popout-anchor {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 50;
+}
+.dm-popout-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 332px;
+  max-height: 60vh;
+  background: #ffffff;
+  border: 1px solid #d5dde0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+}
+.dm-popout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.dm-popout-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+}
+.dm-popout-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #676f73;
+  font-size: 14px;
+  cursor: pointer;
+}
+.dm-popout-close:hover {
+  background: #f1f5f9;
+  color: #1d201f;
+}
+.dm-popout-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dm-right--full {
+  flex: 1;
+  max-width: 100%;
+}
+
