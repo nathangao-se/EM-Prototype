@@ -126,11 +126,13 @@
     if (isNewVersion()) {
       var info = getActiveFileSummary();
       html += '<div class="dm-toolbar dm-toolbar--new">';
+      var otherCount = FILE_ITEMS.length - 1;
       html += '<button class="dm-file-btn" data-action="toggle-files-panel">';
       html += '<div class="dm-file-btn-text">';
       html += '<span class="dm-file-btn-name">' + esc(info.name) + '</span>';
       html += '<span class="dm-file-btn-sub">' + esc(info.sub) + '</span>';
       html += '</div>';
+      html += '<span class="dm-file-btn-link">See ' + otherCount + ' other file' + (otherCount !== 1 ? 's' : '') + '</span>';
       html += '</button>';
       html += '<div class="dm-toolbar-inner">';
       html += '<div class="dm-toolbar-start">';
@@ -138,7 +140,6 @@
       html += '<button class="dm-tbtn"><i class="fa-solid fa-filter"></i> Filters <span class="dm-badge">2</span></button>';
       html += '</div>';
       html += '<div class="dm-toolbar-end">';
-      html += '<button class="dm-tbtn"><i class="fa-regular fa-bookmark"></i> Save view <i class="fa-solid fa-chevron-down dm-tbtn-chev"></i></button>';
       html += '<button class="dm-tbtn"><i class="fa-solid fa-table-columns"></i> Columns <i class="fa-solid fa-chevron-down dm-tbtn-chev"></i></button>';
       html += '<button class="dm-tbtn"><i class="fa-solid fa-download"></i> Export</button>';
       html += '</div>';
@@ -183,20 +184,44 @@
     if (!rightPanel) return;
     var data = rows || TABLE_ROWS;
     var heading = title || 'All data list';
-    var html = '';
-    html += '<div class="dm-table-wrap">';
-    html += buildToolbarHTML(heading);
-    if (data.length === 0) {
-      html += '<div class="dm-empty-state">No records available for this file.</div>';
+
+    if (isNewVersion()) {
+      var toolbar = rightPanel.querySelector('.dm-toolbar--new');
+      if (toolbar) {
+        var info = getActiveFileSummary();
+        var nameEl = toolbar.querySelector('.dm-file-btn-name');
+        var subEl = toolbar.querySelector('.dm-file-btn-sub');
+        if (nameEl) nameEl.textContent = info.name;
+        if (subEl) subEl.textContent = info.sub;
+      }
+      var wrap = rightPanel.querySelector('.dm-table-wrap');
+      if (wrap) {
+        if (data.length === 0) {
+          wrap.innerHTML = '<div class="dm-empty-state">No records available for this file.</div>';
+        } else {
+          var inner = '<div class="dm-table-scroll">';
+          inner += '<table class="dm-table">';
+          inner += buildTableHTML(data);
+          inner += '</table></div>';
+          wrap.innerHTML = inner;
+        }
+      }
     } else {
-      html += '<div class="dm-table-scroll">';
-      html += '<table class="dm-table">';
-      html += buildTableHTML(data);
-      html += '</table>';
+      var html = '';
+      html += '<div class="dm-table-wrap">';
+      html += buildToolbarHTML(heading);
+      if (data.length === 0) {
+        html += '<div class="dm-empty-state">No records available for this file.</div>';
+      } else {
+        html += '<div class="dm-table-scroll">';
+        html += '<table class="dm-table">';
+        html += buildTableHTML(data);
+        html += '</table>';
+        html += '</div>';
+      }
       html += '</div>';
+      rightPanel.innerHTML = html;
     }
-    html += '</div>';
-    rightPanel.innerHTML = html;
   }
 
   function restoreDefaultLeftPanel(contextEl) {
@@ -572,6 +597,12 @@
     }
   }
 
+  var _clickInsidePopout = false;
+  document.addEventListener('click', function (e) {
+    var p = document.querySelector('.dm-popout-panel');
+    _clickInsidePopout = !!(p && p.contains(e.target));
+  }, true);
+
   document.addEventListener('click', function (e) {
     var pop = document.querySelector('.dm-popover');
     if (pop && !pop.contains(e.target) && !e.target.closest('[data-control="dropdown"]')) {
@@ -599,7 +630,7 @@
 
     var openPopout = document.querySelector('.dm-popout-panel');
     if (openPopout && openPopout.style.display !== 'none'
-        && !openPopout.contains(e.target)
+        && !_clickInsidePopout
         && !e.target.closest('[data-action="toggle-files-panel"]')) {
       openPopout.style.display = 'none';
     }
@@ -679,10 +710,12 @@
     var html = '';
     html += '<div class="dm-popout-anchor">';
     html += '<div class="dm-popout-panel" style="display:none">';
-    html += '<div class="dm-popout-header">';
-    html += '<span class="dm-popout-title">Files &amp; data</span>';
-    html += '<button class="dm-popout-close" data-action="close-files-panel"><i class="fa-solid fa-xmark"></i></button>';
-    html += '</div>';
+    if (!isNewVersion()) {
+      html += '<div class="dm-popout-header">';
+      html += '<span class="dm-popout-title">Files &amp; data</span>';
+      html += '<button class="dm-popout-close" data-action="close-files-panel"><i class="fa-solid fa-xmark"></i></button>';
+      html += '</div>';
+    }
     html += '<div class="dm-popout-body">';
     html += buildDefaultLeftPanel(panelOpts);
     html += '</div>';

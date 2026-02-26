@@ -247,9 +247,10 @@
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
-      '<button class="wizard-btn-outline" id="dcc-back" style="visibility:hidden">Back</button>' +
+      '<button class="wizard-btn-outline" id="dcc-back">Cancel</button>' +
       '<button class="wizard-btn-green" id="dcc-next">Next: Entities to include</button>';
 
+    footer.querySelector('#dcc-back').addEventListener('click', closeWizard);
     bindFooterNav(-1, 1);
 
     var templateCb = document.getElementById('dcc-templates-check');

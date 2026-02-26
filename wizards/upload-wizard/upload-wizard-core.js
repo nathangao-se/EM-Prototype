@@ -348,14 +348,7 @@
   });
 
   nextBtn.addEventListener('click', function () {
-    var next = nextVisibleStep(ctx.currentStep);
-    if (next >= 0) {
-      ctx.stepDirection = 'forward';
-      ctx.currentStep = next;
-      render();
-    } else {
-      closeWizard();
-    }
+    closeWizard();
   });
 
   // ── Stepper ─────────────────────────────────────────────────────
@@ -402,17 +395,10 @@
   // ── Footer ──────────────────────────────────────────────────────
 
   function updateFooter() {
-    backBtn.textContent = 'Back';
-    var next = nextVisibleStep(ctx.currentStep);
-    if (next < 0) {
-      nextBtn.textContent = 'Complete and exit';
-    } else if (ctx.currentStep === 1) {
-      nextBtn.textContent = 'Review';
-    } else if (next === 2) {
-      nextBtn.textContent = 'Review';
-    } else {
-      nextBtn.textContent = 'Next: add emissions files';
-    }
+    backBtn.textContent = 'Cancel';
+    backBtn.style.visibility = '';
+    nextBtn.textContent = 'Save';
+    discardLink.style.display = 'none';
 
     var checkRow = overlay.querySelector('.uw-s2-check-row');
     if (checkRow) {

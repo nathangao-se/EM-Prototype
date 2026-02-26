@@ -155,12 +155,14 @@
         html += '<span class="inv-tree-toggle inv-tree-toggle--leaf"></span>';
       }
 
+      html += '<label class="inv-tree-label">';
       html += '<input type="checkbox" class="inv-tree-cb" data-ws-cb="' + node.id + '"' + (isChecked ? ' checked' : '') + '>';
       html += '<span class="inv-tree-name">' + esc(node.name);
       if (hasChildren || totCount > 0) {
         html += ' <span class="inv-tree-name-count">(' + selCount + '/' + totCount + ')</span>';
       }
       html += '</span>';
+      html += '</label>';
       html += '<span class="inv-tree-act">' + node.activities + '</span>';
       html += '<span class="inv-tree-rec">' + numberFmt(node.records) + '</span>';
       html += '</div>';
@@ -185,10 +187,10 @@
 
     var header =
       '<div class="inv-tree-header">' +
-        '<span class="inv-tree-header-entity" style="display:flex;align-items:center;gap:8px">' +
+        '<label class="inv-tree-header-entity inv-tree-label" style="display:flex;align-items:center;gap:8px">' +
           '<input type="checkbox" class="inv-tree-cb" id="' + p + '-select-all"' + selectAllChecked + '>' +
           'Entities <span class="inv-tree-name-count">(selected/total)</span>' +
-        '</span>' +
+        '</label>' +
         '<span class="inv-tree-header-act">Activities</span>' +
         '<span class="inv-tree-header-rec">Records</span>' +
       '</div>';
@@ -316,6 +318,7 @@
         html += '<span class="inv-tree-toggle inv-tree-toggle--leaf" style="width:20px"></span>';
       }
 
+      html += '<label class="inv-tree-label">';
       html += '<input type="checkbox" class="inv-tree-cb" data-ws-at-cb="' + node.id + '"' +
         (isChecked ? ' checked' : '') + (eligible ? '' : ' disabled') + '>';
       html += '<span class="inv-tree-name" style="font-size:13px">' + esc(node.name);
@@ -323,6 +326,7 @@
         html += ' <span class="inv-tree-name-count">(' + selCount + '/' + totCount + ')</span>';
       }
       html += '</span>';
+      html += '</label>';
       html += '<span class="inv-tree-act" style="width:56px;font-size:13px">' + node.activities + '</span>';
       html += '<span class="inv-tree-rec" style="width:56px;font-size:13px">' + numberFmt(node.records) + '</span>';
       html += '</div>';

@@ -105,7 +105,33 @@ window.WizardSteps = (function () {
       html += '<span class="inv-review-chip">' + esc(a.name) +
         ' <span class="inv-scope-badge ' + sc + '" style="margin-left:6px;font-size:11px;padding:1px 6px">S' + a.scope + '</span></span>';
     });
-    return { html: html, count: selected.length };
+
+    var byScope = {};
+    selected.forEach(function (a) {
+      if (!byScope[a.scope]) byScope[a.scope] = [];
+      byScope[a.scope].push(a);
+    });
+    var scopeKeys = Object.keys(byScope).sort();
+    scopeKeys.forEach(function (k) {
+      byScope[k].sort(function (a, b) { return a.name.localeCompare(b.name); });
+    });
+    var maxCount = 0;
+    scopeKeys.forEach(function (k) { if (byScope[k].length > maxCount) maxCount = byScope[k].length; });
+
+    var columnsHtml = '';
+    scopeKeys.forEach(function (k) {
+      var wide = byScope[k].length === maxCount && maxCount > 6;
+      columnsHtml += '<div class="inv-review-col' + (wide ? ' inv-review-col--wide' : '') + '">';
+      columnsHtml += '<div class="inv-review-col-title">Scope ' + k + '</div>';
+      columnsHtml += '<div class="inv-review-col-chips' + (wide ? ' inv-review-col-chips--2col' : '') + '">';
+      byScope[k].forEach(function (a) {
+        columnsHtml += '<span class="inv-review-chip">' + esc(a.name) + '</span>';
+      });
+      columnsHtml += '</div>';
+      columnsHtml += '</div>';
+    });
+
+    return { html: html, columnsHtml: columnsHtml, count: selected.length };
   }
 
   function buildAssignReviewSummary(ctx) {

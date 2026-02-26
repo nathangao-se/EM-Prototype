@@ -510,6 +510,14 @@
   white-space: nowrap;
   line-height: 1;
 }
+.dm-file-btn-link {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #0075a3;
+}
 
 /* Toolbar inner (right of file button) */
 .dm-toolbar-inner {
@@ -1096,17 +1104,17 @@ th.dm-col-actions {
 .dm-popout-panel {
   position: absolute;
   top: 4px;
-  left: 0;
-  width: 332px;
+  left: 4px;
+  width: 320px;
   max-height: 60vh;
   background: #ffffff;
   border: 1px solid #d5dde0;
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 100;
+  z-index: 40;
 }
 .dm-popout-header {
   display: flex;

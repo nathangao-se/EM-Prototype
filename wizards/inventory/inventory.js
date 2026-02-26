@@ -46,7 +46,7 @@
     gases: 'Kyoto 7 GHGs (CO\u2082, CH\u2084, N\u2082O, HFCs, PFCs, SF\u2086, NF\u2083)'
   };
 
-  var STEP_WIDTHS = [800, 1000, 1000, 1200, 1000];
+  var STEP_WIDTHS = [800, 1000, 1000, 1200, 760];
 
   var STEPS = [
     { label: 'Basic info', key: 'basic' },
@@ -291,9 +291,10 @@
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
-      '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
+      '<button class="wizard-btn-outline" id="inv-back">Cancel</button>' +
       '<button class="wizard-btn-green" id="inv-next">Next: Org boundaries</button>';
 
+    footer.querySelector('#inv-back').addEventListener('click', closeWizard);
     bindFooterNav(-1, 1);
 
     body.querySelectorAll('input[name="consolidation"]').forEach(function (radio) {
@@ -326,10 +327,12 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next">Next: Ops boundaries</button>';
 
+    footer.querySelector('#inv-discard').addEventListener('click', closeWizard);
     bindFooterNav(0, 2);
     WS.bindEntitiesStep(c, function () { WS.refreshStatsBar(c); });
   }
@@ -349,10 +352,12 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next">' + nextLabel + '</button>';
 
+    footer.querySelector('#inv-discard').addEventListener('click', closeWizard);
     bindFooterNav(1, nxt);
     WS.bindActivitiesStep(c, function () { WS.refreshStatsBar(c); });
   }
@@ -369,10 +374,12 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next">Next: Review</button>';
 
+    footer.querySelector('#inv-discard').addEventListener('click', closeWizard);
     bindFooterNav(2, 4);
     WS.bindAssignStep(c);
   }
@@ -388,17 +395,24 @@
     var stepperHTML = buildStepper(4);
     var statsHTML = WS.buildStatsBar(c);
 
+    function reviewItem(label, value, extra) {
+      return '<div class="inv-review-item">' +
+        '<span class="inv-review-label">' + label + '</span>' +
+        '<span class="inv-review-value"' + (extra || '') + '>' + value + '</span>' +
+      '</div>';
+    }
+
     var basicReview =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Basic information</div>' +
         '<div class="inv-review-grid">' +
-          '<span class="inv-review-label">Inventory name</span><span class="inv-review-value">' + WS.esc(formData.name || '(not set)') + '</span>' +
-          '<span class="inv-review-label">Start date</span><span class="inv-review-value">' + WS.esc(formData.startDate) + '</span>' +
-          '<span class="inv-review-label">End date</span><span class="inv-review-value">' + WS.esc(formData.endDate) + '</span>' +
-          '<span class="inv-review-label">GHG Framework</span><span class="inv-review-value">' + WS.esc(formData.framework) + '</span>' +
-          '<span class="inv-review-label">GWP Version</span><span class="inv-review-value">' + WS.esc(formData.gwp) + '</span>' +
-          '<span class="inv-review-label">Gases</span><span class="inv-review-value">' + WS.esc(formData.gases) + '</span>' +
-          '<span class="inv-review-label">Consolidation</span><span class="inv-review-value" style="text-transform:capitalize">' + WS.esc(consolidationChoice) + '</span>' +
+          reviewItem('Name', WS.esc(formData.name || '(not set)')) +
+          reviewItem('Start', WS.esc(formData.startDate)) +
+          reviewItem('End', WS.esc(formData.endDate)) +
+          reviewItem('Framework', WS.esc(formData.framework)) +
+          reviewItem('GWP', WS.esc(formData.gwp)) +
+          reviewItem('Gases', WS.esc(formData.gases)) +
+          reviewItem('Consolidation', WS.esc(consolidationChoice), ' style="text-transform:capitalize"') +
         '</div>' +
       '</div>';
 
@@ -406,7 +420,7 @@
     var actReview =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Selected activities (' + chips.count + ')</div>' +
-        '<div class="inv-review-list">' + chips.html + '</div>' +
+        '<div class="inv-review-columns">' + chips.columnsHtml + '</div>' +
       '</div>';
 
     var entCount = WS.countEntitiesSelected(c);
@@ -429,10 +443,12 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next" style="min-width:180px">Complete setup</button>';
 
+    footer.querySelector('#inv-discard').addEventListener('click', closeWizard);
     var backBtn = footer.querySelector('#inv-back');
     backBtn.addEventListener('click', function () { currentStep = prev; render(); });
 

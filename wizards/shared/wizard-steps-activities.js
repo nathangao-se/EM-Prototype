@@ -59,7 +59,7 @@
             esc(group.name) +
             ' <span class="inv-act-group-count" data-ws-group-count="' + group.id + '">(' + selCount + '/' + children.length + ')</span>' +
           '</td>' +
-          '<td><span class="inv-scope-badge ' + sc + '">Scope ' + group.scope + '</span></td>' +
+          '<td></td>' +
           '<td style="text-align:right">' + numberFmt(totalEntities) + '</td>' +
           '<td style="text-align:right">' + numberFmt(totalRecords) + '</td>' +
           '<td></td>' +
@@ -69,6 +69,7 @@
       var rowCollapsedCls = isExpanded ? '' : ' inv-row-collapsed';
 
       children.forEach(function (a) {
+        var asc = scopeClass(a);
         var statusClass = a.status === 'ready' ? 'inv-status-badge--ready' : 'inv-status-badge--need';
         var statusIcon = a.status === 'ready' ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-circle-info"></i>';
         var statusText = a.status === 'ready' ? 'Ready' : 'Needs data';
@@ -78,7 +79,7 @@
           '<tr data-ws-group-child="' + group.id + '" class="' + rowCollapsedCls + '">' +
             '<td style="padding-left:36px"><div class="inv-cell-inner"><input type="checkbox" class="inv-table-checkbox" data-ws-act="' + a.id + '"' + checked + '></div></td>' +
             '<td style="padding-left:32px"><div class="inv-cell-inner">' + esc(a.name) + '</div></td>' +
-            '<td><div class="inv-cell-inner"></div></td>' +
+            '<td><div class="inv-cell-inner"><span class="inv-scope-badge ' + asc + '">Scope ' + a.scope + '</span></div></td>' +
             '<td style="text-align:right"><div class="inv-cell-inner">' + numberFmt(a.entities) + '</div></td>' +
             '<td style="text-align:right"><div class="inv-cell-inner">' + numberFmt(a.records) + '</div></td>' +
             '<td><div class="inv-cell-inner"><span class="inv-calc-select">' + esc(a.calc) + ' <i class="fa-solid fa-chevron-down"></i></span></div></td>' +
