@@ -374,7 +374,7 @@
 
   function buildFooter(step) {
     var html = '<div class="vb-footer">';
-    html += '<button class="vb-discard" data-vb-action="discard"><i class="fa-solid fa-trash"></i> Discard and exit</button>';
+    html += '<button class="vb-discard" data-vb-action="discard"><i class="fa-solid fa-trash"></i> Discard</button>';
     html += '<div class="vb-footer-actions">';
     html += '<button class="btn btn-outline" data-vb-action="back">Back</button>';
     if (step === 1) {

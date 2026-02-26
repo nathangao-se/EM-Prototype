@@ -60,7 +60,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 24px;
   font-weight: 600;
-  color: #000000;
+  color: #1d201f;
   line-height: 28px;
 }
 
@@ -119,15 +119,15 @@
   padding: 0;
   background: none;
   border: none;
-  color: #cc1300;
+  color: #dc2626;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   cursor: pointer;
 }
 
 .wizard-btn-discard i {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .wizard-btn-discard:hover {
@@ -146,7 +146,7 @@
   border-radius: 4px;
   color: #1d201f;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   cursor: pointer;
 }
@@ -167,7 +167,7 @@
   border-radius: 4px;
   color: #ffffff;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   cursor: pointer;
 }
@@ -188,7 +188,7 @@
   border-radius: 4px;
   color: #1d201f;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   cursor: pointer;
 }
@@ -422,7 +422,7 @@
 
 .wizard-upload-meta {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #676f73;
   line-height: 1.6;
@@ -482,7 +482,7 @@
 
 .wizard-checkbox-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
 }
@@ -584,7 +584,7 @@
 
 .wizard-banner-text {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   line-height: 1.5;
@@ -686,7 +686,7 @@
    ======================================== */
 .wizard-section-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   line-height: 25px;
@@ -705,7 +705,7 @@
   border-radius: 4px;
   background: #ffffff;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #1d201f;
   outline: none;
 }
@@ -754,7 +754,7 @@
 
 .wizard-review-section-title {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   line-height: 25px;

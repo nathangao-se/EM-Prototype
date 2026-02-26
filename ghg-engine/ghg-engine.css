@@ -68,7 +68,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 24px;
   font-weight: 700;
-  color: #41494d;
+  color: #1d201f;
   margin: 0;
   line-height: 1.3;
 }
@@ -106,7 +106,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #a0a8ab;
+  color: #676f73;
   font-size: 14px;
 }
 
@@ -124,7 +124,7 @@
   transition: border-color 0.15s;
 }
 
-.ghg-search-input::placeholder { color: #a0a8ab; }
+.ghg-search-input::placeholder { color: #676f73; }
 .ghg-search-input:focus { border-color: #008029; }
 
 /* ========================================
@@ -208,7 +208,7 @@
   color: #676f73;
 }
 
-.ghg-inv-card-right > i { color: #a0a8ab; font-size: 14px; }
+.ghg-inv-card-right > i { color: #676f73; font-size: 14px; }
 
 /* ========================================
    BADGES
@@ -350,7 +350,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 16px;
   font-weight: 600;
-  color: #41494d;
+  color: #1d201f;
   margin-bottom: 6px;
 }
 
@@ -403,7 +403,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #a0a8ab;
+  color: #676f73;
   background: none;
   border: none;
   cursor: pointer;
@@ -414,7 +414,7 @@
 .ghg-tab:hover { color: #676f73; }
 
 .ghg-tab--active {
-  color: #41494d;
+  color: #1d201f;
 }
 
 .ghg-tab--active::after {
@@ -533,7 +533,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 16px;
   font-weight: 700;
-  color: #41494d;
+  color: #1d201f;
   margin: 0 0 12px;
 }
 
@@ -615,7 +615,7 @@
 
 .ghg-dual-scope-note {
   font-size: 11px;
-  color: #a0a8ab;
+  color: #676f73;
   margin-top: 4px;
 }
 
@@ -700,7 +700,7 @@
 .ghg-expand-row:hover td { background: #f0faf3; }
 
 .ghg-expand-icon {
-  color: #a0a8ab;
+  color: #676f73;
   font-size: 12px;
   transition: transform 0.2s;
   display: inline-block;
@@ -784,7 +784,7 @@
 
 .ghg-lineage-item-label {
   font-size: 11px;
-  color: #a0a8ab;
+  color: #676f73;
   margin-bottom: 2px;
 }
 
@@ -944,7 +944,7 @@
 
 .ghg-kpi-trend {
   font-size: 11px;
-  color: #a0a8ab;
+  color: #676f73;
 }
 
 .ghg-kpi-trend--up { color: #008029; }
@@ -1105,7 +1105,7 @@
   margin: 0;
 }
 
-.ghg-quick-action > i { color: #a0a8ab; font-size: 14px; }
+.ghg-quick-action > i { color: #676f73; font-size: 14px; }
 
 .ghg-quick-action-badge {
   font-size: 11px;

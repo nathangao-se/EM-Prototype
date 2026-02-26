@@ -59,7 +59,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: #41494d;
+  color: #1d201f;
 }
 
 .modal-close-btn {
@@ -79,7 +79,7 @@
 
 .modal-close-btn:hover {
   background: #f1f5f9;
-  color: #41494d;
+  color: #1d201f;
 }
 
 /* Body — split panes */
@@ -281,7 +281,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  color: #475569;
+  color: #676f73;
   line-height: 22px;
   margin: 0;
 }

@@ -148,7 +148,7 @@
 }
 
 .shell-nav-item--disabled {
-  color: #a0a8ab;
+  color: #676f73;
   cursor: default;
 }
 
@@ -179,7 +179,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #a0a8ab;
+  color: #676f73;
   font-family: 'Nunito Sans', sans-serif;
 }
 
@@ -188,6 +188,6 @@
 }
 
 .shell-placeholder span {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
 }

@@ -57,7 +57,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: #1d201f;
   position: relative;
@@ -133,7 +133,7 @@
   border: 1px solid #676f73;
   border-radius: 4px;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #1d201f;
   background: #fff;
   outline: none;
@@ -153,7 +153,7 @@
   border: 1px solid #1d201f;
   border-radius: 4px;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #1d201f;
   background: #fff;
   cursor: pointer;
@@ -233,7 +233,7 @@
 
 .cm-name-sub {
   font-size: 13px;
-  color: #333;
+  color: #676f73;
   line-height: 1.25;
 }
 

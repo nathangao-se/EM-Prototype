@@ -9,7 +9,7 @@
 /* Intro paragraph */
 .uw-s1-intro {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   line-height: 1.55;
@@ -38,7 +38,7 @@
 
 .uw-s1-toggle-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
 }
@@ -99,7 +99,7 @@
 /* Disclaimer text above dropdown */
 .uw-s1-disclaimer {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   line-height: 1.55;
@@ -121,7 +121,7 @@
   height: 32px;
   padding: 0 32px 0 8px;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   background: #fff;
@@ -258,7 +258,7 @@
 
 .uw-s1-range-chip:hover {
   background: #fef2f2;
-  border-color: #cc1300;
+  border-color: #dc2626;
 }
 
 .uw-s1-range-chip-x {
@@ -268,7 +268,7 @@
 }
 
 .uw-s1-range-chip:hover .uw-s1-range-chip-x {
-  color: #cc1300;
+  color: #dc2626;
 }
 
 .uw-s1-save-actions {
@@ -316,7 +316,7 @@
 .uw-s1-section-remove {
   background: none;
   border: none;
-  color: #cc1300;
+  color: #dc2626;
   cursor: pointer;
   font-size: 13px;
   padding: 2px 4px;
@@ -645,7 +645,7 @@
   right: 10px;
   background: none;
   border: none;
-  color: #cc1300;
+  color: #dc2626;
   cursor: pointer;
   font-size: 13px;
   padding: 4px;

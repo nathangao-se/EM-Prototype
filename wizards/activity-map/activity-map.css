@@ -81,7 +81,7 @@
 }
 .dm-sort-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #1d201f;
 }
@@ -111,7 +111,7 @@
   border-radius: 2px;
   background: transparent;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   cursor: pointer;
@@ -210,7 +210,7 @@
 }
 
 .dm-filter-meta {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #676f73;
   line-height: 1;
@@ -218,7 +218,7 @@
 }
 
 .dm-filter-warn-icon {
-  color: #cc1300;
+  color: #dc2626;
   font-size: 21px;
   flex-shrink: 0;
 }
@@ -399,7 +399,7 @@
 }
 .dm-warn-text {
   flex: 1;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #1d201f;
 }
@@ -684,7 +684,7 @@ th.dm-col-check {
   background: #f9fbfc;
 }
 .dm-flag-error {
-  color: #cc1300;
+  color: #dc2626;
   font-size: 14px;
 }
 .dm-checkbox {
@@ -766,7 +766,7 @@ th.dm-col-actions {
   background: none;
   border: none;
   color: #676f73;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
@@ -963,11 +963,11 @@ th.dm-col-actions {
 .dm-file-chip-error {
   background: #ffdfdb;
   border: 1px solid #ff9e94;
-  color: #cc1300;
+  color: #dc2626;
 }
 .dm-file-chip-error i {
   font-size: 14px;
-  color: #cc1300;
+  color: #dc2626;
 }
 
 /* =============================================

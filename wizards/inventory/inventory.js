@@ -327,7 +327,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next">Next: Ops boundaries</button>';
@@ -352,7 +352,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next">' + nextLabel + '</button>';
@@ -374,7 +374,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next">Next: Review</button>';
@@ -443,7 +443,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="inv-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="inv-back">Back</button>' +
       '<button class="wizard-btn-green" id="inv-next" style="min-width:180px">Complete setup</button>';

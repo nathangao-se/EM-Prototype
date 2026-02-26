@@ -94,7 +94,7 @@
 
 .inv-form-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #1d201f;
   line-height: 20px;
@@ -108,7 +108,7 @@
   border-radius: 4px;
   background: #ffffff;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   outline: none;
@@ -194,7 +194,7 @@
 
 .inv-radio-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #1d201f;
   line-height: 20px;
@@ -202,7 +202,7 @@
 
 .inv-radio-desc {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #676f73;
   line-height: 22px;
@@ -228,7 +228,7 @@
   border-radius: 4px;
   background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Ccircle cx='5.5' cy='5.5' r='4.5' stroke='%23676f73' stroke-width='1.2' fill='none'/%3E%3Cline x1='9' y1='9' x2='13' y2='13' stroke='%23676f73' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 10px center;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #1d201f;
   outline: none;
   box-sizing: border-box;

@@ -196,7 +196,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="wizard-back">Back</button>' +
       '<button class="wizard-btn-green" id="wizard-next">Next: add emissions files</button>';
@@ -255,7 +255,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="wizard-back">Back</button>' +
       '<button class="wizard-btn-green" id="wizard-next">Next: add emissions files</button>';
@@ -303,7 +303,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="wizard-back">Back</button>' +
       '<button class="wizard-btn-green" id="wizard-next">Next: add collaborators</button>';
@@ -357,7 +357,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="wizard-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="wizard-back">Back</button>' +
       '<button class="wizard-btn-green" id="wizard-next" style="min-width:180px">Complete your setup</button>';

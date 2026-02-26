@@ -53,7 +53,7 @@
   var assignEntityChecked = {};
   var entityActivities = {};
 
-  var STEP_WIDTHS = [680, 1000, 1000, 1200, 680];
+  var STEP_WIDTHS = [680, 1000, 1000, 1200, 760];
 
   var STEPS = [
     { label: 'Basic info', key: 'basic' },
@@ -290,7 +290,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="dcc-back">Back</button>' +
       '<button class="wizard-btn-green" id="dcc-next">Next: Activities to include</button>';
@@ -311,7 +311,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="dcc-back">Back</button>' +
       '<button class="wizard-btn-green" id="dcc-next">Next: Add activities to entities</button>';
@@ -332,7 +332,7 @@
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="dcc-back">Back</button>' +
       '<button class="wizard-btn-green" id="dcc-next">Next: Finalize</button>';
@@ -352,18 +352,32 @@
     var stepperHTML = buildStepper(4);
     var statsHTML = WS.buildStatsBar(c);
 
-    var reviewHTML =
+    function reviewItem(label, value, extra) {
+      return '<div class="inv-review-item">' +
+        '<span class="inv-review-label">' + label + '</span>' +
+        '<span class="inv-review-value"' + (extra || '') + '>' + value + '</span>' +
+      '</div>';
+    }
+
+    var basicReview =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Campaign details</div>' +
         '<div class="inv-review-grid">' +
-          '<span class="inv-review-label">Campaign name</span><span class="inv-review-value">' + WS.esc(formData.name || '(not set)') + '</span>' +
-          '<span class="inv-review-label">Start date</span><span class="inv-review-value">' + WS.esc(formData.startDate || '(not set)') + '</span>' +
-          '<span class="inv-review-label">End date</span><span class="inv-review-value">' + WS.esc(formData.endDate || '(not set)') + '</span>' +
+          reviewItem('Name', WS.esc(formData.name || '(not set)')) +
+          reviewItem('Start', WS.esc(formData.startDate || '(not set)')) +
+          reviewItem('End', WS.esc(formData.endDate || '(not set)')) +
         '</div>' +
       '</div>';
 
+    var chips = WS.buildActivitiesReviewChips(c);
+    var actReview =
+      '<div class="inv-review-section">' +
+        '<div class="inv-review-title">Selected activities (' + chips.count + ')</div>' +
+        '<div class="inv-review-columns">' + chips.columnsHtml + '</div>' +
+      '</div>';
+
     var entCount = WS.countEntitiesSelected(c);
-    reviewHTML +=
+    var entitiesReview =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Entities</div>' +
         '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73">' +
@@ -371,33 +385,27 @@
         '</div>' +
       '</div>';
 
-    var chips = WS.buildActivitiesReviewChips(c);
-    reviewHTML +=
-      '<div class="inv-review-section">' +
-        '<div class="inv-review-title">Selected activities (' + chips.count + ')</div>' +
-        '<div class="inv-review-list">' + chips.html + '</div>' +
-      '</div>';
-
     var assignSummary = WS.buildAssignReviewSummary(c);
-    reviewHTML +=
+    var assignReview =
       '<div class="inv-review-section">' +
         '<div class="inv-review-title">Activity assignments</div>' +
         '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#1d201f">' + assignSummary.totalAssignments + ' activity assignments across ' + assignSummary.entitiesWithActivities + ' entities</div>' +
       '</div>';
 
+    var templatesReview = '';
     if (templatesChecked) {
-      reviewHTML +=
+      templatesReview =
         '<div class="inv-review-section">' +
           '<div class="inv-review-title">Templates</div>' +
           '<div style="font-family:\'Nunito Sans\',sans-serif;font-size:14px;color:#676f73">' + TEMPLATES.length + ' templates attached</div>' +
         '</div>';
     }
 
-    body.innerHTML = stepperHTML + statsHTML + reviewHTML;
+    body.innerHTML = stepperHTML + statsHTML + basicReview + actReview + entitiesReview + assignReview + templatesReview;
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
-      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard setup</button>' +
+      '<button class="wizard-btn-discard" id="dcc-discard"><i class="fa-regular fa-trash-can"></i> Discard</button>' +
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="dcc-back">Back</button>' +
       '<button class="wizard-btn-green" id="dcc-next" style="min-width:180px">Launch campaign</button>';

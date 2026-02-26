@@ -55,9 +55,9 @@
 
 .normalize-title {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  color: #41494d;
+  color: #1d201f;
   margin: 0;
 }
 
@@ -77,7 +77,7 @@
 
 .normalize-close-btn:hover {
   background: #f5f8fa;
-  color: #41494d;
+  color: #1d201f;
 }
 
 /* Body */
@@ -163,7 +163,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #41494d;
+  color: #1d201f;
 }
 
 .normalize-automap-input {
@@ -248,9 +248,9 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #a0a8ab;
+  color: #676f73;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -321,7 +321,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #41494d;
+  color: #1d201f;
 }
 
 .normalize-list-meta {
@@ -403,7 +403,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #41494d;
+  color: #1d201f;
 }
 
 .normalize-panels-title strong {
@@ -506,7 +506,7 @@
 
 .normalize-footer .normalize-discard {
   font-size: 13px;
-  color: #c53030;
+  color: #dc2626;
   text-decoration: none;
   display: inline-flex;
   align-items: center;

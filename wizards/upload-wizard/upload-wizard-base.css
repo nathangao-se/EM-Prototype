@@ -58,7 +58,7 @@
 
 .upload-wiz-title {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #1d201f;
   margin: 0;
@@ -175,7 +175,7 @@
 
 .upload-wiz-discard {
   font-size: 13px;
-  color: #c53030;
+  color: #dc2626;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -189,6 +189,7 @@
 .upload-wiz-footer-actions {
   display: flex;
   gap: 10px;
+  margin-left: auto;
 }
 
 /* Placeholder for steps 2 and 3 */

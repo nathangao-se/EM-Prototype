@@ -28,7 +28,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 24px;
   font-weight: 600;
-  color: #000000;
+  color: #1d201f;
   line-height: 28px;
 }
 
@@ -63,7 +63,7 @@
   font-family: 'Nunito Sans', sans-serif;
   font-size: 16px;
   font-weight: 600;
-  color: #41494d;
+  color: #1d201f;
   line-height: 1.4;
 }
 
@@ -331,7 +331,7 @@
   padding: 1px 8px;
   border-radius: 999px;
   background: #e8ecee;
-  color: #41494d;
+  color: #1d201f;
 }
 
 .project-bar__dropdown-badge--success {

@@ -12,7 +12,7 @@
 
 .uw-s2-label {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   line-height: 25px;
@@ -67,7 +67,7 @@
   border: none;
   outline: none;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #1d201f;
   flex: 1;
   min-width: 60px;
@@ -209,7 +209,7 @@
 
 .uw-s2-checkbox-text {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #1d201f;
   line-height: 1.4;
