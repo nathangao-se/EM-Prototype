@@ -67,6 +67,15 @@
       return;
     }
 
+    if (configId === 'onboarding') {
+      currentConfigId = configId;
+      deactivateDeliverables();
+      if (typeof window.openOnboardingWizard === 'function') {
+        window.openOnboardingWizard();
+      }
+      return;
+    }
+
     if (configId === 'app-shell') {
       currentConfigId = configId;
       if (typeof window.activateAppShell === 'function') {
@@ -105,6 +114,8 @@
 
         if (target === 'deliverables') {
           switchToConfig('deliverables');
+        } else if (target === 'onboarding') {
+          switchToConfig('onboarding');
         } else if (target === 'global-admin') {
           switchToConfig('global-oversight');
         } else if (target === 'site-manager') {

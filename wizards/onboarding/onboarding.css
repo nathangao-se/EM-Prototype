@@ -1,0 +1,252 @@
+/* ========================================
+   ONBOARDING WIZARD
+   ======================================== */
+
+.onb-wizard {
+  width: 720px;
+  max-height: 85vh;
+  transition: width 0.25s ease, height 0.25s ease;
+}
+
+.onb-wizard .wizard-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ========================================
+   STEP 0 — WELCOME
+   ======================================== */
+
+.onb-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+  padding: 24px 16px 0;
+}
+
+.onb-welcome-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: #e6f4ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #008029;
+}
+
+.onb-welcome-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.onb-welcome-subtitle {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #676f73;
+  line-height: 1.5;
+  max-width: 520px;
+  margin: 0;
+}
+
+.onb-welcome-highlight {
+  background: #f0faf3;
+  border: 1px solid #c8e5d2;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a5c2e;
+  line-height: 1.5;
+  max-width: 520px;
+}
+
+/* ========================================
+   STEP 1 — PROJECT TYPE CARDS
+   ======================================== */
+
+.onb-type-intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.onb-type-grid {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.onb-type-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #d5dde0;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.onb-type-card:hover {
+  border-color: #a3d4b5;
+}
+
+.onb-type-card--selected {
+  border-color: #008029;
+  box-shadow: 0 0 0 1px #008029;
+}
+
+.onb-type-card-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1d201f;
+  line-height: 1.3;
+}
+
+.onb-type-card-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  color: #676f73;
+  line-height: 1.4;
+}
+
+.onb-feature-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.onb-feature-group-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3a3f44;
+  margin-bottom: 2px;
+}
+
+.onb-feature-item {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #676f73;
+  padding-left: 12px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   STEP 2 — LIGHT SETUP FORM
+   ======================================== */
+
+.onb-setup-intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  line-height: 1.5;
+  margin: 0 0 4px;
+}
+
+.onb-project-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e6f4ec;
+  color: #1a5c2e;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+/* ========================================
+   STEP 3 — PERSPECTIVE CHOICE
+   ======================================== */
+
+.onb-perspective-intro {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #676f73;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.onb-perspective-grid {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.onb-perspective-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+  border: 2px solid #d5dde0;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.onb-perspective-card:hover {
+  border-color: #a3d4b5;
+}
+
+.onb-perspective-card--selected {
+  border-color: #008029;
+  box-shadow: 0 0 0 1px #008029;
+}
+
+.onb-perspective-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.onb-perspective-icon--global {
+  background: #e3ecf9;
+  color: #2d5fa0;
+}
+
+.onb-perspective-icon--site {
+  background: #fdf0e3;
+  color: #a05e2d;
+}
+
+.onb-perspective-card-name {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1d201f;
+}
+
+.onb-perspective-card-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  color: #676f73;
+  line-height: 1.4;
+}

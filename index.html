@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="wizards/upload-wizard/upload-wizard-step2.css">
   <link rel="stylesheet" href="ghg-engine/ghg-engine.css">
   <link rel="stylesheet" href="styles/app-shell.css">
+  <link rel="stylesheet" href="wizards/onboarding/onboarding.css">
   <link rel="stylesheet" href="styles/clickable-hints.css">
 </head>
 <body>
@@ -217,6 +218,18 @@
     </div>
   </div>
 
+  <!-- ========== ONBOARDING WIZARD OVERLAY ========== -->
+  <div id="onb-wizard-overlay" class="wizard-overlay">
+    <div class="wizard onb-wizard">
+      <div class="wizard-header">
+        <span class="wizard-header-title"></span>
+        <button class="wizard-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="wizard-body"></div>
+      <div class="wizard-footer"></div>
+    </div>
+  </div>
+
   <!-- ========== COLUMNS NORMALIZE MODAL ========== -->
   <div id="columns-normalize-overlay" class="normalize-overlay">
     <div class="normalize-modal">
@@ -342,6 +355,10 @@
           <span class="landing-sel-option-label">See 2/25 deliverables</span>
           <span class="landing-sel-option-desc">Upload files via template and create inventory flow</span>
         </button>
+        <button class="landing-sel-option" data-landing="onboarding">
+          <span class="landing-sel-option-label">Onboarding</span>
+          <span class="landing-sel-option-desc">Project-centric guided setup, ending in data collection</span>
+        </button>
         <button class="landing-sel-option" data-landing="global-admin">
           <span class="landing-sel-option-label">Admin concept</span>
           <span class="landing-sel-option-desc">Global admin view</span>
@@ -385,6 +402,7 @@
         <div class="dev-panel-label">Perspective</div>
         <div class="dev-panel-options">
           <button class="dev-panel-option" data-config="deliverables">2/24 deliverables</button>
+          <button class="dev-panel-option" data-config="onboarding">Onboarding</button>
           <button class="dev-panel-option dev-panel-option--active" data-config="global-oversight">Global Admin</button>
           <button class="dev-panel-option" data-config="site-manager">Site Manager</button>
           <button class="dev-panel-option" data-config="app-shell">Older side nav view</button>
@@ -490,6 +508,7 @@
     });
   })();
   </script>
+  <script src="wizards/onboarding/onboarding.js"></script>
   <script src="js/app-shell.js"></script>
   <script src="js/clickable-hints.js"></script>
   <script src="js/dev-panel.js"></script>

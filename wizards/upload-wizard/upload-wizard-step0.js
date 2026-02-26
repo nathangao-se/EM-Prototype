@@ -272,7 +272,8 @@
         html += '<p class="upload-wiz-desc">Add your activity files here by uploading a spreadsheet/CSV, importing it from another project, or typing in your own field. If you\'re not familiar with what this document looks like, we wrote <a href="#">a guide for you here</a>.</p>';
         html += '<p class="upload-wiz-hint">If your files is running into validation errors, try entering your data into our <a href="#" class="uw-tpl-link" data-action="show-templates">downloadable excel template</a></p>';
       } else {
-        html += '<p class="upload-wiz-desc">Add your activity files here by uploading a spreadsheet/CSV. You can <a href="#" class="uw-tpl-link" data-action="show-templates">download excel templates here</a></p>';
+        html += '<p class="upload-wiz-desc">First, download the appropriate <a href="#" class="uw-tpl-link" data-action="show-templates">excel templates</a></p>';
+        html += '<p class="upload-wiz-desc">Then, after completing it, upload your activity files below</p>';
       }
 
       html += '<div class="upload-wiz-section">';
