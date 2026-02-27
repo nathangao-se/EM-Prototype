@@ -147,6 +147,14 @@
               activateDeliverables();
             }});
           }
+        } else if (wizard === 'ghg-engine') {
+          deactivateDeliverables();
+          if (typeof window.getGhgEnginePageContent === 'function' && typeof window.runPageTransition === 'function') {
+            var pageContent = window.getGhgEnginePageContent({ skipList: true });
+            window.runPageTransition({ triggerEl: btn, pageContent: pageContent, title: 'Inventory', onExit: function () {
+              activateDeliverables();
+            }});
+          }
         }
       });
     });

@@ -453,17 +453,19 @@
 
 .dashboard-table th {
   text-align: left;
-  padding: 12px 8px;
+  height: 40px;
+  padding: 0 8px;
   font-size: 14px;
   font-weight: 600;
   color: #676f73;
-  border-bottom: 1px solid #abb3b8;
+  border-bottom: 1px solid #dfe7eb;
 }
 
 .dashboard-table td {
-  padding: 12px 8px;
+  height: 56px;
+  padding: 4px 8px;
   color: #1d201f;
-  border-bottom: 1px solid #cbd3d6;
+  border-bottom: 1px solid #dfe7eb;
 }
 
 .dashboard-table tbody tr {

@@ -87,6 +87,188 @@
         checks: ['Fuel receipts matched', 'EF region-appropriate', 'Odometer cross-check passed'] } }
   ];
 
+  var EAD_DATA = [
+    { entity: 'All Entities', activity: 'Purchased Goods', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$2.4M', tco2e: '412.0', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Spend-based', breadcrumb: ['All Entities', 'Purchased Goods', 'Scope 3'],
+      result: '412.0', resultUnit: 'kg tCO\u2082e',
+      input: '$2.4M', period: 'Oct-Dec 2025', dataSource: 'API/Procurement', specificity: '62/100',
+      efVal: '0.172', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Manufacturing', activity: 'Electricity', scope: 'Scope 2', scopeCls: 's2',
+      scopeLabel: 'Scope 2', actData: '890.0k kWh', tco2e: '323.9', efSource: 'eGRID 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['Manufacturing', 'Electricity', 'Scope 2'],
+      result: '323.9', resultUnit: 'kg tCO\u2082e',
+      input: '890.0k kWh', period: 'Oct-Dec 2025', dataSource: 'Smart Meter', specificity: '88/100',
+      efVal: '0.364', efUnit: 'kg tCO\u2082e/kWh', efSrc: 'eGRID 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'All Entities', activity: 'Purchased Goods', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$1.8M', tco2e: '309.0', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Spend-based', breadcrumb: ['All Entities', 'Purchased Goods', 'Scope 3'],
+      result: '309.0', resultUnit: 'kg tCO\u2082e',
+      input: '$1.8M', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '54/100',
+      efVal: '0.172', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'All Entities', activity: 'Use of Products', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$1.5M', tco2e: '255.0', efSource: 'EEIO 2024', quality: 'Low', qualityCls: 'low',
+      method: 'Spend-based', breadcrumb: ['All Entities', 'Use of Products', 'Scope 3'],
+      result: '255.0', resultUnit: 'kg tCO\u2082e',
+      input: '$1.5M', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '42/100',
+      efVal: '0.170', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Manufacturing', activity: 'Natural Gas', scope: 'Scope 1', scopeCls: 's1',
+      scopeLabel: 'Scope 1', actData: '45.0k therms', tco2e: '238.9', efSource: 'EPA 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['Manufacturing', 'Natural Gas', 'Scope 1'],
+      result: '238.9', resultUnit: 'kg tCO\u2082e',
+      input: '45.0k therms', period: 'Oct-Dec 2025', dataSource: 'Utility Bills', specificity: '90/100',
+      efVal: '5.311', efUnit: 'kg tCO\u2082e/therm', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Manufacturing', activity: 'Capital Goods', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$1.2M', tco2e: '285.2', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Spend-based', breadcrumb: ['Manufacturing', 'Capital Goods', 'Scope 3'],
+      result: '285.2', resultUnit: 'kg tCO\u2082e',
+      input: '$1.2M', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '50/100',
+      efVal: '0.238', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Manufacturing', activity: 'Refrigerants', scope: 'Scope 1', scopeCls: 's1',
+      scopeLabel: 'Scope 1', actData: '125 kg', tco2e: '156.3', efSource: 'EPA 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['Manufacturing', 'Refrigerants', 'Scope 1'],
+      result: '156.3', resultUnit: 'kg tCO\u2082e',
+      input: '125 kg', period: 'Oct-Dec 2025', dataSource: 'Maintenance Logs', specificity: '85/100',
+      efVal: '1.250', efUnit: 'kg tCO\u2082e/kg', efSrc: 'EPA 2024', gases: 'HFCs', gwp: 'AR5 (100-year)' },
+    { entity: 'HQ Building', activity: 'Capital Goods', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$850k', tco2e: '145.2', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Spend-based', breadcrumb: ['HQ Building', 'Capital Goods', 'Scope 3'],
+      result: '145.2', resultUnit: 'kg tCO\u2082e',
+      input: '$850k', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '48/100',
+      efVal: '0.171', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Distribution', activity: 'Fleet Vehicles', scope: 'Scope 1', scopeCls: 's1',
+      scopeLabel: 'Scope 1', actData: '15.2k gallons', tco2e: '135.1', efSource: 'EPA 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['Distribution', 'Fleet Vehicles', 'Scope 1'],
+      result: '135.1', resultUnit: 'kg tCO\u2082e',
+      input: '15.2k gallons', period: 'Oct-Dec 2025', dataSource: 'Fleet Management', specificity: '92/100',
+      efVal: '8.887', efUnit: 'kg tCO\u2082e/gal', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Distribution', activity: 'Processing of Products', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$650k', tco2e: '110.5', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Spend-based', breadcrumb: ['Distribution', 'Processing of Products', 'Scope 3'],
+      result: '110.5', resultUnit: 'kg tCO\u2082e',
+      input: '$650k', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '46/100',
+      efVal: '0.170', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Manufacturing', activity: 'Refrigerants', scope: 'Scope 1', scopeCls: 's1',
+      scopeLabel: 'Scope 1', actData: '85 kg', tco2e: '106.3', efSource: 'EPA 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['Manufacturing', 'Refrigerants', 'Scope 1'],
+      result: '106.3', resultUnit: 'kg tCO\u2082e',
+      input: '85 kg', period: 'Oct-Dec 2025', dataSource: 'Maintenance Logs', specificity: '85/100',
+      efVal: '1.250', efUnit: 'kg tCO\u2082e/kg', efSrc: 'EPA 2024', gases: 'HFCs', gwp: 'AR5 (100-year)' },
+    { entity: 'All Entities', activity: 'Upstream Transport', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '320.0k ton-miles', tco2e: '89.6', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Activity-based', breadcrumb: ['All Entities', 'Upstream Transport', 'Scope 3'],
+      result: '89.6', resultUnit: 'kg tCO\u2082e',
+      input: '320.0k ton-miles', period: 'Oct-Dec 2025', dataSource: 'Logistics System', specificity: '60/100',
+      efVal: '0.000280', efUnit: 'kg tCO\u2082e/ton-mi', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'HQ Building', activity: 'Electricity', scope: 'Scope 2', scopeCls: 's2',
+      scopeLabel: 'Scope 2', actData: '245.0k kWh', tco2e: '89.2', efSource: 'eGRID 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['HQ Building', 'Electricity', 'Scope 2'],
+      result: '89.2', resultUnit: 'kg tCO\u2082e',
+      input: '245.0k kWh', period: 'Oct-Dec 2025', dataSource: 'Smart Meter', specificity: '88/100',
+      efVal: '0.364', efUnit: 'kg tCO\u2082e/kWh', efSrc: 'eGRID 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'All Entities', activity: 'Franchises', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$450k', tco2e: '76.5', efSource: 'EEIO 2024', quality: 'Low', qualityCls: 'low',
+      method: 'Spend-based', breadcrumb: ['All Entities', 'Franchises', 'Scope 3'],
+      result: '76.5', resultUnit: 'kg tCO\u2082e',
+      input: '$450k', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '35/100',
+      efVal: '0.170', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Distribution', activity: 'Waste Disposal', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '450 tons', tco2e: '67.2', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Activity-based', breadcrumb: ['Distribution', 'Waste Disposal', 'Scope 3'],
+      result: '67.2', resultUnit: 'kg tCO\u2082e',
+      input: '450 tons', period: 'Oct-Dec 2025', dataSource: 'Waste Hauler', specificity: '65/100',
+      efVal: '0.149', efUnit: 'kg tCO\u2082e/ton', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'HQ Building', activity: 'Natural Gas', scope: 'Scope 1', scopeCls: 's1',
+      scopeLabel: 'Scope 1', actData: '12.4k therms', tco2e: '66.1', efSource: 'EPA 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['HQ Building', 'Natural Gas', 'Scope 1'],
+      result: '66.1', resultUnit: 'kg tCO\u2082e',
+      input: '12.4k therms', period: 'Oct-Dec 2025', dataSource: 'Utility Bills', specificity: '90/100',
+      efVal: '5.311', efUnit: 'kg tCO\u2082e/therm', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Distribution', activity: 'Investments', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '$320k', tco2e: '54.4', efSource: 'EEIO 2024', quality: 'Low', qualityCls: 'low',
+      method: 'Spend-based', breadcrumb: ['Distribution', 'Investments', 'Scope 3'],
+      result: '54.4', resultUnit: 'kg tCO\u2082e',
+      input: '$320k', period: 'Oct-Dec 2025', dataSource: 'Financial System', specificity: '30/100',
+      efVal: '0.170', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Distribution', activity: 'Downstream Transport', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '180.0k ton-miles', tco2e: '50.4', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Activity-based', breadcrumb: ['Distribution', 'Downstream Transport', 'Scope 3'],
+      result: '50.4', resultUnit: 'kg tCO\u2082e',
+      input: '180.0k ton-miles', period: 'Oct-Dec 2025', dataSource: 'Logistics System', specificity: '58/100',
+      efVal: '0.000280', efUnit: 'kg tCO\u2082e/ton-mi', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Manufacturing', activity: 'Waste Disposal', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '320 tons', tco2e: '47.7', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      method: 'Activity-based', breadcrumb: ['Manufacturing', 'Waste Disposal', 'Scope 3'],
+      result: '47.7', resultUnit: 'kg tCO\u2082e',
+      input: '320 tons', period: 'Oct-Dec 2025', dataSource: 'Waste Hauler', specificity: '65/100',
+      efVal: '0.149', efUnit: 'kg tCO\u2082e/ton', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Distribution', activity: 'Electricity', scope: 'Scope 2', scopeCls: 's2',
+      scopeLabel: 'Scope 2', actData: '125.0k kWh', tco2e: '45.5', efSource: 'eGRID 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['Distribution', 'Electricity', 'Scope 2'],
+      result: '45.5', resultUnit: 'kg tCO\u2082e',
+      input: '125.0k kWh', period: 'Oct-Dec 2025', dataSource: 'Smart Meter', specificity: '88/100',
+      efVal: '0.364', efUnit: 'kg tCO\u2082e/kWh', efSrc: 'eGRID 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'HQ Building', activity: 'Upstream Leased Assets', scope: 'Scope 3', scopeCls: 's3',
+      scopeLabel: 'Scope 3', actData: '125.0k kWh', tco2e: '45.5', efSource: 'eGRID 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['HQ Building', 'Upstream Leased Assets', 'Scope 3'],
+      result: '45.5', resultUnit: 'kg tCO\u2082e',
+      input: '125.0k kWh', period: 'Oct-Dec 2025', dataSource: 'Smart Meter', specificity: '75/100',
+      efVal: '0.364', efUnit: 'kg tCO\u2082e/kWh', efSrc: 'eGRID 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
+    { entity: 'Distribution', activity: 'Natural Gas', scope: 'Scope 1', scopeCls: 's1',
+      scopeLabel: 'Scope 1', actData: '8.5k therms', tco2e: '45.1', efSource: 'EPA 2024', quality: 'High', qualityCls: 'high',
+      method: 'Activity-based', breadcrumb: ['Distribution', 'Natural Gas', 'Scope 1'],
+      result: '45.1', resultUnit: 'kg tCO\u2082e',
+      input: '8.5k therms', period: 'Oct-Dec 2025', dataSource: 'Utility Bills', specificity: '90/100',
+      efVal: '5.311', efUnit: 'kg tCO\u2082e/therm', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' }
+  ];
+
+  function buildEadDetail(d) {
+    return '' +
+      '<div style="display:flex;flex-direction:column;gap:8px">' +
+        '<div class="ghg-ead-section-label">Lineage, methodology, and decisions</div>' +
+        '<div class="ghg-ead-breadcrumb">' + d.breadcrumb.map(function (b, i) {
+          return (i > 0 ? '<span class="ghg-ead-arrow"><i class="fa-solid fa-arrow-right" style="font-size:10px"></i></span>' : '') + '<span class="ghg-ead-crumb">' + esc(b) + '</span>';
+        }).join('') + '</div>' +
+      '</div>' +
+      '<div class="ghg-ead-divider"></div>' +
+      '<div style="display:flex;flex-direction:column;gap:1px"><div class="ghg-ead-pair-label">Calculation method</div>' +
+        '<div style="display:flex;gap:16px;align-items:center"><div class="ghg-ead-pair-value" style="flex:1;min-width:0">' + esc(d.method) + '</div>' +
+        '<span class="ghg-scope-chip ghg-scope-chip--' + (d.scopeLabel === 'Scope 1' ? 's1' : d.scopeLabel === 'Scope 2' ? 's2' : 's3') + '" style="width:80px;flex-shrink:0">' + esc(d.scopeLabel) + '</span></div></div>' +
+      '<div class="ghg-ead-row-pair">' +
+        '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">Quality</div><div class="ghg-ead-pair-value">' + esc(d.quality) + '</div></div>' +
+        '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">EF Source</div><div class="ghg-ead-pair-value">' + esc(d.efSource) + '</div></div>' +
+      '</div>' +
+      '<div class="ghg-ead-divider"></div>' +
+      '<div class="ghg-ead-section-label">Calculations</div>' +
+      '<div class="ghg-ead-calc-result"><div class="ghg-ead-calc-result-label">Final result</div><div class="ghg-ead-calc-result-val">' + esc(d.result) + ' <span>' + d.resultUnit + '</span></div></div>' +
+      '<div class="ghg-ead-calc-pair" style="position:relative">' +
+        '<div class="ghg-ead-calc-card">' +
+          '<div class="ghg-ead-calc-card-top"><div class="ghg-ead-calc-card-label">Input</div><div class="ghg-ead-calc-card-val">' + esc(d.input) + '</div></div>' +
+          '<div class="ghg-ead-calc-card-body">' +
+            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Period</div><div class="ghg-ead-calc-meta-val">' + esc(d.period) + '</div></div>' +
+            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Data source</div><div class="ghg-ead-calc-meta-val">' + esc(d.dataSource) + '</div></div>' +
+            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Specificity score</div><div class="ghg-ead-calc-meta-val">' + esc(d.specificity) + '</div></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ghg-ead-calc-x"><i class="fa-solid fa-xmark"></i></div>' +
+        '<div class="ghg-ead-calc-card">' +
+          '<div class="ghg-ead-calc-card-top"><div class="ghg-ead-calc-card-label">Emissions factors</div><div class="ghg-ead-calc-card-val">' + esc(d.efVal) + ' <span>' + d.efUnit + '</span></div></div>' +
+          '<div class="ghg-ead-calc-card-body">' +
+            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Source</div><div class="ghg-ead-calc-meta-val">' + esc(d.efSrc) + '</div></div>' +
+            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Gases covered</div><div class="ghg-ead-calc-meta-val">' + d.gases + '</div></div>' +
+            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">GWP Version</div><div class="ghg-ead-calc-meta-val">' + esc(d.gwp) + '</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ghg-ead-divider"></div>' +
+      '<div class="ghg-ead-section-label">Validation</div>' +
+      '<div class="ghg-ead-validation">' +
+        '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Scope attribution verified</div>' +
+        '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> No double-counting detected</div>' +
+        '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Boundary: Operational control applied</div>' +
+      '</div>';
+  }
+
   /* ==============================================
      HTML BUILDERS
      ============================================== */
@@ -201,6 +383,20 @@
       });
     });
 
+    // EAD row selection
+    var eadDetail = ctx.querySelector('[data-ghg-ead-detail]');
+    if (eadDetail) {
+      eadDetail.innerHTML = buildEadDetail(EAD_DATA[0]);
+      ctx.addEventListener('click', function (e) {
+        var row = e.target.closest('.ghg-ead-row');
+        if (!row) return;
+        var idx = parseInt(row.getAttribute('data-ead'), 10);
+        ctx.querySelectorAll('.ghg-ead-row').forEach(function (r) { r.classList.remove('ghg-ead-row--selected'); });
+        row.classList.add('ghg-ead-row--selected');
+        eadDetail.innerHTML = buildEadDetail(EAD_DATA[idx]);
+      });
+    }
+
     // Lineage expand (accordion)
     ctx.addEventListener('click', function (e) {
       var row = e.target.closest('.ghg-expand-row');
@@ -263,68 +459,130 @@
       '</div>' +
     '</div>' +
     '<div id="ghg-view-results" class="ghg-view">' +
-      '<div class="ghg-stats-grid">' +
-        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Total Emissions</div><div class="ghg-stat-value">1,061.9<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change ghg-stat-change--down"><i class="fa-solid fa-arrow-down"></i> 5.4% from Q3 2025</div></div>' +
-        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Scope 1 \u2013 Direct</div><div class="ghg-stat-value">124.6<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">11.7% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +5.3%</span></div></div>' +
-        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Scope 2 \u2013 Indirect (Energy)</div><div class="ghg-stat-value">45.2<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">4.3% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +4.9%</span></div></div>' +
-        '<div class="ghg-stat-card pt-stagger-item"><div class="ghg-stat-label">Scope 3 \u2013 Value Chain</div><div class="ghg-stat-value">892.1<span class="ghg-stat-unit">tCO\u2082e</span></div><div class="ghg-stat-change">84.0% of total \u2022 <span class="ghg-stat-change--up">\u25B2 +5.3%</span></div></div>' +
+      '<div class="ghg-stats-row pt-stagger-item">' +
+        '<div class="ghg-stat-card ghg-stat-card--wide">' +
+          '<div class="ghg-stat-label">Total emissions</div>' +
+          '<div class="ghg-stat-value ghg-stat-value--xl">1,061.9 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
+          '<div class="ghg-stat-scopes">' +
+            '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 1 - 11.7%</div><div class="ghg-stat-scope-val">124.6 <span>tCO\u2082e</span></div></div>' +
+            '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 2 - 4.3%</div><div class="ghg-stat-scope-val">45.2 <span>tCO\u2082e</span></div></div>' +
+            '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 3 - 84%</div><div class="ghg-stat-scope-val">892.1 <span>tCO\u2082e</span></div></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ghg-stat-card ghg-stat-card--side">' +
+          '<div class="ghg-stat-label">Location-based</div>' +
+          '<div class="ghg-stat-value ghg-stat-value--xl">45.2 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
+          '<div class="ghg-stat-divider"></div>' +
+          '<div class="ghg-stat-note">Uses <strong>Grid-average emissions factors</strong></div>' +
+        '</div>' +
+        '<div class="ghg-stat-card ghg-stat-card--side">' +
+          '<div class="ghg-stat-label">Market-based</div>' +
+          '<div class="ghg-stat-value ghg-stat-value--xl">38.1 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
+          '<div class="ghg-stat-divider"></div>' +
+          '<div class="ghg-stat-note">Accounts for <strong>RECs and supplier contracts</strong></div>' +
+        '</div>' +
       '</div>' +
       '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
         '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">Overview</button>' +
-        '<button class="ghg-tab" data-ghg-tab="breakdown">Detailed Breakdown</button>' +
-        '<button class="ghg-tab" data-ghg-tab="lineage">Calculation Lineage</button>' +
+        '<button class="ghg-tab" data-ghg-tab="breakdown">Entities and activities details</button>' +
+        '<button class="ghg-tab" data-ghg-tab="lineage">Audit trail and traceability</button>' +
         '<button class="ghg-tab" data-ghg-tab="ef-selection">EF Selection &amp; Review</button></div>' +
       '<div class="ghg-tab-content ghg-tab-content--active" id="ghg-tab-overview">' +
-        '<div class="ghg-overview-meta pt-stagger-item"><div class="ghg-status-meta">' +
-          '<span><i class="fa-regular fa-calendar"></i> Oct 1 \u2013 Dec 31, 2025</span>' +
-          '<span><i class="fa-solid fa-book"></i> GHG Protocol Corporate Standard</span>' +
-          '<span><i class="fa-solid fa-sitemap"></i> Financial Control</span>' +
-          '<span><i class="fa-solid fa-building"></i> 4 entities</span></div>' +
-        '<div class="ghg-status-right"><label class="ghg-compare-label">Compare with:</label>' +
-          '<select class="ghg-select"><option>No Comparison</option><option selected>Q3 2025 (Previous)</option><option>Q4 2024 (YoY)</option></select>' +
-          '<span class="ghg-badge ghg-badge--success ghg-badge--lg"><i class="fa-solid fa-circle-check"></i> Calculation Complete</span></div></div>' +
-        '<div class="ghg-quality-card pt-stagger-item"><div class="ghg-quality-score"><div class="ghg-quality-score-val">87</div><div class="ghg-quality-score-label">out of 100</div></div>' +
-          '<div class="ghg-quality-body"><h3 class="ghg-quality-title"><i class="fa-solid fa-shield-check"></i> Data Quality Score</h3>' +
-          '<p class="ghg-quality-sub">Based on data completeness, source quality, and validation status</p>' +
-          '<div class="ghg-quality-details">' +
-            '<div class="ghg-quality-detail-item"><i class="fa-solid fa-circle-check"></i> 892 of 920 records complete (97%)</div>' +
-            '<div class="ghg-quality-detail-item"><i class="fa-solid fa-circle-check"></i> All emission factors current (&lt;12 mo)</div>' +
-            '<div class="ghg-quality-detail-item"><i class="fa-solid fa-triangle-exclamation warn-icon"></i> 156 records using spend-based estimates (17%)</div>' +
-            '<div class="ghg-quality-detail-item"><i class="fa-solid fa-triangle-exclamation warn-icon"></i> 28 high-emission records pending review</div>' +
-          '</div></div></div>' +
-        '<div class="ghg-section-group pt-stagger-item"><h3 class="ghg-section-title ghg-section-title--spaced">Scope 2 Dual Reporting</h3>' +
-        '<div class="ghg-dual-scope"><div class="ghg-dual-scope-item"><div class="ghg-dual-scope-label">Location-Based</div><div class="ghg-dual-scope-value">45.2 tCO\u2082e</div><div class="ghg-dual-scope-note">Uses grid-average emission factors</div></div>' +
-        '<div class="ghg-dual-scope-item"><div class="ghg-dual-scope-label">Market-Based</div><div class="ghg-dual-scope-value">38.1 tCO\u2082e</div><div class="ghg-dual-scope-note">Accounts for RECs and supplier contracts</div></div></div></div>' +
-        '<div class="ghg-section-group pt-stagger-item"><h3 class="ghg-section-title ghg-section-title--spaced">Emissions Summary by Scope &amp; Category</h3>' +
-        '<div class="ghg-scope-bar"><div class="ghg-scope-seg ghg-scope-seg--s1" style="width:11.7%"></div><div class="ghg-scope-seg ghg-scope-seg--s2" style="width:4.3%"></div><div class="ghg-scope-seg ghg-scope-seg--s3" style="width:84%"></div></div>' +
-        '<div class="ghg-scope-legend"><div class="ghg-scope-legend-item"><div class="ghg-scope-dot ghg-scope-dot--s1"></div> Scope 1: 124.6 tCO\u2082e (11.7%)</div><div class="ghg-scope-legend-item"><div class="ghg-scope-dot ghg-scope-dot--s2"></div> Scope 2: 45.2 tCO\u2082e (4.3%)</div><div class="ghg-scope-legend-item"><div class="ghg-scope-dot ghg-scope-dot--s3"></div> Scope 3: 892.1 tCO\u2082e (84.0%)</div></div>' +
-        '<table class="ghg-table" style="margin-top:16px"><thead><tr><th>Scope</th><th>Category</th><th class="num">Emissions (tCO\u2082e)</th><th class="num">% of Total</th><th class="num">Records</th></tr></thead><tbody>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-1">Scope 1</span></td><td>Stationary Combustion (Natural Gas)</td><td class="num">78.2</td><td class="num">7.4%</td><td class="num">48</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-1">Scope 1</span></td><td>Mobile Combustion (Company Fleet)</td><td class="num">42.4</td><td class="num">4.0%</td><td class="num">24</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-1">Scope 1</span></td><td>Fugitive Emissions</td><td class="num">4.0</td><td class="num">0.4%</td><td class="num">6</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-2">Scope 2</span></td><td>Purchased Electricity</td><td class="num">38.6</td><td class="num">3.6%</td><td class="num">52</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-2">Scope 2</span></td><td>Purchased Heating/Cooling</td><td class="num">6.6</td><td class="num">0.6%</td><td class="num">12</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Purchased Goods &amp; Services</td><td class="num">412.3</td><td class="num">38.8%</td><td class="num">280</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Business Travel</td><td class="num">156.8</td><td class="num">14.8%</td><td class="num">192</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Employee Commuting</td><td class="num">89.4</td><td class="num">8.4%</td><td class="num">120</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Upstream Transport &amp; Distribution</td><td class="num">134.2</td><td class="num">12.6%</td><td class="num">96</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Waste Generated in Operations</td><td class="num">52.7</td><td class="num">5.0%</td><td class="num">48</td></tr>' +
-          '<tr><td><span class="ghg-badge ghg-badge--scope-3">Scope 3</span></td><td>Fuel- and Energy-Related Activities</td><td class="num">46.7</td><td class="num">4.4%</td><td class="num">42</td></tr>' +
-        '</tbody></table></div></div>' +
+        '<div class="ghg-overview-cols pt-stagger-item">' +
+          '<div class="ghg-overview-left">' +
+            '<div class="ghg-overview-meta-list">' +
+              '<div class="ghg-meta-row"><i class="fa-regular fa-calendar"></i><span>10/1/25 - 12/31/25 (91 days)</span></div>' +
+              '<div class="ghg-meta-row"><i class="fa-regular fa-file-lines"></i><span>GHG Protocol Corporate Standard</span></div>' +
+              '<div class="ghg-meta-row"><i class="fa-solid fa-sitemap"></i><span>Financial Control</span></div>' +
+              '<div class="ghg-meta-row"><i class="fa-solid fa-people-group"></i><span>4 entities</span></div>' +
+            '</div>' +
+            '<div class="ghg-overview-divider"></div>' +
+            '<div class="ghg-ov-quality-label">Data quality score</div>' +
+            '<div class="ghg-ov-quality-score"><i class="fa-solid fa-circle-check ghg-ov-quality-icon"></i><span class="ghg-ov-quality-val">87</span><span class="ghg-ov-quality-unit">out of 100</span></div>' +
+            '<p class="ghg-ov-quality-desc">Based on data completeness, source quality, and validation status</p>' +
+            '<div class="ghg-ov-quality-items">' +
+              '<div class="ghg-ov-qi"><i class="fa-solid fa-circle-check ghg-ov-qi-ok"></i><span>892 of 920 records complete</span></div>' +
+              '<div class="ghg-ov-qi"><i class="fa-solid fa-triangle-exclamation ghg-ov-qi-warn"></i><span>156 records using spend-based estimates (17%)</span></div>' +
+              '<div class="ghg-ov-qi"><i class="fa-solid fa-circle-check ghg-ov-qi-ok"></i><span>All emission factors current (&lt;12 mo)</span></div>' +
+              '<div class="ghg-ov-qi"><i class="fa-solid fa-triangle-exclamation ghg-ov-qi-warn"></i><span>28 high-emission records pending review</span></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ghg-overview-right">' +
+            '<table class="ghg-ov-table"><thead><tr>' +
+              '<th class="ghg-ov-col-scope">Scope</th>' +
+              '<th>Category</th>' +
+              '<th class="num">Emissions (tCO\u2082e)</th>' +
+              '<th class="num">% of total</th>' +
+              '<th class="num">Records</th>' +
+            '</tr></thead><tbody>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Stationary Combustion (Natural Gas)</td><td class="num">78.2</td><td class="num">7.4%</td><td class="num">48</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Mobile Combustion (Company Fleet)</td><td class="num">42.4</td><td class="num">4.0%</td><td class="num">24</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Fugitive Emissions</td><td class="num">4.0</td><td class="num">0.4%</td><td class="num">4</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td class="ghg-ov-activity">Purchased Electricity (Location-Based)</td><td class="num">42.1</td><td class="num">4.0%</td><td class="num">48</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td class="ghg-ov-activity">Purchased Heat/Steam</td><td class="num">3.1</td><td class="num">0.3%</td><td class="num">12</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 1: Purchased Goods &amp; Services</td><td class="num">412.0</td><td class="num">38.8%</td><td class="num">156</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 3: Fuel &amp; Energy Related Activities</td><td class="num">28.5</td><td class="num">2.7%</td><td class="num">72</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 4: Upstream Transportation</td><td class="num">186.4</td><td class="num">17.6%</td><td class="num">48</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 5: Waste Generated in Operations</td><td class="num">24.8</td><td class="num">2.3%</td><td class="num">36</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 6: Business Travel</td><td class="num">89.2</td><td class="num">8.4%</td><td class="num">84</td></tr>' +
+              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 7: Employee Commuting</td><td class="num">151.2</td><td class="num">14.2%</td><td class="num">96</td></tr>' +
+            '</tbody></table>' +
+          '</div>' +
+        '</div></div>' +
       '<div class="ghg-tab-content" id="ghg-tab-breakdown">' +
-        '<h3 class="ghg-section-title">Emissions by Entity &amp; Scope</h3>' +
-        '<table class="ghg-table"><thead><tr><th>Entity / Category</th><th class="num">Scope 1</th><th class="num">Scope 2</th><th class="num">Scope 3</th><th class="num">Total (tCO\u2082e)</th><th class="num">% of Total</th></tr></thead>' +
-        '<tbody id="ghg-breakdown-body"></tbody></table>' +
-        '<h3 class="ghg-section-title ghg-section-title--spaced">Calculation Method Distribution</h3>' +
-        '<table class="ghg-table"><thead><tr><th>Method</th><th>Description</th><th class="num">Records</th><th class="num">% Usage</th></tr></thead><tbody>' +
-          '<tr><td>Activity-Based</td><td>Activity data \u00D7 emission factor</td><td class="num">332</td><td class="num">52.8%</td></tr>' +
-          '<tr><td>Spend-Based</td><td>Spend amount \u00D7 EEIO factor</td><td class="num">156</td><td class="num">24.8%</td></tr>' +
-          '<tr><td>Distance-Based</td><td>Distance \u00D7 mode factor (travel/transport)</td><td class="num">136</td><td class="num">21.7%</td></tr>' +
-          '<tr><td>Supplier-Specific</td><td>Supplier-provided emission data</td><td class="num">5</td><td class="num">0.8%</td></tr></tbody></table></div>' +
+        '<div class="ghg-ead-layout">' +
+          '<div class="ghg-ead-table-wrap">' +
+            '<table class="ghg-ov-table ghg-ead-table"><thead><tr>' +
+              '<th>Entities</th><th>Activities</th><th>Scope</th><th>Activity data</th><th class="num">tCO\u2082e</th><th>EF Source</th><th>Quality</th>' +
+            '</tr></thead><tbody data-ghg-ead-body>' +
+              '<tr class="ghg-ead-row ghg-ead-row--selected" data-ead="0"><td>All Entities</td><td>Purchased Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$2.4M</td><td class="num">412.0</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="1"><td>Manufacturing</td><td>Electricity</td><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td>890.0k kWh</td><td class="num">323.9</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="2"><td>All Entities</td><td>Purchased Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$1.8M</td><td class="num">309.0</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="3"><td>All Entities</td><td>Use of Products</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$1.5M</td><td class="num">255.0</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--low">Low</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="4"><td>Manufacturing</td><td>Natural Gas</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>45.0k therms</td><td class="num">238.9</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="5"><td>Manufacturing</td><td>Capital Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$1.2M</td><td class="num">285.2</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="6"><td>Manufacturing</td><td>Refrigerants</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>125 kg</td><td class="num">156.3</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="7"><td>HQ Building</td><td>Capital Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$850k</td><td class="num">145.2</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="8"><td>Distribution</td><td>Fleet Vehicles</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>15.2k gallons</td><td class="num">135.1</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="9"><td>Distribution</td><td>Processing of Products</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$650k</td><td class="num">110.5</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="10"><td>Manufacturing</td><td>Refrigerants</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>85 kg</td><td class="num">106.3</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="11"><td>All Entities</td><td>Upstream Transport</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>320.0k ton-miles</td><td class="num">89.6</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="12"><td>HQ Building</td><td>Electricity</td><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td>245.0k kWh</td><td class="num">89.2</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="13"><td>All Entities</td><td>Franchises</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$450k</td><td class="num">76.5</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--low">Low</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="14"><td>Distribution</td><td>Waste Disposal</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>450 tons</td><td class="num">67.2</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="15"><td>HQ Building</td><td>Natural Gas</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>12.4k therms</td><td class="num">66.1</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="16"><td>Distribution</td><td>Investments</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$320k</td><td class="num">54.4</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--low">Low</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="17"><td>Distribution</td><td>Downstream Transport</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>180.0k ton-miles</td><td class="num">50.4</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="18"><td>Manufacturing</td><td>Waste Disposal</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>320 tons</td><td class="num">47.7</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="19"><td>Distribution</td><td>Electricity</td><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td>125.0k kWh</td><td class="num">45.5</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="20"><td>HQ Building</td><td>Upstream Leased Assets</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>125.0k kWh</td><td class="num">45.5</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              '<tr class="ghg-ead-row" data-ead="21"><td>Distribution</td><td>Natural Gas</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>8.5k therms</td><td class="num">45.1</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+            '</tbody></table>' +
+          '</div>' +
+          '<div class="ghg-ead-detail" data-ghg-ead-detail>' +
+            '<div class="ghg-ead-detail-placeholder">Select a row to view lineage details</div>' +
+          '</div>' +
+        '</div></div>' +
       '<div class="ghg-tab-content" id="ghg-tab-lineage">' +
-        '<div class="ghg-info-box ghg-info-box--info" style="margin-bottom:16px"><i class="fa-solid fa-circle-info"></i><div>Click any row to view the full calculation lineage, including source data, emission factors, and validation checks.</div></div>' +
-        '<table class="ghg-table"><thead><tr><th style="width:28px"></th><th>Activity</th><th>Entity</th><th>Method</th><th class="num">Value</th><th class="num">EF</th><th class="num">Emissions (tCO\u2082e)</th><th>Status</th></tr></thead>' +
-        '<tbody id="ghg-lineage-body"></tbody></table></div>' +
+        '<div class="ghg-audit-content">' +
+          '<p class="ghg-audit-title">Audit trail and traceability</p>' +
+          '<p class="ghg-audit-desc">Complete calculation logs for external auditor verification. Every emission record traces back to source data, emission factor, and methodology.</p>' +
+          '<div class="ghg-audit-banner"><i class="fa-solid fa-circle-info"></i><span>Audit-Ready Status: All 628 emission records in this inventory have complete lineage documentation including inputs, conversions, EF source, boundary decisions, and calculation steps.</span></div>' +
+          '<div class="ghg-audit-tables">' +
+            '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th>Source</th><th style="width:80px">Version</th><th>Categories covered</th><th class="num" style="width:112px">Records using</th></tr></thead><tbody>' +
+              '<tr><td>eGRID (EPA)</td><td>2024</td><td>EEIO 2024</td><td class="num">192</td></tr>' +
+              '<tr><td>EPA GHG Emission Factor Hub</td><td>2024</td><td>Electricity</td><td class="num">144</td></tr>' +
+              '<tr><td>EEIO (EPA)</td><td>2024</td><td>Electricity</td><td class="num">156</td></tr>' +
+              '<tr><td>DEFRA</td><td>2024</td><td>Electricity</td><td class="num">136</td></tr>' +
+            '</tbody></table></div>' +
+            '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th style="width:160px">Method</th><th>Description</th><th class="num" style="width:64px">Records</th><th class="num" style="width:88px">% Coverage</th></tr></thead><tbody>' +
+              '<tr><td>Activity-based</td><td>Activity \u00D7 Emission Factor (measured data)</td><td class="num">336</td><td class="num">53.5%</td></tr>' +
+              '<tr><td>Spend-based</td><td>Spend \u00D7 EEIO Factor (economic input-output)</td><td class="num">156</td><td class="num">24.8%</td></tr>' +
+              '<tr><td>Distance-based</td><td>Distance \u00D7 Mode Factor (travel/transport)</td><td class="num">136</td><td class="num">21.7%</td></tr>' +
+            '</tbody></table></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="ghg-tab-content" id="ghg-tab-ef-selection">' +
         '<div class="ghg-ef-hero"><div class="ghg-ef-hero-main"><div class="ghg-ef-circle"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#dfe7eb" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#008029" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="10" transform="rotate(-90 50 50)" stroke-linecap="round"/></svg><div class="ghg-ef-circle-text"><span class="ghg-ef-circle-pct">96.2%</span><span class="ghg-ef-circle-label">EF Coverage</span></div></div>' +
         '<div class="ghg-ef-breakdown"><div class="ghg-ef-bstat"><span class="ghg-ef-bstat-val ghg-ef-bstat-val--success">1,206,234</span><span class="ghg-ef-bstat-label">Records with EF assigned</span></div><div class="ghg-ef-bstat"><span class="ghg-ef-bstat-val ghg-ef-bstat-val--warning">15,402</span><span class="ghg-ef-bstat-label">Flagged for review</span></div><div class="ghg-ef-bstat"><span class="ghg-ef-bstat-val ghg-ef-bstat-val--danger">32,598</span><span class="ghg-ef-bstat-label">Unmapped / Missing EF</span></div></div></div>' +
