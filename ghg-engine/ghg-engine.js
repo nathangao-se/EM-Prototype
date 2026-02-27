@@ -231,38 +231,44 @@
         }).join('') + '</div>' +
       '</div>' +
       '<div class="ghg-ead-divider"></div>' +
-      '<div style="display:flex;flex-direction:column;gap:1px"><div class="ghg-ead-pair-label">Calculation method</div>' +
-        '<div style="display:flex;gap:16px;align-items:center"><div class="ghg-ead-pair-value" style="flex:1;min-width:0">' + esc(d.method) + '</div>' +
-        '<span class="ghg-scope-chip ghg-scope-chip--' + (d.scopeLabel === 'Scope 1' ? 's1' : d.scopeLabel === 'Scope 2' ? 's2' : 's3') + '" style="width:80px;flex-shrink:0">' + esc(d.scopeLabel) + '</span></div></div>' +
-      '<div class="ghg-ead-row-pair">' +
-        '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">Quality</div><div class="ghg-ead-pair-value">' + esc(d.quality) + '</div></div>' +
-        '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">EF Source</div><div class="ghg-ead-pair-value">' + esc(d.efSource) + '</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:16px">' +
+        '<div style="display:flex;flex-direction:column;gap:1px"><div class="ghg-ead-pair-label">Calculation method</div>' +
+          '<div style="display:flex;gap:16px;align-items:center"><div class="ghg-ead-pair-value" style="flex:1;min-width:0">' + esc(d.method) + '</div>' +
+          '<span class="ghg-scope-chip ghg-scope-chip--' + (d.scopeLabel === 'Scope 1' ? 's1' : d.scopeLabel === 'Scope 2' ? 's2' : 's3') + '" style="width:80px;flex-shrink:0">' + esc(d.scopeLabel) + '</span></div></div>' +
+        '<div class="ghg-ead-row-pair">' +
+          '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">Quality</div><div class="ghg-ead-pair-value">' + esc(d.quality) + '</div></div>' +
+          '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">EF Source</div><div class="ghg-ead-pair-value">' + esc(d.efSource) + '</div></div>' +
+        '</div>' +
       '</div>' +
       '<div class="ghg-ead-divider"></div>' +
-      '<div class="ghg-ead-section-label">Calculations</div>' +
-      '<div class="ghg-ead-calc-result"><div class="ghg-ead-calc-result-label">Final result</div><div class="ghg-ead-calc-result-val">' + esc(d.result) + ' <span>' + d.resultUnit + '</span></div></div>' +
-      '<div class="ghg-ead-calc-pair" style="position:relative">' +
-        '<div class="ghg-ead-calc-card">' +
-          '<div class="ghg-ead-calc-card-top"><div class="ghg-ead-calc-card-label">Input</div><div class="ghg-ead-calc-card-val">' + esc(d.input) + '</div></div>' +
-          '<div class="ghg-ead-calc-card-body">' +
+      '<div style="display:flex;flex-direction:column;gap:8px">' +
+        '<div class="ghg-ead-section-label">Calculations</div>' +
+        '<div class="ghg-ead-calc-result"><div class="ghg-ead-calc-result-label">Final result</div><div class="ghg-ead-calc-result-val">' + esc(d.result) + ' <span>' + d.resultUnit + '</span></div></div>' +
+      '<div class="ghg-ead-details-card">' +
+        '<div class="ghg-ead-details-top">' +
+          '<div class="ghg-ead-details-top-col"><div class="ghg-ead-details-top-label">Input</div><div class="ghg-ead-details-top-val">' + esc(d.input) + '</div></div>' +
+          '<div class="ghg-ead-details-top-vdiv"></div>' +
+          '<div class="ghg-ead-details-top-col"><div class="ghg-ead-details-top-label">Emissions factors</div><div class="ghg-ead-details-top-val">' + esc(d.efVal) + ' <span>' + d.efUnit + '</span></div></div>' +
+          '<div class="ghg-ead-details-multiply"><i class="fa-solid fa-xmark"></i></div>' +
+        '</div>' +
+        '<div class="ghg-ead-details-bottom">' +
+          '<div class="ghg-ead-details-col">' +
             '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Period</div><div class="ghg-ead-calc-meta-val">' + esc(d.period) + '</div></div>' +
             '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Data source</div><div class="ghg-ead-calc-meta-val">' + esc(d.dataSource) + '</div></div>' +
             '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Specificity score</div><div class="ghg-ead-calc-meta-val">' + esc(d.specificity) + '</div></div>' +
           '</div>' +
-        '</div>' +
-        '<div class="ghg-ead-calc-x"><i class="fa-solid fa-xmark"></i></div>' +
-        '<div class="ghg-ead-calc-card">' +
-          '<div class="ghg-ead-calc-card-top"><div class="ghg-ead-calc-card-label">Emissions factors</div><div class="ghg-ead-calc-card-val">' + esc(d.efVal) + ' <span>' + d.efUnit + '</span></div></div>' +
-          '<div class="ghg-ead-calc-card-body">' +
+          '<div class="ghg-ead-details-vdiv"></div>' +
+          '<div class="ghg-ead-details-col">' +
             '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Source</div><div class="ghg-ead-calc-meta-val">' + esc(d.efSrc) + '</div></div>' +
             '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Gases covered</div><div class="ghg-ead-calc-meta-val">' + d.gases + '</div></div>' +
             '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">GWP Version</div><div class="ghg-ead-calc-meta-val">' + esc(d.gwp) + '</div></div>' +
           '</div>' +
         '</div>' +
       '</div>' +
+      '</div>' +
       '<div class="ghg-ead-divider"></div>' +
-      '<div class="ghg-ead-section-label">Validation</div>' +
       '<div class="ghg-ead-validation">' +
+        '<div class="ghg-ead-section-label">Validation</div>' +
         '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Scope attribution verified</div>' +
         '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> No double-counting detected</div>' +
         '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Boundary: Operational control applied</div>' +
