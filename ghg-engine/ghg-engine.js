@@ -11,8 +11,6 @@
   'use strict';
 
   var esc = window.DomUtils.esc;
-  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
-  function $$(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
 
   /* ==============================================
      DATA
@@ -234,7 +232,7 @@
       '<div style="display:flex;flex-direction:column;gap:16px">' +
         '<div style="display:flex;flex-direction:column;gap:1px"><div class="ghg-ead-pair-label">Calculation method</div>' +
           '<div style="display:flex;gap:16px;align-items:center"><div class="ghg-ead-pair-value" style="flex:1;min-width:0">' + esc(d.method) + '</div>' +
-          '<span class="ghg-scope-chip ghg-scope-chip--' + (d.scopeLabel === 'Scope 1' ? 's1' : d.scopeLabel === 'Scope 2' ? 's2' : 's3') + '" style="width:80px;flex-shrink:0">' + esc(d.scopeLabel) + '</span></div></div>' +
+          '<span class="ghg-scope-chip ghg-scope-chip--' + d.scopeCls + '" style="width:80px;flex-shrink:0">' + esc(d.scopeLabel) + '</span></div></div>' +
         '<div class="ghg-ead-row-pair">' +
           '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">Quality</div><div class="ghg-ead-pair-value">' + esc(d.quality) + '</div></div>' +
           '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">EF Source</div><div class="ghg-ead-pair-value">' + esc(d.efSource) + '</div></div>' +
@@ -273,6 +271,20 @@
         '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> No double-counting detected</div>' +
         '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Boundary: Operational control applied</div>' +
       '</div>';
+  }
+
+  function buildEadTableRows() {
+    return EAD_DATA.map(function (d, i) {
+      return '<tr class="ghg-ead-row' + (i === 0 ? ' ghg-ead-row--selected' : '') + '" data-ead="' + i + '">' +
+        '<td>' + esc(d.entity) + '</td>' +
+        '<td>' + esc(d.activity) + '</td>' +
+        '<td><span class="ghg-scope-chip ghg-scope-chip--' + d.scopeCls + '">' + esc(d.scopeLabel) + '</span></td>' +
+        '<td>' + esc(d.actData) + '</td>' +
+        '<td class="num">' + esc(d.tco2e) + '</td>' +
+        '<td>' + esc(d.efSource) + '</td>' +
+        '<td><span class="ghg-ead-badge ghg-ead-badge--' + d.qualityCls + '">' + esc(d.quality) + '</span></td>' +
+      '</tr>';
+    }).join('');
   }
 
   /* ==============================================
@@ -589,101 +601,13 @@
   function bindGhgEngine(ctx) {
     var breakdownBody = ctx.querySelector('#ghg-breakdown-body') || ctx.querySelector('[data-ghg-breakdown-body]');
     if (breakdownBody) breakdownBody.innerHTML = buildBreakdownHTML();
-
     var lineageBody = ctx.querySelector('#ghg-lineage-body') || ctx.querySelector('[data-ghg-lineage-body]');
     if (lineageBody) lineageBody.innerHTML = buildLineageHTML();
 
-    // View switching (list ↔ results)
-    function switchView(id) {
-      $$(ctx.querySelectorAll ? '.ghg-view' : '.ghg-view', ctx).forEach(function (v) { v.classList.remove('ghg-view--active'); });
-      var views = ctx.querySelectorAll('.ghg-view');
-      views.forEach(function (v) { v.classList.remove('ghg-view--active'); });
-      var target = ctx.querySelector('#ghg-view-' + id) || ctx.querySelector('[data-ghg-view="' + id + '"]');
-      if (target) target.classList.add('ghg-view--active');
-    }
-
-    ctx.querySelectorAll('.ghg-inv-card').forEach(function (card) {
-      card.addEventListener('click', function () { switchView('results'); });
-    });
-
-    ctx.addEventListener('click', function (e) {
-      var backLink = e.target.closest('[data-action="back-to-list"]');
-      if (backLink) { e.preventDefault(); switchView('list'); }
-    });
-
-    // Tabs
-    var statsRowOverview = ctx.querySelector('#ghg-stats-row-overview');
-    var statsRowActivities = ctx.querySelector('#ghg-stats-row-activities');
-    ctx.querySelectorAll('.ghg-tab').forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        var tabId = tab.getAttribute('data-ghg-tab');
-        ctx.querySelectorAll('.ghg-tab').forEach(function (t) { t.classList.remove('ghg-tab--active'); });
-        tab.classList.add('ghg-tab--active');
-        ctx.querySelectorAll('.ghg-tab-content').forEach(function (c) { c.classList.remove('ghg-tab-content--active'); });
-        var target = ctx.querySelector('#ghg-tab-' + tabId) || ctx.querySelector('[data-ghg-tab-content="' + tabId + '"]');
-        if (target) target.classList.add('ghg-tab-content--active');
-        if (statsRowOverview && statsRowActivities) {
-          var isOverview = tabId === 'overview';
-          statsRowOverview.style.display = isOverview ? '' : 'none';
-          statsRowActivities.style.display = isOverview ? 'none' : 'flex';
-        }
-      });
-    });
-
-    // Breakdown group toggle
-    ctx.addEventListener('click', function (e) {
-      var header = e.target.closest('.ghg-group-header');
-      if (!header) return;
-      var gi = header.getAttribute('data-group');
-      var isCollapsed = header.classList.toggle('ghg-collapsed');
-      ctx.querySelectorAll('.ghg-group-child[data-group-parent="' + gi + '"]').forEach(function (row) {
-        row.classList.toggle('ghg-hidden', isCollapsed);
-      });
-    });
-
-    // EAD row selection
-    var eadDetail = ctx.querySelector('[data-ghg-ead-detail]');
-    if (eadDetail) {
-      eadDetail.innerHTML = buildEadDetail(EAD_DATA[0]);
-      ctx.addEventListener('click', function (e) {
-        var row = e.target.closest('.ghg-ead-row');
-        if (!row) return;
-        var idx = parseInt(row.getAttribute('data-ead'), 10);
-        ctx.querySelectorAll('.ghg-ead-row').forEach(function (r) { r.classList.remove('ghg-ead-row--selected'); });
-        row.classList.add('ghg-ead-row--selected');
-        eadDetail.innerHTML = buildEadDetail(EAD_DATA[idx]);
-      });
-    }
-
-    // Lineage expand (accordion)
-    ctx.addEventListener('click', function (e) {
-      var row = e.target.closest('.ghg-expand-row');
-      if (!row) return;
-      var idx = row.getAttribute('data-lineage');
-      var detail = ctx.querySelector('[data-lineage-detail="' + idx + '"]');
-      if (!detail) return;
-      var isExpanded = row.classList.toggle('ghg-expanded');
-      detail.classList.toggle('ghg-expanded-content--open', isExpanded);
-      if (isExpanded) {
-        ctx.querySelectorAll('.ghg-expand-row').forEach(function (other) {
-          if (other !== row && other.classList.contains('ghg-expanded')) {
-            other.classList.remove('ghg-expanded');
-            var oi = other.getAttribute('data-lineage');
-            var od = ctx.querySelector('[data-lineage-detail="' + oi + '"]');
-            if (od) od.classList.remove('ghg-expanded-content--open');
-          }
-        });
-      }
-    });
-
-    // EFA tab — populate table and wire interactivity
     var efaBody = ctx.querySelector('#ghg-efa-tbody');
-    var efaSummary = ctx.querySelector('#ghg-efa-summary');
-    var efaPanel = ctx.querySelector('#ghg-efa-panel');
     var efaActivities = ctx.querySelector('#ghg-efa-activities');
     var efaDetail = ctx.querySelector('#ghg-efa-detail');
     var efaSelectedEntity = -1;
-
     if (efaBody) efaBody.innerHTML = buildEfaTableRows();
 
     function efaReset() {
@@ -695,51 +619,137 @@
       if (layout) { layout.classList.remove('ghg-efa-layout--drilled'); layout.classList.remove('ghg-efa-layout--detail'); }
     }
 
-    function efaShowActivities(entityIdx) {
-      efaSelectedEntity = entityIdx;
-      if (efaActivities) efaActivities.innerHTML = buildEfaActivities(entityIdx);
-      if (efaDetail) efaDetail.innerHTML = '';
-      var layout = ctx.querySelector('.ghg-efa-layout');
-      if (layout) { layout.classList.add('ghg-efa-layout--drilled'); layout.classList.remove('ghg-efa-layout--detail'); }
+    function bindViewSwitching() {
+      function switchView(id) {
+        var views = ctx.querySelectorAll('.ghg-view');
+        views.forEach(function (v) { v.classList.remove('ghg-view--active'); });
+        var target = ctx.querySelector('#ghg-view-' + id) || ctx.querySelector('[data-ghg-view="' + id + '"]');
+        if (target) target.classList.add('ghg-view--active');
+      }
+      ctx.querySelectorAll('.ghg-inv-card').forEach(function (card) {
+        card.addEventListener('click', function () { switchView('results'); });
+      });
+      ctx.addEventListener('click', function (e) {
+        var backLink = e.target.closest('[data-action="back-to-list"]');
+        if (backLink) { e.preventDefault(); switchView('list'); }
+      });
     }
 
-    function efaShowDetail(entityIdx) {
-      if (efaDetail) efaDetail.innerHTML = buildEfaDetail(entityIdx);
-      var layout = ctx.querySelector('.ghg-efa-layout');
-      if (layout) layout.classList.add('ghg-efa-layout--detail');
+    function bindTabs() {
+      var statsRowOverview = ctx.querySelector('#ghg-stats-row-overview');
+      var statsRowActivities = ctx.querySelector('#ghg-stats-row-activities');
+      ctx.querySelectorAll('.ghg-tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var tabId = tab.getAttribute('data-ghg-tab');
+          ctx.querySelectorAll('.ghg-tab').forEach(function (t) { t.classList.remove('ghg-tab--active'); });
+          tab.classList.add('ghg-tab--active');
+          ctx.querySelectorAll('.ghg-tab-content').forEach(function (c) { c.classList.remove('ghg-tab-content--active'); });
+          var target = ctx.querySelector('#ghg-tab-' + tabId) || ctx.querySelector('[data-ghg-tab-content="' + tabId + '"]');
+          if (target) target.classList.add('ghg-tab-content--active');
+          if (statsRowOverview && statsRowActivities) {
+            var isOverview = tabId === 'overview';
+            statsRowOverview.style.display = isOverview ? '' : 'none';
+            statsRowActivities.style.display = isOverview ? 'none' : 'flex';
+          }
+          if (tabId === 'ef-selection') efaReset();
+        });
+      });
     }
 
-    ctx.addEventListener('click', function (e) {
-      var row = e.target.closest('.ghg-efa-row');
-      if (row) {
-        var idx = parseInt(row.getAttribute('data-efa-entity'), 10);
-        ctx.querySelectorAll('.ghg-efa-row').forEach(function (r) { r.classList.remove('ghg-efa-row--selected'); });
-        row.classList.add('ghg-efa-row--selected');
-        efaShowActivities(idx);
-        return;
+    function bindBreakdownToggle() {
+      ctx.addEventListener('click', function (e) {
+        var header = e.target.closest('.ghg-group-header');
+        if (!header) return;
+        var gi = header.getAttribute('data-group');
+        var isCollapsed = header.classList.toggle('ghg-collapsed');
+        ctx.querySelectorAll('.ghg-group-child[data-group-parent="' + gi + '"]').forEach(function (row) {
+          row.classList.toggle('ghg-hidden', isCollapsed);
+        });
+      });
+    }
+
+    function bindEadSelection() {
+      var eadDetail = ctx.querySelector('[data-ghg-ead-detail]');
+      if (eadDetail) {
+        eadDetail.innerHTML = buildEadDetail(EAD_DATA[0]);
+        ctx.addEventListener('click', function (e) {
+          var row = e.target.closest('.ghg-ead-row');
+          if (!row) return;
+          var idx = parseInt(row.getAttribute('data-ead'), 10);
+          ctx.querySelectorAll('.ghg-ead-row').forEach(function (r) { r.classList.remove('ghg-ead-row--selected'); });
+          row.classList.add('ghg-ead-row--selected');
+          eadDetail.innerHTML = buildEadDetail(EAD_DATA[idx]);
+        });
       }
-      var act = e.target.closest('.ghg-efa-act');
-      if (act) {
-        var ei = parseInt(act.getAttribute('data-efa-entity'), 10);
-        efaShowDetail(ei);
-        return;
-      }
-      var back = e.target.closest('[data-action="efa-back"]');
-      if (back) {
-        e.preventDefault();
+    }
+
+    function bindLineageAccordion() {
+      ctx.addEventListener('click', function (e) {
+        var row = e.target.closest('.ghg-expand-row');
+        if (!row) return;
+        var idx = row.getAttribute('data-lineage');
+        var detail = ctx.querySelector('[data-lineage-detail="' + idx + '"]');
+        if (!detail) return;
+        var isExpanded = row.classList.toggle('ghg-expanded');
+        detail.classList.toggle('ghg-expanded-content--open', isExpanded);
+        if (isExpanded) {
+          ctx.querySelectorAll('.ghg-expand-row').forEach(function (other) {
+            if (other !== row && other.classList.contains('ghg-expanded')) {
+              other.classList.remove('ghg-expanded');
+              var oi = other.getAttribute('data-lineage');
+              var od = ctx.querySelector('[data-lineage-detail="' + oi + '"]');
+              if (od) od.classList.remove('ghg-expanded-content--open');
+            }
+          });
+        }
+      });
+    }
+
+    function bindEfaInteractivity() {
+      function efaShowActivities(entityIdx) {
+        efaSelectedEntity = entityIdx;
+        if (efaActivities) efaActivities.innerHTML = buildEfaActivities(entityIdx);
         if (efaDetail) efaDetail.innerHTML = '';
         var layout = ctx.querySelector('.ghg-efa-layout');
-        if (layout) layout.classList.remove('ghg-efa-layout--detail');
-        return;
+        if (layout) { layout.classList.add('ghg-efa-layout--drilled'); layout.classList.remove('ghg-efa-layout--detail'); }
       }
-    });
-
-    // Tab re-click resets EFA
-    ctx.querySelectorAll('.ghg-tab').forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        if (tab.getAttribute('data-ghg-tab') === 'ef-selection') efaReset();
+      function efaShowDetail(entityIdx) {
+        if (efaDetail) efaDetail.innerHTML = buildEfaDetail(entityIdx);
+        var layout = ctx.querySelector('.ghg-efa-layout');
+        if (layout) layout.classList.add('ghg-efa-layout--detail');
+      }
+      ctx.addEventListener('click', function (e) {
+        var row = e.target.closest('.ghg-efa-row');
+        if (row) {
+          var idx = parseInt(row.getAttribute('data-efa-entity'), 10);
+          ctx.querySelectorAll('.ghg-efa-row').forEach(function (r) { r.classList.remove('ghg-efa-row--selected'); });
+          row.classList.add('ghg-efa-row--selected');
+          efaShowActivities(idx);
+          return;
+        }
+        var act = e.target.closest('.ghg-efa-act');
+        if (act) {
+          var ei = parseInt(act.getAttribute('data-efa-entity'), 10);
+          efaShowDetail(ei);
+          return;
+        }
+        var back = e.target.closest('[data-action="efa-back"]');
+        if (back) {
+          e.preventDefault();
+          if (efaDetail) efaDetail.innerHTML = '';
+          var layout = ctx.querySelector('.ghg-efa-layout');
+          if (layout) layout.classList.remove('ghg-efa-layout--detail');
+          return;
+        }
       });
-    });
+    }
+
+    bindViewSwitching();
+    bindTabs();
+    bindBreakdownToggle();
+    bindEadSelection();
+    bindLineageAccordion();
+    bindEfaInteractivity();
   }
 
   window.bindGhgEngine = bindGhgEngine;
@@ -852,17 +862,7 @@
               '<p class="ghg-audit-desc">Complete calculation logs for external auditor verification. Every emission record traces back to source data, emission factor, and methodology.</p>' +
               '<div class="ghg-audit-banner"><i class="fa-solid fa-circle-info"></i><span>Audit-Ready Status: All 628 emission records in this inventory have complete lineage documentation including inputs, conversions, EF source, boundary decisions, and calculation steps.</span></div>' +
               '<div class="ghg-ov-audit-tables">' +
-                '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th>Source</th><th style="width:80px">Version</th><th>Categories covered</th><th class="num" style="width:112px">Records using</th></tr></thead><tbody>' +
-                  '<tr><td>eGRID (EPA)</td><td>2024</td><td>EEIO 2024</td><td class="num">192</td></tr>' +
-                  '<tr><td>EPA GHG Emission Factor Hub</td><td>2024</td><td>Electricity</td><td class="num">144</td></tr>' +
-                  '<tr><td>EEIO (EPA)</td><td>2024</td><td>Electricity</td><td class="num">156</td></tr>' +
-                  '<tr><td>DEFRA</td><td>2024</td><td>Electricity</td><td class="num">136</td></tr>' +
-                '</tbody></table></div>' +
-                '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th style="width:160px">Method</th><th>Description</th><th class="num" style="width:64px">Records</th><th class="num" style="width:88px">% Coverage</th></tr></thead><tbody>' +
-                  '<tr><td>Activity-based</td><td>Activity \u00D7 Emission Factor (measured data)</td><td class="num">336</td><td class="num">53.5%</td></tr>' +
-                  '<tr><td>Spend-based</td><td>Spend \u00D7 EEIO Factor (economic input-output)</td><td class="num">156</td><td class="num">24.8%</td></tr>' +
-                  '<tr><td>Distance-based</td><td>Distance \u00D7 Mode Factor (travel/transport)</td><td class="num">136</td><td class="num">21.7%</td></tr>' +
-                '</tbody></table></div>' +
+                buildAuditTablesHTML() +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -873,31 +873,64 @@
     return (window.ghgOverviewVersion === 'v1') ? getGhgOverviewV1() : getGhgOverviewV2();
   }
 
+  function buildDonutSVG(cls) {
+    return '<svg class="ghg-efa-donut' + (cls ? ' ' + cls : '') + '" viewBox="0 0 164 164">' +
+      '<circle cx="82" cy="82" r="41" fill="none" stroke="#008029" stroke-width="82" stroke-dasharray="247.75 257.61" transform="rotate(-90 82 82)"/>' +
+      '<circle cx="82" cy="82" r="41" fill="none" stroke="#d4790a" stroke-width="82" stroke-dasharray="3.16 257.61" stroke-dashoffset="-247.75" transform="rotate(-90 82 82)"/>' +
+      '<circle cx="82" cy="82" r="41" fill="none" stroke="#d42a1a" stroke-width="82" stroke-dasharray="6.70 257.61" stroke-dashoffset="-250.91" transform="rotate(-90 82 82)"/>' +
+    '</svg>';
+  }
+
+  var METRICS_ASSIGN = [
+    { icon: 'fa-circle-check', cls: 'ghg-efa-mi--green', val: '1,206,234', label: 'Records assigned with EF' },
+    { icon: 'fa-circle-exclamation', cls: 'ghg-efa-mi--amber', val: '15,402', label: 'Assignment needing review' },
+    { icon: 'fa-triangle-exclamation', cls: 'ghg-efa-mi--red', val: '32,598', label: 'Unassigned records' }
+  ];
+  var METRICS_ISSUES = [
+    { icon: 'fa-bullseye', cls: 'ghg-efa-mi--grey', val: '6,283', label: 'Low specificity' },
+    { icon: 'fa-location-dot', cls: 'ghg-efa-mi--grey', val: '5,230', label: 'Geographic mismatch' },
+    { icon: 'fa-clock', cls: 'ghg-efa-mi--grey', val: '3,890', label: 'Outdated factors' }
+  ];
+  var METRICS_QUALITY = [
+    { icon: 'fa-bullseye', cls: 'ghg-efa-mi--grey', val: '76.4', label: 'Average specifity score' },
+    { icon: 'fa-location-dot', cls: 'ghg-efa-mi--grey', val: '84.2%', label: 'Geographic match rate' },
+    { icon: 'fa-clock', cls: 'ghg-efa-mi--grey', val: '92.1%', label: 'Data freshness' },
+    { icon: 'fa-pen', cls: 'ghg-efa-mi--grey', val: '0.11%', label: 'Manual override rate' }
+  ];
+
+  function buildMetricsBlock(items) {
+    return '<div class="ghg-efa-metrics">' + items.map(function (m) {
+      return '<div class="ghg-efa-metric"><i class="fa-solid ' + m.icon + ' ' + m.cls + '"></i><span class="ghg-efa-mv">' + m.val + '</span><span class="ghg-efa-ml">' + m.label + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  function buildAuditTablesHTML() {
+    return '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th>Source</th><th style="width:80px">Version</th><th>Categories covered</th><th class="num" style="width:112px">Records using</th></tr></thead><tbody>' +
+      '<tr><td>eGRID (EPA)</td><td>2024</td><td>EEIO 2024</td><td class="num">192</td></tr>' +
+      '<tr><td>EPA GHG Emission Factor Hub</td><td>2024</td><td>Electricity</td><td class="num">144</td></tr>' +
+      '<tr><td>EEIO (EPA)</td><td>2024</td><td>Electricity</td><td class="num">156</td></tr>' +
+      '<tr><td>DEFRA</td><td>2024</td><td>Electricity</td><td class="num">136</td></tr>' +
+      '</tbody></table></div>' +
+      '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th style="width:160px">Method</th><th>Description</th><th class="num" style="width:64px">Records</th><th class="num" style="width:88px">% Coverage</th></tr></thead><tbody>' +
+      '<tr><td>Activity-based</td><td>Activity \u00D7 Emission Factor (measured data)</td><td class="num">336</td><td class="num">53.5%</td></tr>' +
+      '<tr><td>Spend-based</td><td>Spend \u00D7 EEIO Factor (economic input-output)</td><td class="num">156</td><td class="num">24.8%</td></tr>' +
+      '<tr><td>Distance-based</td><td>Distance \u00D7 Mode Factor (travel/transport)</td><td class="num">136</td><td class="num">21.7%</td></tr>' +
+      '</tbody></table></div>';
+  }
+
   function getGhgEfaDonutBlockHTML() {
     return '' +
       '<div class="ghg-efa-donut-area">' +
-        '<svg class="ghg-efa-donut" viewBox="0 0 164 164">' +
-          '<circle cx="82" cy="82" r="41" fill="none" stroke="#008029" stroke-width="82" stroke-dasharray="247.75 257.61" transform="rotate(-90 82 82)"/>' +
-          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d4790a" stroke-width="82" stroke-dasharray="3.16 257.61" stroke-dashoffset="-247.75" transform="rotate(-90 82 82)"/>' +
-          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d42a1a" stroke-width="82" stroke-dasharray="6.70 257.61" stroke-dashoffset="-250.91" transform="rotate(-90 82 82)"/>' +
-        '</svg>' +
+        buildDonutSVG() +
         '<div class="ghg-efa-donut-text"><span class="ghg-efa-donut-pct">87 <span>%</span></span><span class="ghg-efa-donut-label">Records assigned<br>with EF</span></div>' +
       '</div>' +
-      '<div class="ghg-efa-metrics">' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-check ghg-efa-mi--green"></i><span class="ghg-efa-mv">1,206,234</span><span class="ghg-efa-ml">Records assigned with EF</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-exclamation ghg-efa-mi--amber"></i><span class="ghg-efa-mv">15,402</span><span class="ghg-efa-ml">Assignment needing review</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-triangle-exclamation ghg-efa-mi--red"></i><span class="ghg-efa-mv">32,598</span><span class="ghg-efa-ml">Unassigned records</span></div>' +
-      '</div>';
+      buildMetricsBlock(METRICS_ASSIGN);
   }
 
   function getGhgEfaDonutOnlyHTML() {
     return '' +
       '<div class="ghg-qsb-kpi-donut">' +
-        '<svg class="ghg-efa-donut ghg-efa-donut--strip" viewBox="0 0 164 164">' +
-          '<circle cx="82" cy="82" r="41" fill="none" stroke="#008029" stroke-width="82" stroke-dasharray="247.75 257.61" transform="rotate(-90 82 82)"/>' +
-          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d4790a" stroke-width="82" stroke-dasharray="3.16 257.61" stroke-dashoffset="-247.75" transform="rotate(-90 82 82)"/>' +
-          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d42a1a" stroke-width="82" stroke-dasharray="6.70 257.61" stroke-dashoffset="-250.91" transform="rotate(-90 82 82)"/>' +
-        '</svg>' +
+        buildDonutSVG('ghg-efa-donut--strip') +
         '<div class="ghg-qsb-kpi-donut-text">' +
           '<div class="ghg-qsb-kpi-value-row"><span class="ghg-qsb-kpi-value">87</span><span class="ghg-qsb-kpi-uom">%</span></div>' +
           '<p class="ghg-qsb-kpi-donut-label">Records assigned with EF</p>' +
@@ -906,31 +939,15 @@
   }
 
   function getGhgEfaAssignmentMetricsHTML() {
-    return '' +
-      '<div class="ghg-efa-metrics">' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-check ghg-efa-mi--green"></i><span class="ghg-efa-mv">1,206,234</span><span class="ghg-efa-ml">Records assigned with EF</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-exclamation ghg-efa-mi--amber"></i><span class="ghg-efa-mv">15,402</span><span class="ghg-efa-ml">Assignment needing review</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-triangle-exclamation ghg-efa-mi--red"></i><span class="ghg-efa-mv">32,598</span><span class="ghg-efa-ml">Unassigned records</span></div>' +
-      '</div>';
+    return buildMetricsBlock(METRICS_ASSIGN);
   }
 
   function getGhgEfaIssuesBlockHTML() {
-    return '' +
-      '<div class="ghg-efa-metrics">' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-bullseye ghg-efa-mi--grey"></i><span class="ghg-efa-mv">6,283</span><span class="ghg-efa-ml">Low specificity</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-location-dot ghg-efa-mi--grey"></i><span class="ghg-efa-mv">5,230</span><span class="ghg-efa-ml">Geographic mismatch</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-clock ghg-efa-mi--grey"></i><span class="ghg-efa-mv">3,890</span><span class="ghg-efa-ml">Outdated factors</span></div>' +
-      '</div>';
+    return buildMetricsBlock(METRICS_ISSUES);
   }
 
   function getGhgEfaQualityBlockHTML() {
-    return '' +
-      '<div class="ghg-efa-metrics">' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-bullseye ghg-efa-mi--grey"></i><span class="ghg-efa-mv">76.4</span><span class="ghg-efa-ml">Average specifity score</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-location-dot ghg-efa-mi--grey"></i><span class="ghg-efa-mv">84.2%</span><span class="ghg-efa-ml">Geographic match rate</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-clock ghg-efa-mi--grey"></i><span class="ghg-efa-mv">92.1%</span><span class="ghg-efa-ml">Data freshness</span></div>' +
-        '<div class="ghg-efa-metric"><i class="fa-solid fa-pen ghg-efa-mi--grey"></i><span class="ghg-efa-mv">0.11%</span><span class="ghg-efa-ml">Manual override rate</span></div>' +
-      '</div>';
+    return buildMetricsBlock(METRICS_QUALITY);
   }
 
   function getGhgEfaSummaryInnerHTML() {
@@ -954,7 +971,7 @@
       '</div>';
   }
 
-  function getGhgHTML() {
+  function buildListViewHTML() {
     return '' +
     '<div id="ghg-view-list" class="ghg-view ghg-view--active">' +
       '<div class="ghg-page-header pt-stagger-item"><div class="ghg-page-header-left">' +
@@ -969,8 +986,11 @@
         '<div class="ghg-inv-card" data-inv="q3-2025"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--locked"><i class="fa-solid fa-lock"></i></div><div><h3 class="ghg-inv-title">Q3 2025 Corporate Inventory</h3><div class="ghg-inv-meta">Jul 1 \u2013 Sep 30, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">987.3</div><div class="ghg-inv-stat-label">tCO\u2082e Total</div></div><span class="ghg-badge ghg-badge--success"><i class="fa-solid fa-lock"></i> Locked</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
         '<div class="ghg-inv-card" data-inv="draft"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--draft"><i class="fa-solid fa-pencil"></i></div><div><h3 class="ghg-inv-title">FY 2025 Annual Report</h3><div class="ghg-inv-meta">Jan 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">\u2014</div><div class="ghg-inv-stat-label">Not calculated</div></div><span class="ghg-badge ghg-badge--warning"><i class="fa-solid fa-clock"></i> Draft</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
       '</div>' +
-    '</div>' +
-    '<div id="ghg-view-results" class="ghg-view">' +
+    '</div>';
+  }
+
+  function buildStatsRowHTML() {
+    return '' +
       '<div class="ghg-stats-row-wrap">' +
         '<div class="ghg-stats-row ghg-stats-row--overview pt-stagger-item" id="ghg-stats-row-overview">' +
           '<div class="ghg-stat-card ghg-stat-card--wide">' +
@@ -1014,67 +1034,42 @@
           '</div>' +
           '<div class="ghg-qsb-kpi-wrap">' + getGhgEfaKpiStripCardHTML() + '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
-        '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">' + (window.ghgOverviewVersion === 'v1' ? 'Overview' : 'Overview and audit trail') + '</button>' +
-        '<button class="ghg-tab" data-ghg-tab="breakdown">Entities and activities details</button>' +
-        '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors assignment</button>' +
-        '<button class="ghg-tab" data-ghg-tab="lineage"' + (window.ghgOverviewVersion === 'v1' ? '' : ' style="display:none"') + '>Audit trail and traceability</button></div>' +
-      getGhgOverviewTabHTML() +
+      '</div>';
+  }
+
+  function buildEadTabHTML() {
+    return '' +
       '<div class="ghg-tab-content" id="ghg-tab-breakdown">' +
         '<div class="ghg-ead-layout">' +
           '<div class="ghg-ead-table-wrap">' +
             '<table class="ghg-ov-table ghg-ead-table"><thead><tr>' +
               '<th>Entities</th><th>Activities</th><th>Scope</th><th>Activity data</th><th class="num">tCO\u2082e</th><th>EF Source</th><th>Quality</th>' +
             '</tr></thead><tbody data-ghg-ead-body>' +
-              '<tr class="ghg-ead-row ghg-ead-row--selected" data-ead="0"><td>All Entities</td><td>Purchased Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$2.4M</td><td class="num">412.0</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="1"><td>Manufacturing</td><td>Electricity</td><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td>890.0k kWh</td><td class="num">323.9</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="2"><td>All Entities</td><td>Purchased Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$1.8M</td><td class="num">309.0</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="3"><td>All Entities</td><td>Use of Products</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$1.5M</td><td class="num">255.0</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--low">Low</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="4"><td>Manufacturing</td><td>Natural Gas</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>45.0k therms</td><td class="num">238.9</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="5"><td>Manufacturing</td><td>Capital Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$1.2M</td><td class="num">285.2</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="6"><td>Manufacturing</td><td>Refrigerants</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>125 kg</td><td class="num">156.3</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="7"><td>HQ Building</td><td>Capital Goods</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$850k</td><td class="num">145.2</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="8"><td>Distribution</td><td>Fleet Vehicles</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>15.2k gallons</td><td class="num">135.1</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="9"><td>Distribution</td><td>Processing of Products</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$650k</td><td class="num">110.5</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="10"><td>Manufacturing</td><td>Refrigerants</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>85 kg</td><td class="num">106.3</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="11"><td>All Entities</td><td>Upstream Transport</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>320.0k ton-miles</td><td class="num">89.6</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="12"><td>HQ Building</td><td>Electricity</td><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td>245.0k kWh</td><td class="num">89.2</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="13"><td>All Entities</td><td>Franchises</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$450k</td><td class="num">76.5</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--low">Low</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="14"><td>Distribution</td><td>Waste Disposal</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>450 tons</td><td class="num">67.2</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="15"><td>HQ Building</td><td>Natural Gas</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>12.4k therms</td><td class="num">66.1</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="16"><td>Distribution</td><td>Investments</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>$320k</td><td class="num">54.4</td><td>EEIO 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--low">Low</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="17"><td>Distribution</td><td>Downstream Transport</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>180.0k ton-miles</td><td class="num">50.4</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="18"><td>Manufacturing</td><td>Waste Disposal</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>320 tons</td><td class="num">47.7</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--medium">Medium</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="19"><td>Distribution</td><td>Electricity</td><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td>125.0k kWh</td><td class="num">45.5</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="20"><td>HQ Building</td><td>Upstream Leased Assets</td><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td>125.0k kWh</td><td class="num">45.5</td><td>eGRID 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
-              '<tr class="ghg-ead-row" data-ead="21"><td>Distribution</td><td>Natural Gas</td><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td>8.5k therms</td><td class="num">45.1</td><td>EPA 2024</td><td><span class="ghg-ead-badge ghg-ead-badge--high">High</span></td></tr>' +
+              buildEadTableRows() +
             '</tbody></table>' +
           '</div>' +
           '<div class="ghg-ead-detail" data-ghg-ead-detail>' +
             '<div class="ghg-ead-detail-placeholder">Select a row to view lineage details</div>' +
           '</div>' +
-        '</div></div>' +
+        '</div></div>';
+  }
+
+  function buildLineageTabHTML() {
+    return '' +
       '<div class="ghg-tab-content" id="ghg-tab-lineage">' +
         '<div class="ghg-audit-content">' +
           '<p class="ghg-audit-title">Audit trail and traceability</p>' +
           '<p class="ghg-audit-desc">Complete calculation logs for external auditor verification. Every emission record traces back to source data, emission factor, and methodology.</p>' +
           '<div class="ghg-audit-banner"><i class="fa-solid fa-circle-info"></i><span>Audit-Ready Status: All 628 emission records in this inventory have complete lineage documentation including inputs, conversions, EF source, boundary decisions, and calculation steps.</span></div>' +
           '<div class="ghg-audit-tables">' +
-            '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th>Source</th><th style="width:80px">Version</th><th>Categories covered</th><th class="num" style="width:112px">Records using</th></tr></thead><tbody>' +
-              '<tr><td>eGRID (EPA)</td><td>2024</td><td>EEIO 2024</td><td class="num">192</td></tr>' +
-              '<tr><td>EPA GHG Emission Factor Hub</td><td>2024</td><td>Electricity</td><td class="num">144</td></tr>' +
-              '<tr><td>EEIO (EPA)</td><td>2024</td><td>Electricity</td><td class="num">156</td></tr>' +
-              '<tr><td>DEFRA</td><td>2024</td><td>Electricity</td><td class="num">136</td></tr>' +
-            '</tbody></table></div>' +
-            '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th style="width:160px">Method</th><th>Description</th><th class="num" style="width:64px">Records</th><th class="num" style="width:88px">% Coverage</th></tr></thead><tbody>' +
-              '<tr><td>Activity-based</td><td>Activity \u00D7 Emission Factor (measured data)</td><td class="num">336</td><td class="num">53.5%</td></tr>' +
-              '<tr><td>Spend-based</td><td>Spend \u00D7 EEIO Factor (economic input-output)</td><td class="num">156</td><td class="num">24.8%</td></tr>' +
-              '<tr><td>Distance-based</td><td>Distance \u00D7 Mode Factor (travel/transport)</td><td class="num">136</td><td class="num">21.7%</td></tr>' +
-            '</tbody></table></div>' +
+            buildAuditTablesHTML() +
           '</div>' +
         '</div>' +
-      '</div>' +
+      '</div>';
+  }
+
+  function buildEfaTabHTML() {
+    return '' +
       '<div class="ghg-tab-content" id="ghg-tab-ef-selection">' +
         '<div class="ghg-efa-layout">' +
           '<div class="ghg-efa-summary" id="ghg-efa-summary">' + getGhgEfaSummaryInnerHTML() + '</div>' +
@@ -1087,7 +1082,24 @@
             '<div class="ghg-efa-panel-detail" id="ghg-efa-detail"></div>' +
           '</div>' +
         '</div>' +
-      '</div></div>' +
+      '</div>';
+  }
+
+  function getGhgHTML() {
+    return '' +
+    buildListViewHTML() +
+    '<div id="ghg-view-results" class="ghg-view">' +
+      buildStatsRowHTML() +
+      '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
+        '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">' + (window.ghgOverviewVersion === 'v1' ? 'Overview' : 'Overview and audit trail') + '</button>' +
+        '<button class="ghg-tab" data-ghg-tab="breakdown">Entities and activities details</button>' +
+        '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors assignment</button>' +
+        '<button class="ghg-tab" data-ghg-tab="lineage"' + (window.ghgOverviewVersion === 'v1' ? '' : ' style="display:none"') + '>Audit trail and traceability</button></div>' +
+      getGhgOverviewTabHTML() +
+      buildEadTabHTML() +
+      buildLineageTabHTML() +
+      buildEfaTabHTML() +
+      '</div>' +
     '</div>';
   }
 
