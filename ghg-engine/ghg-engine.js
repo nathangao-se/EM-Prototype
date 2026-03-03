@@ -87,7 +87,7 @@
 
   var EAD_DATA = [
     { entity: 'All Entities', activity: 'Purchased Goods', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '$2.4M', tco2e: '412.0', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '$2.4M', tco2e: '412.0', efSource: 'EEIO 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Spend-based', breadcrumb: ['All Entities', 'Purchased Goods', 'Scope 3'],
       result: '412.0', resultUnit: 'kg tCO\u2082e',
       input: '$2.4M', period: 'Oct-Dec 2025', dataSource: 'API/Procurement', specificity: '62/100',
@@ -99,7 +99,7 @@
       input: '890.0k kWh', period: 'Oct-Dec 2025', dataSource: 'Smart Meter', specificity: '88/100',
       efVal: '0.364', efUnit: 'kg tCO\u2082e/kWh', efSrc: 'eGRID 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
     { entity: 'All Entities', activity: 'Purchased Goods', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '$1.8M', tco2e: '309.0', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '$1.8M', tco2e: '309.0', efSource: 'EEIO 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Spend-based', breadcrumb: ['All Entities', 'Purchased Goods', 'Scope 3'],
       result: '309.0', resultUnit: 'kg tCO\u2082e',
       input: '$1.8M', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '54/100',
@@ -117,7 +117,7 @@
       input: '45.0k therms', period: 'Oct-Dec 2025', dataSource: 'Utility Bills', specificity: '90/100',
       efVal: '5.311', efUnit: 'kg tCO\u2082e/therm', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
     { entity: 'Manufacturing', activity: 'Capital Goods', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '$1.2M', tco2e: '285.2', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '$1.2M', tco2e: '285.2', efSource: 'EEIO 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Spend-based', breadcrumb: ['Manufacturing', 'Capital Goods', 'Scope 3'],
       result: '285.2', resultUnit: 'kg tCO\u2082e',
       input: '$1.2M', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '50/100',
@@ -129,7 +129,7 @@
       input: '125 kg', period: 'Oct-Dec 2025', dataSource: 'Maintenance Logs', specificity: '85/100',
       efVal: '1.250', efUnit: 'kg tCO\u2082e/kg', efSrc: 'EPA 2024', gases: 'HFCs', gwp: 'AR5 (100-year)' },
     { entity: 'HQ Building', activity: 'Capital Goods', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '$850k', tco2e: '145.2', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '$850k', tco2e: '145.2', efSource: 'EEIO 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Spend-based', breadcrumb: ['HQ Building', 'Capital Goods', 'Scope 3'],
       result: '145.2', resultUnit: 'kg tCO\u2082e',
       input: '$850k', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '48/100',
@@ -141,7 +141,7 @@
       input: '15.2k gallons', period: 'Oct-Dec 2025', dataSource: 'Fleet Management', specificity: '92/100',
       efVal: '8.887', efUnit: 'kg tCO\u2082e/gal', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
     { entity: 'Distribution', activity: 'Processing of Products', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '$650k', tco2e: '110.5', efSource: 'EEIO 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '$650k', tco2e: '110.5', efSource: 'EEIO 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Spend-based', breadcrumb: ['Distribution', 'Processing of Products', 'Scope 3'],
       result: '110.5', resultUnit: 'kg tCO\u2082e',
       input: '$650k', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '46/100',
@@ -153,7 +153,7 @@
       input: '85 kg', period: 'Oct-Dec 2025', dataSource: 'Maintenance Logs', specificity: '85/100',
       efVal: '1.250', efUnit: 'kg tCO\u2082e/kg', efSrc: 'EPA 2024', gases: 'HFCs', gwp: 'AR5 (100-year)' },
     { entity: 'All Entities', activity: 'Upstream Transport', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '320.0k ton-miles', tco2e: '89.6', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '320.0k ton-miles', tco2e: '89.6', efSource: 'EPA 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Activity-based', breadcrumb: ['All Entities', 'Upstream Transport', 'Scope 3'],
       result: '89.6', resultUnit: 'kg tCO\u2082e',
       input: '320.0k ton-miles', period: 'Oct-Dec 2025', dataSource: 'Logistics System', specificity: '60/100',
@@ -171,7 +171,7 @@
       input: '$450k', period: 'Oct-Dec 2025', dataSource: 'ERP System', specificity: '35/100',
       efVal: '0.170', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
     { entity: 'Distribution', activity: 'Waste Disposal', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '450 tons', tco2e: '67.2', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '450 tons', tco2e: '67.2', efSource: 'EPA 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Activity-based', breadcrumb: ['Distribution', 'Waste Disposal', 'Scope 3'],
       result: '67.2', resultUnit: 'kg tCO\u2082e',
       input: '450 tons', period: 'Oct-Dec 2025', dataSource: 'Waste Hauler', specificity: '65/100',
@@ -189,13 +189,13 @@
       input: '$320k', period: 'Oct-Dec 2025', dataSource: 'Financial System', specificity: '30/100',
       efVal: '0.170', efUnit: 'kg tCO\u2082e', efSrc: 'EEIO 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
     { entity: 'Distribution', activity: 'Downstream Transport', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '180.0k ton-miles', tco2e: '50.4', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '180.0k ton-miles', tco2e: '50.4', efSource: 'EPA 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Activity-based', breadcrumb: ['Distribution', 'Downstream Transport', 'Scope 3'],
       result: '50.4', resultUnit: 'kg tCO\u2082e',
       input: '180.0k ton-miles', period: 'Oct-Dec 2025', dataSource: 'Logistics System', specificity: '58/100',
       efVal: '0.000280', efUnit: 'kg tCO\u2082e/ton-mi', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' },
     { entity: 'Manufacturing', activity: 'Waste Disposal', scope: 'Scope 3', scopeCls: 's3',
-      scopeLabel: 'Scope 3', actData: '320 tons', tco2e: '47.7', efSource: 'EPA 2024', quality: 'Medium', qualityCls: 'medium',
+      scopeLabel: 'Scope 3', actData: '320 tons', tco2e: '47.7', efSource: 'EPA 2024', quality: 'Med', qualityCls: 'medium',
       method: 'Activity-based', breadcrumb: ['Manufacturing', 'Waste Disposal', 'Scope 3'],
       result: '47.7', resultUnit: 'kg tCO\u2082e',
       input: '320 tons', period: 'Oct-Dec 2025', dataSource: 'Waste Hauler', specificity: '65/100',
@@ -220,66 +220,154 @@
       efVal: '5.311', efUnit: 'kg tCO\u2082e/therm', efSrc: 'EPA 2024', gases: 'CO\u2082, CH\u2084, N\u2082O', gwp: 'AR5 (100-year)' }
   ];
 
+
+  function buildEadAnalysis(d) {
+    var act = d.activity, ent = d.entity, m = d.method, scope = d.scopeLabel;
+    var actId = act.replace(/ /g, '_').replace(/-/g, '_');
+    if (m === 'Spend-based') actId = 'EEIO_' + actId;
+    else if (act.indexOf('Electricity') >= 0) actId = 'Grid_Electricity';
+    else if (act.indexOf('Natural Gas') >= 0) actId = 'Fuel_NatGas_Stationary';
+    else if (act.indexOf('Fleet') >= 0) actId = 'Fuel_Diesel_Mobile';
+    else if (act.indexOf('Refrigerant') >= 0) actId = 'Fugitive_HFC';
+    else if (act.indexOf('Waste') >= 0) actId = 'Waste_' + actId;
+    else if (act.indexOf('Transport') >= 0 || act.indexOf('Downstream') >= 0) actId = 'Transport_' + actId;
+
+    var scopeSuffix = scope.indexOf('1') >= 0 ? ' - Direct' : scope.indexOf('2') >= 0 ? ' - Indirect' : ' - Value Chain';
+    var stage1 = [['Raw activity label', act], ['Sanitized value', d.input], ['EF_ActivityID', actId], ['Scope', scope + scopeSuffix]];
+
+    var factor, lifecycle;
+    if (m === 'Spend-based') { factor = 'EEIO - ' + act; lifecycle = 'Cradle-to-gate'; }
+    else if (act.indexOf('Electricity') >= 0) { factor = ent + ' Grid Average'; lifecycle = 'Generation + T&D'; }
+    else if (act.indexOf('Natural Gas') >= 0) { factor = 'Natural Gas - Pipeline'; lifecycle = 'WTT + TTW combined'; }
+    else if (act.indexOf('Fleet') >= 0) { factor = 'Diesel - Mobile Sources'; lifecycle = 'WTT + TTW combined'; }
+    else if (act.indexOf('Refrigerant') >= 0) { factor = 'HFC Blend - Industrial'; lifecycle = 'Direct emissions (GWP-weighted)'; }
+    else if (act.indexOf('Waste') >= 0) { factor = 'Mixed Waste - Landfill'; lifecycle = 'Decomposition + transport'; }
+    else if (act.indexOf('Transport') >= 0 || act.indexOf('Downstream') >= 0) { factor = 'Road Freight - Average'; lifecycle = 'WTT + TTW combined'; }
+    else if (act.indexOf('Leased') >= 0) { factor = 'Leased Assets - Energy'; lifecycle = 'Generation + T&D'; }
+    else { factor = act + ' Factor'; lifecycle = 'Full lifecycle'; }
+    var stage2 = [['Selected Factor', factor], ['Dataset Source', d.efSrc], ['Emission Factor', d.efVal + ' ' + d.efUnit], ['Lifecycle', lifecycle]];
+
+    var rank = m === 'Activity-based' ? '2/5' : '4/5';
+    var rationale = [{ icon: 'check', text: m + ' data path', note: 'rank ' + rank + ' per method' }];
+    if (d.efSrc.indexOf('2024') >= 0) rationale.push({ icon: 'check', text: '2024 dataset', note: 'current year match' });
+    else if (d.efSrc.indexOf('2023') >= 0) rationale.push({ icon: 'warn', text: '2023 dataset', note: '2024 available' });
+    return { stage1: stage1, stage2: stage2, rationale: rationale };
+  }
+
   function buildEadDetail(d) {
-    return '' +
-      '<div style="display:flex;flex-direction:column;gap:8px">' +
-        '<div class="ghg-ead-section-label">Lineage, methodology, and decisions</div>' +
-        '<div class="ghg-ead-breadcrumb">' + d.breadcrumb.map(function (b, i) {
-          return (i > 0 ? '<span class="ghg-ead-arrow"><i class="fa-solid fa-arrow-right" style="font-size:10px"></i></span>' : '') + '<span class="ghg-ead-crumb">' + esc(b) + '</span>';
-        }).join('') + '</div>' +
-      '</div>' +
-      '<div class="ghg-ead-divider"></div>' +
-      '<div style="display:flex;flex-direction:column;gap:16px">' +
-        '<div style="display:flex;flex-direction:column;gap:1px"><div class="ghg-ead-pair-label">Calculation method</div>' +
-          '<div style="display:flex;gap:16px;align-items:center"><div class="ghg-ead-pair-value" style="flex:1;min-width:0">' + esc(d.method) + '</div>' +
-          '<span class="ghg-scope-chip ghg-scope-chip--' + d.scopeCls + '" style="width:80px;flex-shrink:0">' + esc(d.scopeLabel) + '</span></div></div>' +
-        '<div class="ghg-ead-row-pair">' +
-          '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">Quality</div><div class="ghg-ead-pair-value">' + esc(d.quality) + '</div></div>' +
-          '<div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ghg-ead-pair-label">EF Source</div><div class="ghg-ead-pair-value">' + esc(d.efSource) + '</div></div>' +
+    var a = buildEadAnalysis(d);
+    var specNum = parseInt(d.specificity, 10) || 50;
+
+    var header =
+      '<div class="ghg-ead-detail-header">' +
+        '<div class="ghg-ead-detail-title">' + esc(d.activity) + '</div>' +
+        '<div class="ghg-ead-detail-meta">' +
+          '<span>' + esc(d.entity) + '</span>' +
+          '<span>' + esc(d.method) + '</span>' +
+          '<span>' + esc(d.period) + '</span>' +
+          '<span class="ghg-scope-chip ghg-scope-chip--' + d.scopeCls + '">' + esc(d.scopeLabel) + '</span>' +
         '</div>' +
-      '</div>' +
-      '<div class="ghg-ead-divider"></div>' +
-      '<div style="display:flex;flex-direction:column;gap:8px">' +
-        '<div class="ghg-ead-section-label">Calculations</div>' +
-        '<div class="ghg-ead-calc-result"><div class="ghg-ead-calc-result-label">Final result</div><div class="ghg-ead-calc-result-val">' + esc(d.result) + ' <span>' + d.resultUnit + '</span></div></div>' +
-      '<div class="ghg-ead-details-card">' +
-        '<div class="ghg-ead-details-top">' +
-          '<div class="ghg-ead-details-top-col"><div class="ghg-ead-details-top-label">Input</div><div class="ghg-ead-details-top-val">' + esc(d.input) + '</div></div>' +
-          '<div class="ghg-ead-details-top-vdiv"></div>' +
-          '<div class="ghg-ead-details-top-col"><div class="ghg-ead-details-top-label">Emissions factors</div><div class="ghg-ead-details-top-val">' + esc(d.efVal) + ' <span>' + d.efUnit + '</span></div></div>' +
-          '<div class="ghg-ead-details-multiply"><i class="fa-solid fa-xmark"></i></div>' +
-        '</div>' +
-        '<div class="ghg-ead-details-bottom">' +
-          '<div class="ghg-ead-details-col">' +
-            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Period</div><div class="ghg-ead-calc-meta-val">' + esc(d.period) + '</div></div>' +
-            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Data source</div><div class="ghg-ead-calc-meta-val">' + esc(d.dataSource) + '</div></div>' +
-            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Specificity score</div><div class="ghg-ead-calc-meta-val">' + esc(d.specificity) + '</div></div>' +
-          '</div>' +
-          '<div class="ghg-ead-details-vdiv"></div>' +
-          '<div class="ghg-ead-details-col">' +
-            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Source</div><div class="ghg-ead-calc-meta-val">' + esc(d.efSrc) + '</div></div>' +
-            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Gases covered</div><div class="ghg-ead-calc-meta-val">' + d.gases + '</div></div>' +
-            '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">GWP Version</div><div class="ghg-ead-calc-meta-val">' + esc(d.gwp) + '</div></div>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-      '</div>' +
-      '<div class="ghg-ead-divider"></div>' +
-      '<div class="ghg-ead-validation">' +
-        '<div class="ghg-ead-section-label">Validation</div>' +
-        '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Scope attribution verified</div>' +
-        '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> No double-counting detected</div>' +
-        '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Boundary: Operational control applied</div>' +
+        '<div class="ghg-ead-detail-file">' + esc(d.dataSource) + '</div>' +
       '</div>';
+
+    var toggle =
+      '<div class="ghg-ead-toggle">' +
+        '<span class="ghg-ead-toggle-label">Go to:</span>' +
+        '<div class="ghg-ead-toggle-bar">' +
+          '<button class="ghg-ead-toggle-seg ghg-ead-toggle-seg--active" data-ead-section="calc">Calculations</button>' +
+          '<button class="ghg-ead-toggle-seg" data-ead-section="analysis">Emissions analysis</button>' +
+        '</div>' +
+      '</div>';
+
+    var calcSection =
+      '<div class="ghg-ead-section ghg-ead-section--calc">' +
+        '<div class="ghg-ead-section-title">Calculations</div>' +
+        '<div class="ghg-ead-calc-result"><div class="ghg-ead-calc-result-label">Final result</div><div class="ghg-ead-calc-result-val">' + esc(d.result) + ' <span>' + d.resultUnit + '</span></div></div>' +
+        '<div class="ghg-ead-details-card">' +
+          '<div class="ghg-ead-details-top">' +
+            '<div class="ghg-ead-details-top-col"><div class="ghg-ead-details-top-label">Input</div><div class="ghg-ead-details-top-val">' + esc(d.input) + '</div></div>' +
+            '<div class="ghg-ead-details-top-vdiv"></div>' +
+            '<div class="ghg-ead-details-top-col"><div class="ghg-ead-details-top-label">Emissions factors</div><div class="ghg-ead-details-top-val">' + esc(d.efVal) + ' <span>' + d.efUnit + '</span></div></div>' +
+            '<div class="ghg-ead-details-multiply"><i class="fa-solid fa-xmark"></i></div>' +
+          '</div>' +
+          '<div class="ghg-ead-details-bottom">' +
+            '<div class="ghg-ead-details-col">' +
+              '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Period</div><div class="ghg-ead-calc-meta-val">' + esc(d.period) + '</div></div>' +
+              '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Data source</div><div class="ghg-ead-calc-meta-val">' + esc(d.dataSource) + '</div></div>' +
+              '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Specificity score</div><div class="ghg-ead-calc-meta-val">' + esc(d.specificity) + '</div></div>' +
+            '</div>' +
+            '<div class="ghg-ead-details-vdiv"></div>' +
+            '<div class="ghg-ead-details-col">' +
+              '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Source</div><div class="ghg-ead-calc-meta-val">' + esc(d.efSrc) + '</div></div>' +
+              '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">Gases covered</div><div class="ghg-ead-calc-meta-val">' + d.gases + '</div></div>' +
+              '<div class="ghg-ead-calc-meta"><div class="ghg-ead-calc-meta-label">GWP Version</div><div class="ghg-ead-calc-meta-val">' + esc(d.gwp) + '</div></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ghg-ead-grey-card">' +
+          '<div class="ghg-ead-calc-method">' +
+            '<div class="ghg-ead-pair-label">Calculation method</div>' +
+            '<div class="ghg-ead-calc-method-row"><span class="ghg-ead-pair-value">' + esc(d.method) + '</span><span class="ghg-scope-chip ghg-scope-chip--' + d.scopeCls + '">' + esc(d.scopeLabel) + '</span></div>' +
+          '</div>' +
+          '<div class="ghg-ead-row-pair">' +
+            '<div class="ghg-ead-pair-col"><div class="ghg-ead-pair-label">Quality</div><div class="ghg-ead-pair-value">' + esc(d.quality) + '</div></div>' +
+            '<div class="ghg-ead-pair-col"><div class="ghg-ead-pair-label">EF Source</div><div class="ghg-ead-pair-value">' + esc(d.efSource) + '</div></div>' +
+          '</div>' +
+          '<div class="ghg-ead-grey-card-divider"></div>' +
+          '<div class="ghg-ead-pair-label">Validation</div>' +
+          '<div class="ghg-ead-validation">' +
+            '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Scope attribution verified</div>' +
+            '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> No double-counting detected</div>' +
+            '<div class="ghg-ead-vcheck"><i class="fa-solid fa-circle-check"></i> Boundary: Operational control applied</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    var stageRows = function (rows) {
+      return rows.map(function (r) {
+        return '<div class="ghg-efa-stage-row"><span class="ghg-efa-stage-key">' + esc(r[0]) + '</span><span class="ghg-efa-stage-val">' + esc(r[1]) + '</span></div>';
+      }).join('');
+    };
+
+    var rationaleItems = a.rationale.map(function (r) {
+      var ic = r.icon === 'check' ? 'fa-circle-check ghg-efa-mi--green' : 'fa-circle-exclamation ghg-efa-mi--amber';
+      return '<div class="ghg-efa-rationale-item"><i class="fa-solid ' + ic + '"></i><span><strong>' + esc(r.text) + '</strong> <span class="ghg-efa-rationale-note">(' + esc(r.note) + ')</span></span></div>';
+    }).join('');
+
+    var analysisSection =
+      '<div class="ghg-ead-section ghg-ead-section--analysis ghg-ead-section--hidden">' +
+        '<div class="ghg-ead-section-title">Emissions analysis</div>' +
+        '<div class="ghg-ead-spec-card">' +
+          '<div class="ghg-ead-spec-row">' +
+            '<span class="ghg-ead-pair-label">Specificity score</span>' +
+            '<span class="ghg-ead-detail-audit"><i class="fa-solid fa-magnifying-glass"></i> Audit trail</span>' +
+          '</div>' +
+          '<div class="ghg-ead-spec-progress"><div class="ghg-ead-spec-progress-bar"><div class="ghg-ead-spec-progress-fill" style="width:' + specNum + '%"></div></div><span class="ghg-ead-spec-progress-val">' + esc(d.specificity) + '</span></div>' +
+        '</div>' +
+        '<div class="ghg-efa-stage ghg-efa-stage--grey">' +
+          '<div class="ghg-efa-stage-header"><span class="ghg-efa-stage-title">Stage 1: Classification</span><span class="ghg-efa-stage-chip">Activity \u2192 Activity_ID</span></div>' +
+          stageRows(a.stage1) +
+        '</div>' +
+        '<div class="ghg-efa-stage ghg-efa-stage--grey">' +
+          '<div class="ghg-efa-stage-header"><span class="ghg-efa-stage-title">Stage 2: EF Selection</span><span class="ghg-efa-stage-chip">System - Selected</span></div>' +
+          stageRows(a.stage2) +
+        '</div>' +
+        '<div class="ghg-ead-grey-card">' +
+          '<div class="ghg-efa-rationale-label">Rationale</div>' +
+          rationaleItems +
+        '</div>' +
+      '</div>';
+
+    return header + toggle +
+      '<div class="ghg-ead-detail-body">' + calcSection + analysisSection + '</div>';
   }
 
   function buildEadTableRows() {
     return EAD_DATA.map(function (d, i) {
       return '<tr class="ghg-ead-row' + (i === 0 ? ' ghg-ead-row--selected' : '') + '" data-ead="' + i + '">' +
-        '<td>' + esc(d.entity) + '</td>' +
         '<td>' + esc(d.activity) + '</td>' +
+        '<td>' + esc(d.entity) + '</td>' +
         '<td><span class="ghg-scope-chip ghg-scope-chip--' + d.scopeCls + '">' + esc(d.scopeLabel) + '</span></td>' +
-        '<td>' + esc(d.actData) + '</td>' +
         '<td class="num">' + esc(d.tco2e) + '</td>' +
         '<td>' + esc(d.efSource) + '</td>' +
         '<td><span class="ghg-ead-badge ghg-ead-badge--' + d.qualityCls + '">' + esc(d.quality) + '</span></td>' +
@@ -604,20 +692,7 @@
     var lineageBody = ctx.querySelector('#ghg-lineage-body') || ctx.querySelector('[data-ghg-lineage-body]');
     if (lineageBody) lineageBody.innerHTML = buildLineageHTML();
 
-    var efaBody = ctx.querySelector('#ghg-efa-tbody');
-    var efaActivities = ctx.querySelector('#ghg-efa-activities');
-    var efaDetail = ctx.querySelector('#ghg-efa-detail');
-    var efaSelectedEntity = -1;
-    if (efaBody) efaBody.innerHTML = buildEfaTableRows();
-
-    function efaReset() {
-      efaSelectedEntity = -1;
-      if (efaActivities) efaActivities.innerHTML = '';
-      if (efaDetail) efaDetail.innerHTML = '';
-      ctx.querySelectorAll('.ghg-efa-row').forEach(function (r) { r.classList.remove('ghg-efa-row--selected'); });
-      var layout = ctx.querySelector('.ghg-efa-layout');
-      if (layout) { layout.classList.remove('ghg-efa-layout--drilled'); layout.classList.remove('ghg-efa-layout--detail'); }
-    }
+    function efaReset() {}
 
     function bindViewSwitching() {
       function switchView(id) {
@@ -648,8 +723,8 @@
           if (target) target.classList.add('ghg-tab-content--active');
           if (statsRowOverview && statsRowActivities) {
             var isOverview = tabId === 'overview';
-            statsRowOverview.style.display = isOverview ? '' : 'none';
-            statsRowActivities.style.display = isOverview ? 'none' : 'flex';
+            statsRowOverview.classList.toggle('ghg-stats-row--hidden', !isOverview);
+            statsRowActivities.classList.toggle('ghg-stats-row--hidden', isOverview);
           }
           if (tabId === 'ef-selection') efaReset();
         });
@@ -673,12 +748,194 @@
       if (eadDetail) {
         eadDetail.innerHTML = buildEadDetail(EAD_DATA[0]);
         ctx.addEventListener('click', function (e) {
+          var seg = e.target.closest('.ghg-ead-toggle-seg');
+          if (seg) {
+            var bar = seg.closest('.ghg-ead-toggle-bar');
+            if (bar) {
+              bar.querySelectorAll('.ghg-ead-toggle-seg').forEach(function (s) { s.classList.remove('ghg-ead-toggle-seg--active'); });
+              seg.classList.add('ghg-ead-toggle-seg--active');
+              var section = seg.getAttribute('data-ead-section');
+              var body = seg.closest('.ghg-ead-detail').querySelector('.ghg-ead-detail-body');
+              if (body) {
+                body.querySelector('.ghg-ead-section--calc').classList.toggle('ghg-ead-section--hidden', section !== 'calc');
+                body.querySelector('.ghg-ead-section--analysis').classList.toggle('ghg-ead-section--hidden', section !== 'analysis');
+              }
+            }
+            return;
+          }
           var row = e.target.closest('.ghg-ead-row');
           if (!row) return;
           var idx = parseInt(row.getAttribute('data-ead'), 10);
           ctx.querySelectorAll('.ghg-ead-row').forEach(function (r) { r.classList.remove('ghg-ead-row--selected'); });
           row.classList.add('ghg-ead-row--selected');
           eadDetail.innerHTML = buildEadDetail(EAD_DATA[idx]);
+        });
+      }
+    }
+
+    function bindEadFilters() {
+      var trigger = ctx.querySelector('[data-ghg-entity-trigger]');
+      var searchInput = ctx.querySelector('[data-ghg-ead-search]');
+      if (!trigger) return;
+
+      var activePopover = null;
+
+      function closePopover() {
+        if (activePopover) { activePopover.remove(); activePopover = null; }
+      }
+
+      function applyEntityFilter() {
+        if (!activePopover) return;
+        var panel = activePopover.querySelector('[data-ep-panel="entities"]');
+        if (!panel) return;
+        var checked = {};
+        panel.querySelectorAll('[data-ep-leaf]').forEach(function (cb) {
+          if (cb.checked) checked[cb.getAttribute('data-ep-leaf')] = true;
+        });
+        var allLeaves = panel.querySelectorAll('[data-ep-leaf]');
+        var allChecked = Object.keys(checked).length === allLeaves.length;
+        ctx.querySelectorAll('.ghg-ead-row').forEach(function (tr) {
+          var idx = parseInt(tr.getAttribute('data-ead'), 10);
+          var d = EAD_DATA[idx];
+          if (d) tr.style.display = (allChecked || checked[d.entity]) ? '' : 'none';
+        });
+        var trigText = ctx.querySelector('.ghg-ead-entity-trigger-text');
+        if (trigText) {
+          var cnt = Object.keys(checked).length;
+          trigText.innerHTML = 'Showing activities for <strong>' + cnt + ' entit' + (cnt === 1 ? 'y' : 'ies') + '</strong>';
+        }
+      }
+
+      function applyEfFilter() {
+        if (!activePopover) return;
+        var panel = activePopover.querySelector('[data-ep-panel="factors"]');
+        if (!panel) return;
+        var checked = {};
+        panel.querySelectorAll('[data-ep-leaf]').forEach(function (cb) {
+          if (cb.checked) checked[cb.getAttribute('data-ep-leaf')] = true;
+        });
+        var allLeaves = panel.querySelectorAll('[data-ep-leaf]');
+        var allChecked = Object.keys(checked).length === allLeaves.length;
+        ctx.querySelectorAll('.ghg-ead-row').forEach(function (tr) {
+          var idx = parseInt(tr.getAttribute('data-ead'), 10);
+          var d = EAD_DATA[idx];
+          if (!d) return;
+          if (allChecked) { tr.style.display = ''; return; }
+          var matchesAny = false;
+          EF_TREE.forEach(function (efSet) {
+            efSet.children.forEach(function (f) {
+              if (checked[f.name] && d.efSrc === (efSet.set.indexOf('eGRID') >= 0 ? 'eGRID ' + efSet.year : efSet.set.indexOf('USEEIO') >= 0 ? 'EEIO ' + efSet.year : 'EPA ' + efSet.year)) {
+                matchesAny = true;
+              }
+            });
+          });
+          tr.style.display = matchesAny ? '' : 'none';
+        });
+      }
+
+      function bindPanelEvents(popEl) {
+        popEl.addEventListener('click', function (e) {
+          var chevron = e.target.closest('[data-ep-toggle]');
+          if (chevron) {
+            e.stopPropagation();
+            var key = chevron.getAttribute('data-ep-toggle');
+            var children = popEl.querySelector('[data-ep-children="' + key + '"]');
+            if (children) {
+              var hidden = children.classList.toggle('ghg-ep-tree-children--hidden');
+              chevron.classList.toggle('ghg-ep-tree-chevron--collapsed', hidden);
+            }
+            return;
+          }
+        });
+
+        popEl.addEventListener('change', function (e) {
+          var cb = e.target;
+          if (!cb.classList.contains('ghg-ep-cb')) return;
+          var groupKey = cb.getAttribute('data-ep-group');
+          if (groupKey) {
+            var children = popEl.querySelector('[data-ep-children="' + groupKey + '"]');
+            if (children) {
+              children.querySelectorAll('.ghg-ep-cb').forEach(function (child) { child.checked = cb.checked; });
+            }
+          }
+          var activePanel = popEl.querySelector('.ghg-ep-panel:not(.ghg-ep-panel--hidden)');
+          if (activePanel && activePanel.getAttribute('data-ep-panel') === 'factors') {
+            applyEfFilter();
+          } else {
+            applyEntityFilter();
+          }
+        });
+
+        popEl.querySelectorAll('[data-ghg-ep-search]').forEach(function (epSearch) {
+          epSearch.addEventListener('input', function () {
+            var panel = epSearch.closest('.ghg-ep-panel');
+            if (!panel) return;
+            var q = epSearch.value.toLowerCase();
+            panel.querySelectorAll('.ghg-ep-tree-row').forEach(function (row) {
+              var name = row.querySelector('.ghg-ep-tree-name');
+              if (!name) return;
+              var text = name.textContent.toLowerCase();
+              row.style.display = (!q || text.indexOf(q) >= 0) ? '' : 'none';
+            });
+            panel.querySelectorAll('.ghg-ep-tree-children').forEach(function (ch) {
+              if (!q) { ch.classList.remove('ghg-ep-tree-children--hidden'); return; }
+              var hasVisible = false;
+              ch.querySelectorAll(':scope > .ghg-ep-tree-row').forEach(function (r) {
+                if (r.style.display !== 'none') hasVisible = true;
+              });
+              ch.querySelectorAll(':scope > .ghg-ep-tree-children').forEach(function (nested) {
+                if (nested.querySelector('.ghg-ep-tree-row:not([style*="display: none"])')) hasVisible = true;
+              });
+              if (!hasVisible) ch.classList.add('ghg-ep-tree-children--hidden');
+            });
+          });
+        });
+      }
+
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (activePopover) { closePopover(); return; }
+        var pop = document.createElement('div');
+        pop.innerHTML = buildEntityPopoverHTML();
+        var popEl = pop.firstChild;
+        var rect = trigger.getBoundingClientRect();
+        popEl.style.position = 'fixed';
+        popEl.style.top = (rect.bottom + 4) + 'px';
+        popEl.style.left = rect.left + 'px';
+        popEl.style.zIndex = '9999';
+        document.body.appendChild(popEl);
+        activePopover = popEl;
+
+        popEl.querySelector('[data-ghg-ep-close]').addEventListener('click', function () { closePopover(); });
+
+        popEl.querySelectorAll('.ghg-ep-seg').forEach(function (seg) {
+          seg.addEventListener('click', function () {
+            popEl.querySelectorAll('.ghg-ep-seg').forEach(function (s) { s.classList.remove('ghg-ep-seg--active'); });
+            seg.classList.add('ghg-ep-seg--active');
+            var mode = seg.getAttribute('data-ep-mode');
+            popEl.querySelectorAll('.ghg-ep-panel').forEach(function (p) {
+              p.classList.toggle('ghg-ep-panel--hidden', p.getAttribute('data-ep-panel') !== mode);
+            });
+          });
+        });
+
+        bindPanelEvents(popEl);
+      });
+
+      document.addEventListener('click', function (e) {
+        if (activePopover && !activePopover.contains(e.target) && !trigger.contains(e.target)) {
+          closePopover();
+        }
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          var q = searchInput.value.toLowerCase();
+          ctx.querySelectorAll('.ghg-ead-row').forEach(function (tr) {
+            if (!q) { tr.style.display = ''; return; }
+            var text = tr.textContent.toLowerCase();
+            tr.style.display = text.indexOf(q) >= 0 ? '' : 'none';
+          });
         });
       }
     }
@@ -705,42 +962,57 @@
       });
     }
 
-    function bindEfaInteractivity() {
-      function efaShowActivities(entityIdx) {
-        efaSelectedEntity = entityIdx;
-        if (efaActivities) efaActivities.innerHTML = buildEfaActivities(entityIdx);
-        if (efaDetail) efaDetail.innerHTML = '';
-        var layout = ctx.querySelector('.ghg-efa-layout');
-        if (layout) { layout.classList.add('ghg-efa-layout--drilled'); layout.classList.remove('ghg-efa-layout--detail'); }
+    function bindTreeWrap(wrap) {
+      wrap.addEventListener('click', function (e) {
+        var chevron = e.target.closest('[data-ep-toggle]');
+        if (chevron) {
+          e.stopPropagation();
+          var key = chevron.getAttribute('data-ep-toggle');
+          var children = wrap.querySelector('[data-ep-children="' + key + '"]');
+          if (children) {
+            var hidden = children.classList.toggle('ghg-ep-tree-children--hidden');
+            chevron.classList.toggle('ghg-ep-tree-chevron--collapsed', hidden);
+          }
+        }
+      });
+
+      wrap.addEventListener('change', function (e) {
+        var cb = e.target;
+        if (!cb.classList.contains('ghg-ep-cb')) return;
+        var groupKey = cb.getAttribute('data-ep-group');
+        if (groupKey) {
+          var children = wrap.querySelector('[data-ep-children="' + groupKey + '"]');
+          if (children) {
+            children.querySelectorAll('.ghg-ep-cb').forEach(function (child) { child.checked = cb.checked; });
+          }
+        }
+      });
+
+      var searchEl = wrap.querySelector('.ghg-ep-search');
+      if (searchEl) {
+        searchEl.addEventListener('input', function () {
+          var q = searchEl.value.toLowerCase();
+          wrap.querySelectorAll('.ghg-ep-tree-row').forEach(function (row) {
+            var name = row.querySelector('.ghg-ep-tree-name');
+            if (!name) return;
+            var text = name.textContent.toLowerCase();
+            row.style.display = (!q || text.indexOf(q) >= 0) ? '' : 'none';
+          });
+          wrap.querySelectorAll('.ghg-ep-tree-children').forEach(function (ch) {
+            if (!q) { ch.classList.remove('ghg-ep-tree-children--hidden'); return; }
+            var hasVisible = false;
+            ch.querySelectorAll(':scope > .ghg-ep-tree-row').forEach(function (r) {
+              if (r.style.display !== 'none') hasVisible = true;
+            });
+            if (!hasVisible) ch.classList.add('ghg-ep-tree-children--hidden');
+          });
+        });
       }
-      function efaShowDetail(entityIdx) {
-        if (efaDetail) efaDetail.innerHTML = buildEfaDetail(entityIdx);
-        var layout = ctx.querySelector('.ghg-efa-layout');
-        if (layout) layout.classList.add('ghg-efa-layout--detail');
-      }
-      ctx.addEventListener('click', function (e) {
-        var row = e.target.closest('.ghg-efa-row');
-        if (row) {
-          var idx = parseInt(row.getAttribute('data-efa-entity'), 10);
-          ctx.querySelectorAll('.ghg-efa-row').forEach(function (r) { r.classList.remove('ghg-efa-row--selected'); });
-          row.classList.add('ghg-efa-row--selected');
-          efaShowActivities(idx);
-          return;
-        }
-        var act = e.target.closest('.ghg-efa-act');
-        if (act) {
-          var ei = parseInt(act.getAttribute('data-efa-entity'), 10);
-          efaShowDetail(ei);
-          return;
-        }
-        var back = e.target.closest('[data-action="efa-back"]');
-        if (back) {
-          e.preventDefault();
-          if (efaDetail) efaDetail.innerHTML = '';
-          var layout = ctx.querySelector('.ghg-efa-layout');
-          if (layout) layout.classList.remove('ghg-efa-layout--detail');
-          return;
-        }
+    }
+
+    function bindTreeTabs() {
+      ctx.querySelectorAll('.ghg-eft-wrap').forEach(function (wrap) {
+        bindTreeWrap(wrap);
       });
     }
 
@@ -748,8 +1020,9 @@
     bindTabs();
     bindBreakdownToggle();
     bindEadSelection();
+    bindEadFilters();
     bindLineageAccordion();
-    bindEfaInteractivity();
+    bindTreeTabs();
   }
 
   window.bindGhgEngine = bindGhgEngine;
@@ -1015,7 +1288,7 @@
             '<div class="ghg-stat-note">Accounts for <strong>RECs and supplier contracts</strong></div>' +
           '</div>' +
         '</div>' +
-        '<div class="ghg-stats-row ghg-stats-row--activities pt-stagger-item" id="ghg-stats-row-activities" style="display:none">' +
+        '<div class="ghg-stats-row ghg-stats-row--activities ghg-stats-row--hidden pt-stagger-item" id="ghg-stats-row-activities">' +
           '<div class="ghg-stat-card ghg-stat-card--wide ghg-stat-card--activities-left" data-node-id="794:173132">' +
             '<div class="ghg-stat-label">Total emissions</div>' +
             '<div class="ghg-stat-value ghg-stat-value--xl">1,061.9 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
@@ -1037,13 +1310,252 @@
       '</div>';
   }
 
+  var ENTITY_TREE = [
+    { region: 'Americas', children: [
+      { type: 'Offices', children: [
+        { name: 'HQ Building', activities: 5, records: 364, coverage: 72, issue: 'med' },
+        { name: 'Distribution', activities: 6, records: 233, coverage: 65, issue: 'low' }
+      ]},
+      { type: 'Warehouses', children: [
+        { name: 'Manufacturing', activities: 4, records: 692, coverage: 78, issue: 'low' }
+      ]},
+      { type: 'Factories', children: [] }
+    ]},
+    { region: 'EMEA', children: [
+      { type: 'Offices', children: [] },
+      { type: 'Warehouses', children: [] }
+    ]},
+    { region: 'APAC', children: [
+      { type: 'Offices', children: [] },
+      { type: 'Factories', children: [] }
+    ]}
+  ];
+
+  var EF_TREE = [
+    { set: 'EPA GHG Emission Factors Hub', year: 2024, children: [
+      { name: 'Natural Gas Combustion \u2013 Stationary', ef: '5.311 kg CO\u2082e/therm', activities: 3 },
+      { name: 'Motor Gasoline \u2013 Mobile Sources', ef: '8.887 kg CO\u2082e/gal', activities: 1 },
+      { name: 'HFC Blend \u2013 Refrigeration/AC', ef: '1,250 kg CO\u2082e/kg', activities: 2 },
+      { name: 'Mixed MSW \u2013 Landfill', ef: '0.149 kg CO\u2082e/ton', activities: 2 },
+      { name: 'Freight Truck \u2013 Average', ef: '0.280 g CO\u2082e/ton-mi', activities: 2 }
+    ]},
+    { set: 'EPA eGRID', year: 2024, children: [
+      { name: 'US Average Grid Mix', ef: '0.364 kg CO\u2082e/kWh', activities: 4 }
+    ]},
+    { set: 'USEEIO v2.0 (EEIO)', year: 2024, children: [
+      { name: 'Purchased Goods & Services', ef: '0.172 kg CO\u2082e/$', activities: 2 },
+      { name: 'Capital Goods \u2013 Manufacturing', ef: '0.238 kg CO\u2082e/$', activities: 1 },
+      { name: 'Capital Goods \u2013 Commercial Buildings', ef: '0.171 kg CO\u2082e/$', activities: 1 },
+      { name: 'Use of Sold Products', ef: '0.170 kg CO\u2082e/$', activities: 1 },
+      { name: 'Processing of Sold Products', ef: '0.170 kg CO\u2082e/$', activities: 1 },
+      { name: 'Franchises \u2013 Average', ef: '0.170 kg CO\u2082e/$', activities: 1 },
+      { name: 'Investments \u2013 Financial Assets', ef: '0.170 kg CO\u2082e/$', activities: 1 }
+    ]}
+  ];
+
+  function getEntityTreeTotals(region) {
+    var acts = 0, recs = 0, leaves = 0;
+    region.children.forEach(function (t) {
+      t.children.forEach(function (e) { acts += e.activities; recs += e.records; leaves++; });
+    });
+    return { activities: acts, records: recs, leaves: leaves };
+  }
+
+  function getTypeTotals(type) {
+    var acts = 0, recs = 0;
+    type.children.forEach(function (e) { acts += e.activities; recs += e.records; });
+    return { activities: acts, records: recs };
+  }
+
+  function getUniqueEntities() {
+    var list = [], seen = {};
+    EAD_DATA.forEach(function (d) {
+      if (!seen[d.entity]) {
+        seen[d.entity] = true;
+        var count = 0;
+        EAD_DATA.forEach(function (dd) { if (dd.entity === d.entity) count++; });
+        list.push({ name: d.entity, activities: count });
+      }
+    });
+    return list;
+  }
+
+  function covBarHTML(pct) {
+    return '<div class="ghg-ep-tree-cov"><div class="ghg-ep-cov-bar"><div class="ghg-ep-cov-fill" style="width:' + pct + '%"></div></div><span class="ghg-ep-cov-val">' + pct + '%</span></div>';
+  }
+
+  function issueChipHTML(level) {
+    if (!level) return '<div class="ghg-ep-tree-issue"></div>';
+    var cls = level === 'high' ? 'ghg-ep-issue-chip--high' : level === 'med' ? 'ghg-ep-issue-chip--med' : 'ghg-ep-issue-chip--low';
+    var label = level === 'high' ? 'High' : level === 'med' ? 'Med' : 'Low';
+    return '<div class="ghg-ep-tree-issue"><span class="ghg-ep-issue-chip ' + cls + '">' + label + '</span></div>';
+  }
+
+  function buildEadFilterBarHTML() {
+    var entityCount = getUniqueEntities().length;
+    return '<div class="ghg-ead-filter-bar">' +
+      '<button class="ghg-ead-entity-trigger" data-ghg-entity-trigger>' +
+        '<span class="ghg-ead-entity-trigger-text">Showing activities for <strong>' + entityCount + ' entities</strong></span>' +
+        '<i class="fa-solid fa-chevron-down"></i>' +
+      '</button>' +
+      '<div class="ghg-ead-search-wrap">' +
+        '<i class="fa-solid fa-magnifying-glass"></i>' +
+        '<input type="text" class="ghg-ead-search" placeholder="Search business entity" data-ghg-ead-search />' +
+      '</div>' +
+      '<button class="ghg-ead-filter-btn">' +
+        '<i class="fa-solid fa-filter"></i><span>Filters</span>' +
+        '<span class="ghg-ead-filter-badge">2</span>' +
+      '</button></div>';
+  }
+
+  function buildEntityTreeHTML() {
+    var html = '';
+    ENTITY_TREE.forEach(function (region, ri) {
+      var rt = getEntityTreeTotals(region);
+      var regionLeafCount = rt.leaves;
+      if (ri > 0) html += '<div class="ghg-ep-region-sep"></div>';
+      html += '<div class="ghg-ep-tree-row" data-ep-region="' + ri + '">' +
+        '<div class="ghg-ep-tree-main">' +
+          '<span class="ghg-ep-tree-chevron" data-ep-toggle="region-' + ri + '"><i class="fa-solid fa-chevron-down"></i></span>' +
+          '<input type="checkbox" class="ghg-ep-cb" data-ep-group="region-' + ri + '" checked />' +
+          '<span class="ghg-ep-tree-name">' + esc(region.region) + ' <span class="ghg-ep-tree-name-count">(0/' + regionLeafCount + ')</span></span>' +
+        '</div>' +
+        '<div class="ghg-ep-tree-cell">' + rt.activities + '</div>' +
+        '<div class="ghg-ep-tree-cell">' + rt.records.toLocaleString() + '</div>' +
+        covBarHTML(50) +
+        issueChipHTML('low') +
+      '</div>';
+      html += '<div class="ghg-ep-tree-children" data-ep-children="region-' + ri + '">';
+      region.children.forEach(function (type, ti) {
+        var tt = getTypeTotals(type);
+        var isLast = ti === region.children.length - 1;
+        html += '<div class="ghg-ep-tree-row" data-ep-type="' + ri + '-' + ti + '">' +
+          '<div class="ghg-ep-tree-indent">' +
+            '<div class="ghg-ep-tree-line ' + (isLast ? 'ghg-ep-tree-line--hook' : 'ghg-ep-tree-line--branch') + '"></div>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-main">' +
+            (type.children.length > 0
+              ? '<span class="ghg-ep-tree-chevron" data-ep-toggle="type-' + ri + '-' + ti + '"><i class="fa-solid fa-chevron-down"></i></span>'
+              : '<span class="ghg-ep-tree-chevron ghg-ep-tree-chevron--leaf"></span>') +
+            '<input type="checkbox" class="ghg-ep-cb" data-ep-group="type-' + ri + '-' + ti + '" checked />' +
+            '<span class="ghg-ep-tree-name">' + esc(type.type) + ' <span class="ghg-ep-tree-name-count">(0/' + type.children.length + ')</span></span>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-cell">' + (tt.activities || '') + '</div>' +
+          '<div class="ghg-ep-tree-cell">' + (tt.records ? tt.records.toLocaleString() : '') + '</div>' +
+          covBarHTML(50) +
+          issueChipHTML('low') +
+        '</div>';
+        if (type.children.length > 0) {
+          html += '<div class="ghg-ep-tree-children" data-ep-children="type-' + ri + '-' + ti + '">';
+          type.children.forEach(function (entity, ei) {
+            var isLastEntity = ei === type.children.length - 1;
+            html += '<div class="ghg-ep-tree-row" data-ep-entity="' + esc(entity.name) + '">' +
+              '<div class="ghg-ep-tree-indent">' +
+                '<div class="ghg-ep-tree-line ' + (isLast ? '' : 'ghg-ep-tree-line--vert') + '"></div>' +
+                '<div class="ghg-ep-tree-line ' + (isLastEntity ? 'ghg-ep-tree-line--hook' : 'ghg-ep-tree-line--branch') + '"></div>' +
+              '</div>' +
+              '<div class="ghg-ep-tree-main">' +
+                '<span class="ghg-ep-tree-chevron ghg-ep-tree-chevron--leaf"></span>' +
+                '<input type="checkbox" class="ghg-ep-cb" data-ep-leaf="' + esc(entity.name) + '" checked />' +
+                '<span class="ghg-ep-tree-name">' + esc(entity.name) + '</span>' +
+              '</div>' +
+              '<div class="ghg-ep-tree-cell">' + entity.activities + '</div>' +
+              '<div class="ghg-ep-tree-cell">' + entity.records.toLocaleString() + '</div>' +
+              covBarHTML(entity.coverage) +
+              issueChipHTML(entity.issue) +
+            '</div>';
+          });
+          html += '</div>';
+        }
+      });
+      html += '</div>';
+    });
+    return html;
+  }
+
+  function buildEfTreeHTML() {
+    var html = '';
+    EF_TREE.forEach(function (efSet, si) {
+      var totalActs = 0;
+      efSet.children.forEach(function (f) { totalActs += f.activities; });
+      if (si > 0) html += '<div class="ghg-ep-region-sep"></div>';
+      html += '<div class="ghg-ep-tree-row">' +
+        '<div class="ghg-ep-tree-main">' +
+          '<span class="ghg-ep-tree-chevron" data-ep-toggle="efset-' + si + '"><i class="fa-solid fa-chevron-down"></i></span>' +
+          '<input type="checkbox" class="ghg-ep-cb" data-ep-group="efset-' + si + '" checked />' +
+          '<span class="ghg-ep-tree-name">' + esc(efSet.set) + ' <span class="ghg-ep-tree-name-count">(' + efSet.year + ')</span></span>' +
+        '</div>' +
+        '<div class="ghg-ep-tree-cell ghg-ep-tree-cell--ef-val"></div>' +
+        '<div class="ghg-ep-tree-cell">' + totalActs + '</div>' +
+      '</div>';
+      html += '<div class="ghg-ep-tree-children" data-ep-children="efset-' + si + '">';
+      efSet.children.forEach(function (factor, fi) {
+        var isLast = fi === efSet.children.length - 1;
+        html += '<div class="ghg-ep-tree-row">' +
+          '<div class="ghg-ep-tree-indent">' +
+            '<div class="ghg-ep-tree-line ' + (isLast ? 'ghg-ep-tree-line--hook' : 'ghg-ep-tree-line--branch') + '"></div>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-main">' +
+            '<span class="ghg-ep-tree-chevron ghg-ep-tree-chevron--leaf"></span>' +
+            '<input type="checkbox" class="ghg-ep-cb" data-ep-leaf="' + esc(factor.name) + '" checked />' +
+            '<span class="ghg-ep-tree-name">' + esc(factor.name) + '</span>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-cell ghg-ep-tree-cell--ef-val">' + esc(factor.ef) + '</div>' +
+          '<div class="ghg-ep-tree-cell">' + factor.activities + '</div>' +
+        '</div>';
+      });
+      html += '</div>';
+    });
+    return html;
+  }
+
+  function buildEntityPopoverHTML() {
+    return '<div class="ghg-entity-popover" data-ghg-entity-popover>' +
+      '<div class="ghg-ep-header">' +
+        '<span class="ghg-ep-header-label">Display activities by:</span>' +
+        '<div class="ghg-ep-seg-bar">' +
+          '<button class="ghg-ep-seg ghg-ep-seg--active" data-ep-mode="entities">Entities</button>' +
+          '<button class="ghg-ep-seg" data-ep-mode="factors">Emissions factors</button>' +
+        '</div>' +
+        '<button class="ghg-ep-close" data-ghg-ep-close><i class="fa-solid fa-xmark"></i></button>' +
+      '</div>' +
+      '<div class="ghg-ep-panel" data-ep-panel="entities">' +
+        '<div class="ghg-ep-body">' +
+          '<span class="ghg-ep-search-label">Filter for specific entities</span>' +
+          '<input type="text" class="ghg-ep-search" placeholder="" data-ghg-ep-search />' +
+          '<div class="ghg-ep-col-header">' +
+            '<span class="ghg-ep-col ghg-ep-col--entity">Entities</span>' +
+            '<span class="ghg-ep-col ghg-ep-col--num">Activities</span>' +
+            '<span class="ghg-ep-col ghg-ep-col--num">Records</span>' +
+            '<span class="ghg-ep-col ghg-ep-col--cov">EF Coverage</span>' +
+            '<span class="ghg-ep-col ghg-ep-col--issues">Issues</span>' +
+          '</div>' +
+          '<div class="ghg-ep-list" data-ghg-ep-list>' + buildEntityTreeHTML() + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ghg-ep-panel ghg-ep-panel--hidden" data-ep-panel="factors">' +
+        '<div class="ghg-ep-body">' +
+          '<span class="ghg-ep-search-label">Filter for specific emission factors</span>' +
+          '<input type="text" class="ghg-ep-search" placeholder="" data-ghg-ep-search />' +
+          '<div class="ghg-ep-col-header">' +
+            '<span class="ghg-ep-col ghg-ep-col--entity">Emission Factor Sets</span>' +
+            '<span class="ghg-ep-col ghg-ep-col--ef-val">EF Value</span>' +
+            '<span class="ghg-ep-col ghg-ep-col--num">Activities</span>' +
+          '</div>' +
+          '<div class="ghg-ep-list" data-ghg-ep-list>' + buildEfTreeHTML() + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
   function buildEadTabHTML() {
     return '' +
       '<div class="ghg-tab-content" id="ghg-tab-breakdown">' +
         '<div class="ghg-ead-layout">' +
           '<div class="ghg-ead-table-wrap">' +
+            buildEadFilterBarHTML() +
             '<table class="ghg-ov-table ghg-ead-table"><thead><tr>' +
-              '<th>Entities</th><th>Activities</th><th>Scope</th><th>Activity data</th><th class="num">tCO\u2082e</th><th>EF Source</th><th>Quality</th>' +
+              '<th>Activities</th><th>Entities</th><th>Scope</th><th class="num">tCO\u2082e</th><th>EF Source</th><th>Quality</th>' +
             '</tr></thead><tbody data-ghg-ead-body>' +
               buildEadTableRows() +
             '</tbody></table>' +
@@ -1071,15 +1583,36 @@
   function buildEfaTabHTML() {
     return '' +
       '<div class="ghg-tab-content" id="ghg-tab-ef-selection">' +
-        '<div class="ghg-efa-layout">' +
-          '<div class="ghg-efa-summary" id="ghg-efa-summary">' + getGhgEfaSummaryInnerHTML() + '</div>' +
-          '<div class="ghg-efa-table-wrap" id="ghg-efa-table-wrap">' +
-            '<table class="ghg-ov-table ghg-efa-table"><thead><tr><th>Entities</th><th>Region</th><th>Type</th><th class="num" style="width:64px">Activity</th><th class="num" style="width:88px">Records</th><th style="width:200px">Successful EF Coverage</th><th>Prominent issues</th></tr></thead>' +
-            '<tbody id="ghg-efa-tbody"></tbody></table>' +
+        '<div class="ghg-eft-card">' +
+          '<div class="ghg-eft-wrap">' +
+            '<span class="ghg-ep-search-label">Filter for specific emission factors</span>' +
+            '<input type="text" class="ghg-ep-search" placeholder="" data-ghg-eft-search />' +
+            '<div class="ghg-ep-col-header">' +
+              '<span class="ghg-ep-col ghg-ep-col--entity">Emission Factor Sets</span>' +
+              '<span class="ghg-ep-col ghg-ep-col--ef-val">EF Value</span>' +
+              '<span class="ghg-ep-col ghg-ep-col--num">Activities</span>' +
+            '</div>' +
+            '<div class="ghg-ep-list ghg-eft-list" data-ghg-eft-list>' + buildEfTreeHTML() + '</div>' +
           '</div>' +
-          '<div class="ghg-efa-panel" id="ghg-efa-panel">' +
-            '<div class="ghg-efa-panel-activities" id="ghg-efa-activities"></div>' +
-            '<div class="ghg-efa-panel-detail" id="ghg-efa-detail"></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function buildEntitiesActiveTabHTML() {
+    return '' +
+      '<div class="ghg-tab-content" id="ghg-tab-entities-active">' +
+        '<div class="ghg-eft-card">' +
+          '<div class="ghg-eft-wrap">' +
+            '<span class="ghg-ep-search-label">Filter for specific entities</span>' +
+            '<input type="text" class="ghg-ep-search" placeholder="" data-ghg-ent-search />' +
+            '<div class="ghg-ep-col-header">' +
+              '<span class="ghg-ep-col ghg-ep-col--entity">Entities</span>' +
+              '<span class="ghg-ep-col ghg-ep-col--num">Activities</span>' +
+              '<span class="ghg-ep-col ghg-ep-col--num">Records</span>' +
+              '<span class="ghg-ep-col ghg-ep-col--cov">EF Coverage</span>' +
+              '<span class="ghg-ep-col ghg-ep-col--issues">Issues</span>' +
+            '</div>' +
+            '<div class="ghg-ep-list ghg-eft-list" data-ghg-ent-list>' + buildEntityTreeHTML() + '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -1091,14 +1624,15 @@
     '<div id="ghg-view-results" class="ghg-view">' +
       buildStatsRowHTML() +
       '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
-        '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">' + (window.ghgOverviewVersion === 'v1' ? 'Overview' : 'Overview and audit trail') + '</button>' +
-        '<button class="ghg-tab" data-ghg-tab="breakdown">Entities and activities details</button>' +
-        '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors assignment</button>' +
-        '<button class="ghg-tab" data-ghg-tab="lineage"' + (window.ghgOverviewVersion === 'v1' ? '' : ' style="display:none"') + '>Audit trail and traceability</button></div>' +
+        '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">Overview</button>' +
+        '<button class="ghg-tab" data-ghg-tab="breakdown">Activities and calculations</button>' +
+        '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors active</button>' +
+        '<button class="ghg-tab" data-ghg-tab="entities-active">Entities active</button>' +
+        '</div>' +
       getGhgOverviewTabHTML() +
       buildEadTabHTML() +
-      buildLineageTabHTML() +
       buildEfaTabHTML() +
+      buildEntitiesActiveTabHTML() +
       '</div>' +
     '</div>';
   }
