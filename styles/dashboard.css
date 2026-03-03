@@ -36,6 +36,7 @@
   height: 3px;
   background: transparent;
   border-radius: 2px;
+  transition: background 0.2s ease;
   transition: background 0.15s ease;
 }
 
@@ -637,6 +638,7 @@
 .dashboard-content--expanded .dashboard-detail-expanded {
   display: flex;
   flex-direction: column;
+  animation: ptFadeIn 0.2s ease both;
 }
 
 .dashboard-detail-expanded-content {

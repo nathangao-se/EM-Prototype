@@ -213,6 +213,23 @@
   });
 
   // ===========================================
+  // GHG OVERVIEW — VERSION TOGGLE
+  // ===========================================
+
+  window.ghgOverviewVersion = 'v2';
+  var ghgOvBtns = document.querySelectorAll('[data-ghg-overview]');
+  ghgOvBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var ver = btn.getAttribute('data-ghg-overview');
+      if (ver === window.ghgOverviewVersion) return;
+      window.ghgOverviewVersion = ver;
+      ghgOvBtns.forEach(function (b) {
+        b.classList.toggle('dev-panel-option--active', b.getAttribute('data-ghg-overview') === ver);
+      });
+    });
+  });
+
+  // ===========================================
   // CLOSE ALL OVERLAYS — ensures only one is open at a time
   // ===========================================
 

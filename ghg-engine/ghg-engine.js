@@ -338,6 +338,251 @@
   }
 
   /* ==============================================
+     EFA TAB — data & builders
+     ============================================== */
+
+  var EFA_ENTITIES = [
+    { name: 'Paris HQ', sub: 'Headquarters \u2022 Undefined', region: 'EU', type: 'Headquarters', actCount: 12, records: '45,230', coverage: 96, issues: [],
+      activities: [
+        { name: 'Diesel - Fleet vehicles', value: '2,450L', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Natural Gas - Heating', value: '1,200 m\u00B3', date: 'Jan 2026', tag: 'geo', tagLabel: 'Geo' },
+        { name: 'Electricity - Grid', value: '45,000 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Business Travel - Air', value: '$12,500', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Diesel - Fleet Vehicles', entity: 'Paris HQ', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'mapped', tagLabel: 'Mapped', file: 'Fleet_Data_Q1.xlsx', specificity: 75,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Diesel - Fleet vehicles'],['Sanitized value','2,450 L'],['EF_ActivityID','Fuel_Diesel_Mobile'],['Scope','Scope 1 - Direct Emissions']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','Diesel (100% Mineral)'],['Dataset Source','DEFRA 2024'],['Emission Factor','2.02 kg CO\u2082e/m\u00B3'],['Lifecycle','WTT: 0.34 + TTW: 1.68 = 2.02']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 3/5 per method' },
+          { icon: 'check', text: 'FR factors for FR entity', note: 'exact geo match' },
+          { icon: 'check', text: '2024 dataset', note: 'current year match' }
+        ]
+      }
+    },
+    { name: 'London Office', sub: 'Regional Office \u2022 Undefined', region: 'EU', type: 'Regional Office', actCount: 8, records: '23,000', coverage: 89,
+      issues: [{ label: 'geo (0.01)', cls: 'geo' }],
+      activities: [
+        { name: 'Electricity - Grid', value: '32,000 kWh', date: 'Jan 2026', tag: 'geo', tagLabel: 'Geo' },
+        { name: 'Natural Gas - Heating', value: '800 m\u00B3', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Electricity - Grid', entity: 'London Office', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'geo', tagLabel: 'Geo', file: 'UK_Energy_Q1.xlsx', specificity: 60,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Electricity - Grid'],['Sanitized value','32,000 kWh'],['EF_ActivityID','Grid_Electricity_UK'],['Scope','Scope 2 - Indirect']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','UK Grid Average 2024'],['Dataset Source','DEFRA 2024'],['Emission Factor','0.207 kg CO\u2082e/kWh'],['Lifecycle','Generation only']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 2/5 per method' },
+          { icon: 'check', text: '2024 dataset', note: 'current year match' }
+        ]
+      }
+    },
+    { name: 'Berlin Factory', sub: 'Manufacturing \u2022 Undefined', region: 'EU', type: 'Manufacturing', actCount: 15, records: '312,000', coverage: 72,
+      issues: [{ label: 'eur (3.40)', cls: 'old' }, { label: 'geo (2.10)', cls: 'geo' }],
+      activities: [
+        { name: 'Diesel - Fleet vehicles', value: '18,200L', date: 'Jan 2026', tag: 'old', tagLabel: 'Old' },
+        { name: 'Electricity - Grid', value: '890,000 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Natural Gas - Heating', value: '5,400 m\u00B3', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Diesel - Fleet vehicles', entity: 'Berlin Factory', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'old', tagLabel: 'Old', file: 'DE_Fleet_Q1.xlsx', specificity: 55,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Diesel - Fleet vehicles'],['Sanitized value','18,200 L'],['EF_ActivityID','Fuel_Diesel_Mobile'],['Scope','Scope 1 - Direct Emissions']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','Diesel (100% Mineral)'],['Dataset Source','DEFRA 2022'],['Emission Factor','2.02 kg CO\u2082e/m\u00B3'],['Lifecycle','WTT: 0.34 + TTW: 1.68 = 2.02']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 3/5 per method' },
+          { icon: 'warn', text: 'Outdated 2022 factor set', note: '2024 available' },
+          { icon: 'check', text: 'DE factors for DE entity', note: 'exact geo match' }
+        ]
+      }
+    },
+    { name: 'NYC Branch', sub: 'Regional Office \u2022 Undefined', region: 'Americas', type: 'Regional Office', actCount: 10, records: '18,500', coverage: 100, issues: [],
+      activities: [
+        { name: 'Electricity - Grid', value: '65,000 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Business Travel - Air', value: '$8,900', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Electricity - Grid', entity: 'NYC Branch', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'mapped', tagLabel: 'Mapped', file: 'US_Energy_Q1.xlsx', specificity: 82,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Electricity - Grid'],['Sanitized value','65,000 kWh'],['EF_ActivityID','Grid_Electricity_US'],['Scope','Scope 2 - Indirect']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','eGRID US Average 2024'],['Dataset Source','eGRID (EPA)'],['Emission Factor','0.386 kg CO\u2082e/kWh'],['Lifecycle','Generation + T&D']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 2/5 per method' },
+          { icon: 'check', text: 'US factors for US entity', note: 'exact geo match' },
+          { icon: 'check', text: '2024 dataset', note: 'current year match' }
+        ]
+      }
+    },
+    { name: 'Tokyo Office', sub: 'Regional Office \u2022 Undefined', region: 'Asia-Pacific', type: 'Regional Office', actCount: 6, records: '12,400', coverage: 91, issues: [],
+      activities: [
+        { name: 'Electricity - Grid', value: '28,000 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Natural Gas - Heating', value: '600 m\u00B3', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Electricity - Grid', entity: 'Tokyo Office', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'mapped', tagLabel: 'Mapped', file: 'JP_Energy_Q1.xlsx', specificity: 70,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Electricity - Grid'],['Sanitized value','28,000 kWh'],['EF_ActivityID','Grid_Electricity_JP'],['Scope','Scope 2 - Indirect']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','Japan Grid Average 2024'],['Dataset Source','MOE Japan'],['Emission Factor','0.457 kg CO\u2082e/kWh'],['Lifecycle','Generation + T&D']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 2/5 per method' },
+          { icon: 'check', text: '2024 dataset', note: 'current year match' }
+        ]
+      }
+    },
+    { name: 'Sydney Office', sub: 'Regional Office \u2022 Undefined', region: 'Asia-Pacific', type: 'Regional Office', actCount: 5, records: '8,900', coverage: 94, issues: [],
+      activities: [
+        { name: 'Electricity - Grid', value: '18,500 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Business Travel - Air', value: '$6,200', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Electricity - Grid', entity: 'Sydney Office', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'mapped', tagLabel: 'Mapped', file: 'AU_Energy_Q1.xlsx', specificity: 72,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Electricity - Grid'],['Sanitized value','18,500 kWh'],['EF_ActivityID','Grid_Electricity_AU'],['Scope','Scope 2 - Indirect']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','AU NEM Average 2024'],['Dataset Source','Clean Energy Regulator'],['Emission Factor','0.68 kg CO\u2082e/kWh'],['Lifecycle','Generation + T&D']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 2/5 per method' },
+          { icon: 'check', text: '2024 dataset', note: 'current year match' }
+        ]
+      }
+    },
+    { name: 'Shanghai Plant', sub: 'Manufacturing \u2022 Undefined', region: 'Asia-Pacific', type: 'Manufacturing', actCount: 14, records: '156,000', coverage: 78,
+      issues: [{ label: 'geo (3.20)', cls: 'geo' }],
+      activities: [
+        { name: 'Electricity - Grid', value: '1,200,000 kWh', date: 'Jan 2026', tag: 'geo', tagLabel: 'Geo' },
+        { name: 'Natural Gas - Heating', value: '8,400 m\u00B3', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Diesel - Fleet vehicles', value: '12,800L', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Electricity - Grid', entity: 'Shanghai Plant', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'geo', tagLabel: 'Geo', file: 'CN_Energy_Q1.xlsx', specificity: 50,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Electricity - Grid'],['Sanitized value','1,200,000 kWh'],['EF_ActivityID','Grid_Electricity_CN'],['Scope','Scope 2 - Indirect']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','China Grid Average 2023'],['Dataset Source','IEA'],['Emission Factor','0.555 kg CO\u2082e/kWh'],['Lifecycle','Generation only']],
+        rationale: [
+          { icon: 'warn', text: 'Regional proxy factor used', note: 'partial geo match' },
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 2/5 per method' }
+        ]
+      }
+    },
+    { name: 'Dubai Office', sub: 'Regional Office \u2022 Undefined', region: 'MEA', type: 'Regional Office', actCount: 4, records: '5,600', coverage: 65, issues: [],
+      activities: [
+        { name: 'Electricity - Grid', value: '42,000 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'District Cooling', value: '15,000 ton-hr', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Electricity - Grid', entity: 'Dubai Office', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'mapped', tagLabel: 'Mapped', file: 'AE_Energy_Q1.xlsx', specificity: 58,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Electricity - Grid'],['Sanitized value','42,000 kWh'],['EF_ActivityID','Grid_Electricity_AE'],['Scope','Scope 2 - Indirect']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','UAE Grid Average 2024'],['Dataset Source','EAD'],['Emission Factor','0.42 kg CO\u2082e/kWh'],['Lifecycle','Generation only']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 2/5 per method' },
+          { icon: 'check', text: '2024 dataset', note: 'current year match' }
+        ]
+      }
+    },
+    { name: 'S\u00E3o Paulo Office', sub: 'Regional Office \u2022 Undefined', region: 'Americas', type: 'Regional Office', actCount: 7, records: '14,200', coverage: 88, issues: [],
+      activities: [
+        { name: 'Electricity - Grid', value: '22,000 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Business Travel - Air', value: '$9,800', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Electricity - Grid', entity: 'S\u00E3o Paulo Office', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'mapped', tagLabel: 'Mapped', file: 'BR_Energy_Q1.xlsx', specificity: 68,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Electricity - Grid'],['Sanitized value','22,000 kWh'],['EF_ActivityID','Grid_Electricity_BR'],['Scope','Scope 2 - Indirect']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','Brazil SIN Average 2024'],['Dataset Source','MCTI Brazil'],['Emission Factor','0.056 kg CO\u2082e/kWh'],['Lifecycle','Generation + T&D']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 2/5 per method' },
+          { icon: 'check', text: '2024 dataset', note: 'current year match' }
+        ]
+      }
+    },
+    { name: 'Amsterdam Warehouse', sub: 'Warehouse \u2022 Undefined', region: 'EU', type: 'Warehouse', actCount: 9, records: '67,800', coverage: 82,
+      issues: [{ label: 'age (0.96)', cls: 'old' }],
+      activities: [
+        { name: 'Electricity - Grid', value: '120,000 kWh', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' },
+        { name: 'Natural Gas - Heating', value: '3,200 m\u00B3', date: 'Jan 2026', tag: 'old', tagLabel: 'Old' },
+        { name: 'Diesel - Fleet vehicles', value: '5,600L', date: 'Jan 2026', tag: 'mapped', tagLabel: 'Mapped' }
+      ],
+      detail: {
+        title: 'Natural Gas - Heating', entity: 'Amsterdam Warehouse', method: 'Activity-based', date: 'Jan 2026',
+        tag: 'old', tagLabel: 'Old', file: 'NL_Warehouse_Q1.xlsx', specificity: 62,
+        stage1Label: 'Activity \u2192 Activity_ID',
+        stage1: [['Raw activity label','Natural Gas - Heating'],['Sanitized value','3,200 m\u00B3'],['EF_ActivityID','Fuel_NatGas_Stationary'],['Scope','Scope 1 - Direct Emissions']],
+        stage2Label: 'System - Selected',
+        stage2: [['Selected Factor','Natural Gas (NL)'],['Dataset Source','DEFRA 2023'],['Emission Factor','2.02 kg CO\u2082e/m\u00B3'],['Lifecycle','WTT: 0.34 + TTW: 1.68 = 2.02']],
+        rationale: [
+          { icon: 'check', text: 'Activity-based data path', note: 'rank 3/5 per method' },
+          { icon: 'warn', text: 'Outdated 2023 factor set', note: '2024 available' },
+          { icon: 'check', text: 'NL factors for NL entity', note: 'exact geo match' }
+        ]
+      }
+    }
+  ];
+
+  function buildEfaTableRows() {
+    return EFA_ENTITIES.map(function (e, i) {
+      var bar = '<div class="ghg-efa-cov"><div class="ghg-efa-cov-bar"><div class="ghg-efa-cov-fill" style="width:' + e.coverage + '%"></div></div><span>' + e.coverage + '%</span></div>';
+      var chips = e.issues.length ? e.issues.map(function (is) { return '<span class="ghg-efa-chip ghg-efa-chip--' + is.cls + '">' + esc(is.label) + '</span>'; }).join(' ') : '\u2014';
+      return '<tr class="ghg-efa-row" data-efa-entity="' + i + '"><td>' + esc(e.name) + '</td><td>' + esc(e.region) + '</td><td>' + esc(e.type) + '</td><td class="num">' + e.actCount + '</td><td class="num">' + esc(e.records) + '</td><td>' + bar + '</td><td>' + chips + '</td></tr>';
+    }).join('');
+  }
+
+  function buildEfaActivities(entityIdx) {
+    var e = EFA_ENTITIES[entityIdx];
+    if (!e) return '';
+    return e.activities.map(function (a, ai) {
+      var tagCls = a.tag === 'mapped' ? 'ghg-efa-tag--mapped' : a.tag === 'geo' ? 'ghg-efa-tag--geo' : 'ghg-efa-tag--old';
+      return '<div class="ghg-efa-act" data-efa-act="' + ai + '" data-efa-entity="' + entityIdx + '">' +
+        '<div class="ghg-efa-act-name">' + esc(a.name) + '</div>' +
+        '<div class="ghg-efa-act-meta"><span>' + esc(a.value) + '</span><span>' + esc(a.date) + '</span><span class="ghg-efa-tag ' + tagCls + '">' + esc(a.tagLabel) + '</span></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function buildEfaDetail(entityIdx) {
+    var d = EFA_ENTITIES[entityIdx] && EFA_ENTITIES[entityIdx].detail;
+    if (!d) return '';
+    var tagCls = d.tag === 'mapped' ? 'ghg-efa-tag--mapped' : d.tag === 'geo' ? 'ghg-efa-tag--geo' : 'ghg-efa-tag--old';
+    var html = '<a class="ghg-efa-back" data-action="efa-back"><i class="fa-solid fa-arrow-left"></i> Back</a>' +
+      '<div class="ghg-efa-detail-title">' + esc(d.title) + '</div>' +
+      '<div class="ghg-efa-detail-meta"><span>' + esc(d.entity) + '</span><span>' + esc(d.method) + '</span><span>' + esc(d.date) + '</span><span class="ghg-efa-tag ' + tagCls + '">' + esc(d.tagLabel) + '</span></div>' +
+      '<div class="ghg-efa-detail-file">' + esc(d.file) + '</div>' +
+      '<div class="ghg-efa-detail-spec-row"><span class="ghg-efa-detail-spec-label">Specificity score</span><span class="ghg-efa-detail-audit"><i class="fa-solid fa-magnifying-glass"></i> Audit trail</span></div>' +
+      '<div class="ghg-efa-detail-spec-bar"><div class="ghg-efa-detail-spec-fill" style="width:' + d.specificity + '%"></div></div>' +
+      '<div class="ghg-efa-detail-spec-val">' + d.specificity + '%</div>';
+    html += '<div class="ghg-efa-stage"><div class="ghg-efa-stage-header"><span class="ghg-efa-stage-title">Stage 1: Classification</span><span class="ghg-efa-stage-chip">' + d.stage1Label + '</span></div>';
+    d.stage1.forEach(function (r) { html += '<div class="ghg-efa-stage-row"><span class="ghg-efa-stage-key">' + esc(r[0]) + '</span><span class="ghg-efa-stage-val">' + esc(r[1]) + '</span></div>'; });
+    html += '</div>';
+    html += '<div class="ghg-efa-stage"><div class="ghg-efa-stage-header"><span class="ghg-efa-stage-title">Stage 2: EF Selection</span><span class="ghg-efa-stage-chip">' + d.stage2Label + '</span></div>';
+    d.stage2.forEach(function (r) { html += '<div class="ghg-efa-stage-row"><span class="ghg-efa-stage-key">' + esc(r[0]) + '</span><span class="ghg-efa-stage-val">' + esc(r[1]) + '</span></div>'; });
+    html += '</div>';
+    html += '<div class="ghg-efa-rationale-label">Rationale</div>';
+    d.rationale.forEach(function (r) {
+      var ic = r.icon === 'check' ? 'fa-circle-check ghg-efa-mi--green' : 'fa-circle-exclamation ghg-efa-mi--amber';
+      html += '<div class="ghg-efa-rationale-item"><i class="fa-solid ' + ic + '"></i><span><strong>' + esc(r.text) + '</strong> <span class="ghg-efa-rationale-note">(' + esc(r.note) + ')</span></span></div>';
+    });
+    return html;
+  }
+
+  /* ==============================================
      BIND INTERACTIVITY to a container
      ============================================== */
 
@@ -367,6 +612,8 @@
     });
 
     // Tabs
+    var statsRowOverview = ctx.querySelector('#ghg-stats-row-overview');
+    var statsRowActivities = ctx.querySelector('#ghg-stats-row-activities');
     ctx.querySelectorAll('.ghg-tab').forEach(function (tab) {
       tab.addEventListener('click', function () {
         var tabId = tab.getAttribute('data-ghg-tab');
@@ -375,6 +622,11 @@
         ctx.querySelectorAll('.ghg-tab-content').forEach(function (c) { c.classList.remove('ghg-tab-content--active'); });
         var target = ctx.querySelector('#ghg-tab-' + tabId) || ctx.querySelector('[data-ghg-tab-content="' + tabId + '"]');
         if (target) target.classList.add('ghg-tab-content--active');
+        if (statsRowOverview && statsRowActivities) {
+          var isOverview = tabId === 'overview';
+          statsRowOverview.style.display = isOverview ? '' : 'none';
+          statsRowActivities.style.display = isOverview ? 'none' : 'flex';
+        }
       });
     });
 
@@ -423,6 +675,71 @@
         });
       }
     });
+
+    // EFA tab — populate table and wire interactivity
+    var efaBody = ctx.querySelector('#ghg-efa-tbody');
+    var efaSummary = ctx.querySelector('#ghg-efa-summary');
+    var efaPanel = ctx.querySelector('#ghg-efa-panel');
+    var efaActivities = ctx.querySelector('#ghg-efa-activities');
+    var efaDetail = ctx.querySelector('#ghg-efa-detail');
+    var efaSelectedEntity = -1;
+
+    if (efaBody) efaBody.innerHTML = buildEfaTableRows();
+
+    function efaReset() {
+      efaSelectedEntity = -1;
+      if (efaActivities) efaActivities.innerHTML = '';
+      if (efaDetail) efaDetail.innerHTML = '';
+      ctx.querySelectorAll('.ghg-efa-row').forEach(function (r) { r.classList.remove('ghg-efa-row--selected'); });
+      var layout = ctx.querySelector('.ghg-efa-layout');
+      if (layout) { layout.classList.remove('ghg-efa-layout--drilled'); layout.classList.remove('ghg-efa-layout--detail'); }
+    }
+
+    function efaShowActivities(entityIdx) {
+      efaSelectedEntity = entityIdx;
+      if (efaActivities) efaActivities.innerHTML = buildEfaActivities(entityIdx);
+      if (efaDetail) efaDetail.innerHTML = '';
+      var layout = ctx.querySelector('.ghg-efa-layout');
+      if (layout) { layout.classList.add('ghg-efa-layout--drilled'); layout.classList.remove('ghg-efa-layout--detail'); }
+    }
+
+    function efaShowDetail(entityIdx) {
+      if (efaDetail) efaDetail.innerHTML = buildEfaDetail(entityIdx);
+      var layout = ctx.querySelector('.ghg-efa-layout');
+      if (layout) layout.classList.add('ghg-efa-layout--detail');
+    }
+
+    ctx.addEventListener('click', function (e) {
+      var row = e.target.closest('.ghg-efa-row');
+      if (row) {
+        var idx = parseInt(row.getAttribute('data-efa-entity'), 10);
+        ctx.querySelectorAll('.ghg-efa-row').forEach(function (r) { r.classList.remove('ghg-efa-row--selected'); });
+        row.classList.add('ghg-efa-row--selected');
+        efaShowActivities(idx);
+        return;
+      }
+      var act = e.target.closest('.ghg-efa-act');
+      if (act) {
+        var ei = parseInt(act.getAttribute('data-efa-entity'), 10);
+        efaShowDetail(ei);
+        return;
+      }
+      var back = e.target.closest('[data-action="efa-back"]');
+      if (back) {
+        e.preventDefault();
+        if (efaDetail) efaDetail.innerHTML = '';
+        var layout = ctx.querySelector('.ghg-efa-layout');
+        if (layout) layout.classList.remove('ghg-efa-layout--detail');
+        return;
+      }
+    });
+
+    // Tab re-click resets EFA
+    ctx.querySelectorAll('.ghg-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        if (tab.getAttribute('data-ghg-tab') === 'ef-selection') efaReset();
+      });
+    });
   }
 
   window.bindGhgEngine = bindGhgEngine;
@@ -448,51 +765,30 @@
     return wrap;
   };
 
-  function getGhgHTML() {
+  var GHG_OV_TABLE_ROWS =
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Stationary Combustion (Natural Gas)</td><td class="num">78.2</td><td class="num">7.4%</td><td class="num">48</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Mobile Combustion (Company Fleet)</td><td class="num">42.4</td><td class="num">4.0%</td><td class="num">24</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Fugitive Emissions</td><td class="num">4.0</td><td class="num">0.4%</td><td class="num">4</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td class="ghg-ov-activity">Purchased Electricity (Location-Based)</td><td class="num">42.1</td><td class="num">4.0%</td><td class="num">48</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td class="ghg-ov-activity">Purchased Heat/Steam</td><td class="num">3.1</td><td class="num">0.3%</td><td class="num">12</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 1: Purchased Goods &amp; Services</td><td class="num">412.0</td><td class="num">38.8%</td><td class="num">156</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 3: Fuel &amp; Energy Related Activities</td><td class="num">28.5</td><td class="num">2.7%</td><td class="num">72</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 4: Upstream Transportation</td><td class="num">186.4</td><td class="num">17.6%</td><td class="num">48</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 5: Waste Generated in Operations</td><td class="num">24.8</td><td class="num">2.3%</td><td class="num">36</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 6: Business Travel</td><td class="num">89.2</td><td class="num">8.4%</td><td class="num">84</td></tr>' +
+    '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 7: Employee Commuting</td><td class="num">151.2</td><td class="num">14.2%</td><td class="num">96</td></tr>';
+
+  var GHG_OV_TABLE_HEAD =
+    '<thead><tr>' +
+      '<th class="ghg-ov-col-scope">Scope</th>' +
+      '<th>Category</th>' +
+      '<th class="num">Emissions (tCO\u2082e)</th>' +
+      '<th class="num">% of total</th>' +
+      '<th class="num">Records</th>' +
+    '</tr></thead>';
+
+  function getGhgOverviewV1() {
     return '' +
-    '<div id="ghg-view-list" class="ghg-view ghg-view--active">' +
-      '<div class="ghg-page-header pt-stagger-item"><div class="ghg-page-header-left">' +
-        '<div class="ghg-breadcrumb"><a href="#">Monitor</a> <i class="fa-solid fa-chevron-right"></i> <span>GHG Inventories</span></div>' +
-        '<h1 class="ghg-page-title">GHG Inventories</h1>' +
-        '<p class="ghg-page-subtitle">Create, calculate, and manage your emissions inventories</p>' +
-      '</div><div class="ghg-page-header-actions"><button class="btn btn-primary btn-small"><i class="fa-solid fa-plus"></i> Create Inventory</button></div></div>' +
-      '<div class="ghg-search-bar pt-stagger-item"><div class="ghg-search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" class="ghg-search-input" placeholder="Search inventories..."></div>' +
-      '<button class="btn btn-outline btn-small"><i class="fa-solid fa-filter"></i> Filter</button></div>' +
-      '<div class="ghg-inventory-list pt-stagger-item">' +
-        '<div class="ghg-inv-card" data-inv="q4-2025"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--calc"><i class="fa-solid fa-calculator"></i></div><div><h3 class="ghg-inv-title">Q4 2025 Corporate Inventory</h3><div class="ghg-inv-meta">Oct 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">1,061.9</div><div class="ghg-inv-stat-label">tCO\u2082e Total</div></div><span class="ghg-badge ghg-badge--success"><i class="fa-solid fa-circle-check"></i> Calculated</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
-        '<div class="ghg-inv-card" data-inv="q3-2025"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--locked"><i class="fa-solid fa-lock"></i></div><div><h3 class="ghg-inv-title">Q3 2025 Corporate Inventory</h3><div class="ghg-inv-meta">Jul 1 \u2013 Sep 30, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">987.3</div><div class="ghg-inv-stat-label">tCO\u2082e Total</div></div><span class="ghg-badge ghg-badge--success"><i class="fa-solid fa-lock"></i> Locked</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
-        '<div class="ghg-inv-card" data-inv="draft"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--draft"><i class="fa-solid fa-pencil"></i></div><div><h3 class="ghg-inv-title">FY 2025 Annual Report</h3><div class="ghg-inv-meta">Jan 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">\u2014</div><div class="ghg-inv-stat-label">Not calculated</div></div><span class="ghg-badge ghg-badge--warning"><i class="fa-solid fa-clock"></i> Draft</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
-      '</div>' +
-    '</div>' +
-    '<div id="ghg-view-results" class="ghg-view">' +
-      '<div class="ghg-stats-row pt-stagger-item">' +
-        '<div class="ghg-stat-card ghg-stat-card--wide">' +
-          '<div class="ghg-stat-label">Total emissions</div>' +
-          '<div class="ghg-stat-value ghg-stat-value--xl">1,061.9 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
-          '<div class="ghg-stat-scopes">' +
-            '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 1 - 11.7%</div><div class="ghg-stat-scope-val">124.6 <span>tCO\u2082e</span></div></div>' +
-            '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 2 - 4.3%</div><div class="ghg-stat-scope-val">45.2 <span>tCO\u2082e</span></div></div>' +
-            '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 3 - 84%</div><div class="ghg-stat-scope-val">892.1 <span>tCO\u2082e</span></div></div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="ghg-stat-card ghg-stat-card--side">' +
-          '<div class="ghg-stat-label">Location-based</div>' +
-          '<div class="ghg-stat-value ghg-stat-value--xl">45.2 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
-          '<div class="ghg-stat-divider"></div>' +
-          '<div class="ghg-stat-note">Uses <strong>Grid-average emissions factors</strong></div>' +
-        '</div>' +
-        '<div class="ghg-stat-card ghg-stat-card--side">' +
-          '<div class="ghg-stat-label">Market-based</div>' +
-          '<div class="ghg-stat-value ghg-stat-value--xl">38.1 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
-          '<div class="ghg-stat-divider"></div>' +
-          '<div class="ghg-stat-note">Accounts for <strong>RECs and supplier contracts</strong></div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
-        '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">Overview</button>' +
-        '<button class="ghg-tab" data-ghg-tab="breakdown">Entities and activities details</button>' +
-        '<button class="ghg-tab" data-ghg-tab="lineage">Audit trail and traceability</button>' +
-        '<button class="ghg-tab" data-ghg-tab="ef-selection">EF Selection &amp; Review</button></div>' +
       '<div class="ghg-tab-content ghg-tab-content--active" id="ghg-tab-overview">' +
         '<div class="ghg-overview-cols pt-stagger-item">' +
           '<div class="ghg-overview-left">' +
@@ -514,27 +810,217 @@
             '</div>' +
           '</div>' +
           '<div class="ghg-overview-right">' +
-            '<table class="ghg-ov-table"><thead><tr>' +
-              '<th class="ghg-ov-col-scope">Scope</th>' +
-              '<th>Category</th>' +
-              '<th class="num">Emissions (tCO\u2082e)</th>' +
-              '<th class="num">% of total</th>' +
-              '<th class="num">Records</th>' +
-            '</tr></thead><tbody>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Stationary Combustion (Natural Gas)</td><td class="num">78.2</td><td class="num">7.4%</td><td class="num">48</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Mobile Combustion (Company Fleet)</td><td class="num">42.4</td><td class="num">4.0%</td><td class="num">24</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s1">Scope 1</span></td><td class="ghg-ov-activity">Fugitive Emissions</td><td class="num">4.0</td><td class="num">0.4%</td><td class="num">4</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td class="ghg-ov-activity">Purchased Electricity (Location-Based)</td><td class="num">42.1</td><td class="num">4.0%</td><td class="num">48</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s2">Scope 2</span></td><td class="ghg-ov-activity">Purchased Heat/Steam</td><td class="num">3.1</td><td class="num">0.3%</td><td class="num">12</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 1: Purchased Goods &amp; Services</td><td class="num">412.0</td><td class="num">38.8%</td><td class="num">156</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 3: Fuel &amp; Energy Related Activities</td><td class="num">28.5</td><td class="num">2.7%</td><td class="num">72</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 4: Upstream Transportation</td><td class="num">186.4</td><td class="num">17.6%</td><td class="num">48</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 5: Waste Generated in Operations</td><td class="num">24.8</td><td class="num">2.3%</td><td class="num">36</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 6: Business Travel</td><td class="num">89.2</td><td class="num">8.4%</td><td class="num">84</td></tr>' +
-              '<tr><td><span class="ghg-scope-chip ghg-scope-chip--s3">Scope 3</span></td><td class="ghg-ov-activity">Cat 7: Employee Commuting</td><td class="num">151.2</td><td class="num">14.2%</td><td class="num">96</td></tr>' +
-            '</tbody></table>' +
+            '<table class="ghg-ov-table">' + GHG_OV_TABLE_HEAD + '<tbody>' + GHG_OV_TABLE_ROWS + '</tbody></table>' +
           '</div>' +
-        '</div></div>' +
+        '</div></div>';
+  }
+
+  function getGhgOverviewV2() {
+    return '' +
+      '<div class="ghg-tab-content ghg-tab-content--active" id="ghg-tab-overview">' +
+        '<div class="ghg-overview-cols pt-stagger-item">' +
+          '<div class="ghg-ov-col-left">' +
+            '<div class="ghg-ov-col-card">' +
+              '<div class="ghg-ov-top-row">' +
+                '<div class="ghg-ov-meta-col">' +
+                  '<div class="ghg-meta-row"><i class="fa-light fa-calendar"></i><span>10/1/25 - 12/31/25 (91 days)</span></div>' +
+                  '<div class="ghg-meta-row"><i class="fa-light fa-book-blank"></i><span>GHG Protocol Corporate Standard</span></div>' +
+                  '<div class="ghg-meta-row"><i class="fa-light fa-sitemap"></i><span>Financial Control</span></div>' +
+                  '<div class="ghg-meta-row"><i class="fa-light fa-sitemap"></i><span>4 entities</span></div>' +
+                '</div>' +
+                '<div class="ghg-ov-vdivider"></div>' +
+                '<div class="ghg-ov-quality-col">' +
+                  '<div class="ghg-ov-quality-label">Data quality score</div>' +
+                  '<div class="ghg-ov-quality-score"><i class="fa-solid fa-circle-check ghg-ov-quality-icon"></i><span class="ghg-ov-quality-val">87</span><span class="ghg-ov-quality-unit">out of 100</span></div>' +
+                  '<p class="ghg-ov-quality-desc">Based on data completeness, source quality, and validation status</p>' +
+                  '<div class="ghg-ov-quality-items">' +
+                    '<div class="ghg-ov-qi"><i class="fa-solid fa-circle-check ghg-ov-qi-ok"></i><span class="ghg-ov-qi-val">892 of 920</span><span class="ghg-ov-qi-desc">records complete</span></div>' +
+                    '<div class="ghg-ov-qi"><i class="fa-solid fa-circle-check ghg-ov-qi-ok"></i><span class="ghg-ov-qi-val">100%</span><span class="ghg-ov-qi-desc">emission factors (&lt;12 mo)</span></div>' +
+                    '<div class="ghg-ov-qi"><i class="fa-solid fa-triangle-exclamation ghg-ov-qi-warn"></i><span class="ghg-ov-qi-val">156 (17%)</span><span class="ghg-ov-qi-desc">records using spend-based estimates</span></div>' +
+                    '<div class="ghg-ov-qi"><i class="fa-solid fa-triangle-exclamation ghg-ov-qi-warn"></i><span class="ghg-ov-qi-val">32,598</span><span class="ghg-ov-qi-desc">Unassigned records</span></div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="ghg-ov-table-card">' +
+              '<table class="ghg-ov-table">' + GHG_OV_TABLE_HEAD + '<tbody>' + GHG_OV_TABLE_ROWS + '</tbody></table>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ghg-ov-col-right">' +
+            '<div class="ghg-ov-col-card">' +
+              '<p class="ghg-audit-title">Audit trail and traceability</p>' +
+              '<p class="ghg-audit-desc">Complete calculation logs for external auditor verification. Every emission record traces back to source data, emission factor, and methodology.</p>' +
+              '<div class="ghg-audit-banner"><i class="fa-solid fa-circle-info"></i><span>Audit-Ready Status: All 628 emission records in this inventory have complete lineage documentation including inputs, conversions, EF source, boundary decisions, and calculation steps.</span></div>' +
+              '<div class="ghg-ov-audit-tables">' +
+                '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th>Source</th><th style="width:80px">Version</th><th>Categories covered</th><th class="num" style="width:112px">Records using</th></tr></thead><tbody>' +
+                  '<tr><td>eGRID (EPA)</td><td>2024</td><td>EEIO 2024</td><td class="num">192</td></tr>' +
+                  '<tr><td>EPA GHG Emission Factor Hub</td><td>2024</td><td>Electricity</td><td class="num">144</td></tr>' +
+                  '<tr><td>EEIO (EPA)</td><td>2024</td><td>Electricity</td><td class="num">156</td></tr>' +
+                  '<tr><td>DEFRA</td><td>2024</td><td>Electricity</td><td class="num">136</td></tr>' +
+                '</tbody></table></div>' +
+                '<div class="ghg-audit-table-card"><table class="ghg-ov-table"><thead><tr><th style="width:160px">Method</th><th>Description</th><th class="num" style="width:64px">Records</th><th class="num" style="width:88px">% Coverage</th></tr></thead><tbody>' +
+                  '<tr><td>Activity-based</td><td>Activity \u00D7 Emission Factor (measured data)</td><td class="num">336</td><td class="num">53.5%</td></tr>' +
+                  '<tr><td>Spend-based</td><td>Spend \u00D7 EEIO Factor (economic input-output)</td><td class="num">156</td><td class="num">24.8%</td></tr>' +
+                  '<tr><td>Distance-based</td><td>Distance \u00D7 Mode Factor (travel/transport)</td><td class="num">136</td><td class="num">21.7%</td></tr>' +
+                '</tbody></table></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div></div>';
+  }
+
+  function getGhgOverviewTabHTML() {
+    return (window.ghgOverviewVersion === 'v1') ? getGhgOverviewV1() : getGhgOverviewV2();
+  }
+
+  function getGhgEfaDonutBlockHTML() {
+    return '' +
+      '<div class="ghg-efa-donut-area">' +
+        '<svg class="ghg-efa-donut" viewBox="0 0 164 164">' +
+          '<circle cx="82" cy="82" r="41" fill="none" stroke="#008029" stroke-width="82" stroke-dasharray="247.75 257.61" transform="rotate(-90 82 82)"/>' +
+          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d4790a" stroke-width="82" stroke-dasharray="3.16 257.61" stroke-dashoffset="-247.75" transform="rotate(-90 82 82)"/>' +
+          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d42a1a" stroke-width="82" stroke-dasharray="6.70 257.61" stroke-dashoffset="-250.91" transform="rotate(-90 82 82)"/>' +
+        '</svg>' +
+        '<div class="ghg-efa-donut-text"><span class="ghg-efa-donut-pct">87 <span>%</span></span><span class="ghg-efa-donut-label">Records assigned<br>with EF</span></div>' +
+      '</div>' +
+      '<div class="ghg-efa-metrics">' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-check ghg-efa-mi--green"></i><span class="ghg-efa-mv">1,206,234</span><span class="ghg-efa-ml">Records assigned with EF</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-exclamation ghg-efa-mi--amber"></i><span class="ghg-efa-mv">15,402</span><span class="ghg-efa-ml">Assignment needing review</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-triangle-exclamation ghg-efa-mi--red"></i><span class="ghg-efa-mv">32,598</span><span class="ghg-efa-ml">Unassigned records</span></div>' +
+      '</div>';
+  }
+
+  function getGhgEfaDonutOnlyHTML() {
+    return '' +
+      '<div class="ghg-qsb-kpi-donut">' +
+        '<svg class="ghg-efa-donut ghg-efa-donut--strip" viewBox="0 0 164 164">' +
+          '<circle cx="82" cy="82" r="41" fill="none" stroke="#008029" stroke-width="82" stroke-dasharray="247.75 257.61" transform="rotate(-90 82 82)"/>' +
+          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d4790a" stroke-width="82" stroke-dasharray="3.16 257.61" stroke-dashoffset="-247.75" transform="rotate(-90 82 82)"/>' +
+          '<circle cx="82" cy="82" r="41" fill="none" stroke="#d42a1a" stroke-width="82" stroke-dasharray="6.70 257.61" stroke-dashoffset="-250.91" transform="rotate(-90 82 82)"/>' +
+        '</svg>' +
+        '<div class="ghg-qsb-kpi-donut-text">' +
+          '<div class="ghg-qsb-kpi-value-row"><span class="ghg-qsb-kpi-value">87</span><span class="ghg-qsb-kpi-uom">%</span></div>' +
+          '<p class="ghg-qsb-kpi-donut-label">Records assigned with EF</p>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function getGhgEfaAssignmentMetricsHTML() {
+    return '' +
+      '<div class="ghg-efa-metrics">' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-check ghg-efa-mi--green"></i><span class="ghg-efa-mv">1,206,234</span><span class="ghg-efa-ml">Records assigned with EF</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-circle-exclamation ghg-efa-mi--amber"></i><span class="ghg-efa-mv">15,402</span><span class="ghg-efa-ml">Assignment needing review</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-triangle-exclamation ghg-efa-mi--red"></i><span class="ghg-efa-mv">32,598</span><span class="ghg-efa-ml">Unassigned records</span></div>' +
+      '</div>';
+  }
+
+  function getGhgEfaIssuesBlockHTML() {
+    return '' +
+      '<div class="ghg-efa-metrics">' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-bullseye ghg-efa-mi--grey"></i><span class="ghg-efa-mv">6,283</span><span class="ghg-efa-ml">Low specificity</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-location-dot ghg-efa-mi--grey"></i><span class="ghg-efa-mv">5,230</span><span class="ghg-efa-ml">Geographic mismatch</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-clock ghg-efa-mi--grey"></i><span class="ghg-efa-mv">3,890</span><span class="ghg-efa-ml">Outdated factors</span></div>' +
+      '</div>';
+  }
+
+  function getGhgEfaQualityBlockHTML() {
+    return '' +
+      '<div class="ghg-efa-metrics">' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-bullseye ghg-efa-mi--grey"></i><span class="ghg-efa-mv">76.4</span><span class="ghg-efa-ml">Average specifity score</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-location-dot ghg-efa-mi--grey"></i><span class="ghg-efa-mv">84.2%</span><span class="ghg-efa-ml">Geographic match rate</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-clock ghg-efa-mi--grey"></i><span class="ghg-efa-mv">92.1%</span><span class="ghg-efa-ml">Data freshness</span></div>' +
+        '<div class="ghg-efa-metric"><i class="fa-solid fa-pen ghg-efa-mi--grey"></i><span class="ghg-efa-mv">0.11%</span><span class="ghg-efa-ml">Manual override rate</span></div>' +
+      '</div>';
+  }
+
+  function getGhgEfaSummaryInnerHTML() {
+    return getGhgEfaDonutBlockHTML() +
+      '<div class="ghg-efa-divider"></div>' +
+      getGhgEfaIssuesBlockHTML() +
+      '<div class="ghg-efa-divider"></div>' +
+      getGhgEfaQualityBlockHTML();
+  }
+
+  function getGhgEfaKpiStripCardHTML() {
+    return '' +
+      '<div class="ghg-qsb-kpi" data-node-id="794:173162">' +
+        getGhgEfaDonutOnlyHTML() +
+        '<div class="ghg-qsb-kpi-divider"></div>' +
+        '<div class="ghg-qsb-kpi-section ghg-qsb-kpi-section--assign">' + getGhgEfaAssignmentMetricsHTML() + '</div>' +
+        '<div class="ghg-qsb-kpi-divider"></div>' +
+        '<div class="ghg-qsb-kpi-section ghg-qsb-kpi-section--issues">' + getGhgEfaIssuesBlockHTML() + '</div>' +
+        '<div class="ghg-qsb-kpi-divider"></div>' +
+        '<div class="ghg-qsb-kpi-section ghg-qsb-kpi-section--quality">' + getGhgEfaQualityBlockHTML() + '</div>' +
+      '</div>';
+  }
+
+  function getGhgHTML() {
+    return '' +
+    '<div id="ghg-view-list" class="ghg-view ghg-view--active">' +
+      '<div class="ghg-page-header pt-stagger-item"><div class="ghg-page-header-left">' +
+        '<div class="ghg-breadcrumb"><a href="#">Monitor</a> <i class="fa-solid fa-chevron-right"></i> <span>GHG Inventories</span></div>' +
+        '<h1 class="ghg-page-title">GHG Inventories</h1>' +
+        '<p class="ghg-page-subtitle">Create, calculate, and manage your emissions inventories</p>' +
+      '</div><div class="ghg-page-header-actions"><button class="btn btn-primary btn-small"><i class="fa-solid fa-plus"></i> Create Inventory</button></div></div>' +
+      '<div class="ghg-search-bar pt-stagger-item"><div class="ghg-search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" class="ghg-search-input" placeholder="Search inventories..."></div>' +
+      '<button class="btn btn-outline btn-small"><i class="fa-solid fa-filter"></i> Filter</button></div>' +
+      '<div class="ghg-inventory-list pt-stagger-item">' +
+        '<div class="ghg-inv-card" data-inv="q4-2025"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--calc"><i class="fa-solid fa-calculator"></i></div><div><h3 class="ghg-inv-title">Q4 2025 Corporate Inventory</h3><div class="ghg-inv-meta">Oct 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">1,061.9</div><div class="ghg-inv-stat-label">tCO\u2082e Total</div></div><span class="ghg-badge ghg-badge--success"><i class="fa-solid fa-circle-check"></i> Calculated</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
+        '<div class="ghg-inv-card" data-inv="q3-2025"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--locked"><i class="fa-solid fa-lock"></i></div><div><h3 class="ghg-inv-title">Q3 2025 Corporate Inventory</h3><div class="ghg-inv-meta">Jul 1 \u2013 Sep 30, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">987.3</div><div class="ghg-inv-stat-label">tCO\u2082e Total</div></div><span class="ghg-badge ghg-badge--success"><i class="fa-solid fa-lock"></i> Locked</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
+        '<div class="ghg-inv-card" data-inv="draft"><div class="ghg-inv-card-left"><div class="ghg-inv-icon ghg-inv-icon--draft"><i class="fa-solid fa-pencil"></i></div><div><h3 class="ghg-inv-title">FY 2025 Annual Report</h3><div class="ghg-inv-meta">Jan 1 \u2013 Dec 31, 2025 \u2022 GHG Protocol \u2022 4 entities</div></div></div><div class="ghg-inv-card-right"><div class="ghg-inv-stat"><div class="ghg-inv-stat-value">\u2014</div><div class="ghg-inv-stat-label">Not calculated</div></div><span class="ghg-badge ghg-badge--warning"><i class="fa-solid fa-clock"></i> Draft</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="ghg-view-results" class="ghg-view">' +
+      '<div class="ghg-stats-row-wrap">' +
+        '<div class="ghg-stats-row ghg-stats-row--overview pt-stagger-item" id="ghg-stats-row-overview">' +
+          '<div class="ghg-stat-card ghg-stat-card--wide">' +
+            '<div class="ghg-stat-label">Total emissions</div>' +
+            '<div class="ghg-stat-value ghg-stat-value--xl">1,061.9 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
+            '<div class="ghg-stat-scopes">' +
+              '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 1 - 11.7%</div><div class="ghg-stat-scope-val">124.6 <span>tCO\u2082e</span></div></div>' +
+              '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 2 - 4.3%</div><div class="ghg-stat-scope-val">45.2 <span>tCO\u2082e</span></div></div>' +
+              '<div class="ghg-stat-scope-box"><div class="ghg-stat-scope-title">Scope 3 - 84%</div><div class="ghg-stat-scope-val">892.1 <span>tCO\u2082e</span></div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ghg-stat-card ghg-stat-card--side">' +
+            '<div class="ghg-stat-label">Location-based</div>' +
+            '<div class="ghg-stat-value ghg-stat-value--xl">45.2 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
+            '<div class="ghg-stat-divider"></div>' +
+            '<div class="ghg-stat-note">Uses <strong>Grid-average emissions factors</strong></div>' +
+          '</div>' +
+          '<div class="ghg-stat-card ghg-stat-card--side">' +
+            '<div class="ghg-stat-label">Market-based</div>' +
+            '<div class="ghg-stat-value ghg-stat-value--xl">38.1 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
+            '<div class="ghg-stat-divider"></div>' +
+            '<div class="ghg-stat-note">Accounts for <strong>RECs and supplier contracts</strong></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ghg-stats-row ghg-stats-row--activities pt-stagger-item" id="ghg-stats-row-activities" style="display:none">' +
+          '<div class="ghg-stat-card ghg-stat-card--wide ghg-stat-card--activities-left" data-node-id="794:173132">' +
+            '<div class="ghg-stat-label">Total emissions</div>' +
+            '<div class="ghg-stat-value ghg-stat-value--xl">1,061.9 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
+            '<div class="ghg-stat-bar-wrap">' +
+              '<div class="ghg-stat-bar">' +
+                '<div class="ghg-stat-bar-seg ghg-stat-bar-seg--s1" style="width:11.7%"></div>' +
+                '<div class="ghg-stat-bar-seg ghg-stat-bar-seg--s2" style="width:4.3%"></div>' +
+                '<div class="ghg-stat-bar-seg ghg-stat-bar-seg--s3" style="width:84%"></div>' +
+              '</div>' +
+              '<div class="ghg-stat-bar-legend">' +
+                '<span class="ghg-stat-bar-legend-item"><span class="ghg-stat-bar-dot ghg-stat-bar-dot--s1"></span>Scope 1</span>' +
+                '<span class="ghg-stat-bar-legend-item"><span class="ghg-stat-bar-dot ghg-stat-bar-dot--s2"></span>Scope 2</span>' +
+                '<span class="ghg-stat-bar-legend-item"><span class="ghg-stat-bar-dot ghg-stat-bar-dot--s3"></span>Scope 3</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ghg-qsb-kpi-wrap">' + getGhgEfaKpiStripCardHTML() + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
+        '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">' + (window.ghgOverviewVersion === 'v1' ? 'Overview' : 'Overview and audit trail') + '</button>' +
+        '<button class="ghg-tab" data-ghg-tab="breakdown">Entities and activities details</button>' +
+        '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors assignment</button>' +
+        '<button class="ghg-tab" data-ghg-tab="lineage"' + (window.ghgOverviewVersion === 'v1' ? '' : ' style="display:none"') + '>Audit trail and traceability</button></div>' +
+      getGhgOverviewTabHTML() +
       '<div class="ghg-tab-content" id="ghg-tab-breakdown">' +
         '<div class="ghg-ead-layout">' +
           '<div class="ghg-ead-table-wrap">' +
@@ -590,23 +1076,17 @@
         '</div>' +
       '</div>' +
       '<div class="ghg-tab-content" id="ghg-tab-ef-selection">' +
-        '<div class="ghg-ef-hero"><div class="ghg-ef-hero-main"><div class="ghg-ef-circle"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#dfe7eb" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#008029" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="10" transform="rotate(-90 50 50)" stroke-linecap="round"/></svg><div class="ghg-ef-circle-text"><span class="ghg-ef-circle-pct">96.2%</span><span class="ghg-ef-circle-label">EF Coverage</span></div></div>' +
-        '<div class="ghg-ef-breakdown"><div class="ghg-ef-bstat"><span class="ghg-ef-bstat-val ghg-ef-bstat-val--success">1,206,234</span><span class="ghg-ef-bstat-label">Records with EF assigned</span></div><div class="ghg-ef-bstat"><span class="ghg-ef-bstat-val ghg-ef-bstat-val--warning">15,402</span><span class="ghg-ef-bstat-label">Flagged for review</span></div><div class="ghg-ef-bstat"><span class="ghg-ef-bstat-val ghg-ef-bstat-val--danger">32,598</span><span class="ghg-ef-bstat-label">Unmapped / Missing EF</span></div></div></div>' +
-        '<button class="btn btn-primary btn-small"><i class="fa-solid fa-scale-balanced"></i> Open EF Selection &amp; Review</button></div>' +
-        '<div class="ghg-kpi-grid">' +
-          '<div class="kpi-card ghg-kpi-card"><div class="ghg-kpi-top"><div class="ghg-kpi-icon ghg-kpi-icon--success"><i class="fa-solid fa-bullseye"></i></div><div><div class="ghg-kpi-value">76.4</div><div class="ghg-kpi-label">Avg Specificity Score</div></div></div><div class="ghg-kpi-trend ghg-kpi-trend--up">+3.2 from last period</div></div>' +
-          '<div class="kpi-card ghg-kpi-card"><div class="ghg-kpi-top"><div class="ghg-kpi-icon ghg-kpi-icon--primary"><i class="fa-solid fa-location-dot"></i></div><div><div class="ghg-kpi-value">84.2%</div><div class="ghg-kpi-label">Geographic Match Rate</div></div></div><div class="ghg-kpi-trend">Country-specific EFs applied</div></div>' +
-          '<div class="kpi-card ghg-kpi-card"><div class="ghg-kpi-top"><div class="ghg-kpi-icon ghg-kpi-icon--success"><i class="fa-solid fa-calendar-check"></i></div><div><div class="ghg-kpi-value">92.1%</div><div class="ghg-kpi-label">Dataset Freshness</div></div></div><div class="ghg-kpi-trend">Using 2024+ datasets</div></div>' +
-          '<div class="kpi-card ghg-kpi-card"><div class="ghg-kpi-top"><div class="ghg-kpi-icon ghg-kpi-icon--warning"><i class="fa-solid fa-right-left"></i></div><div><div class="ghg-kpi-value">0.11%</div><div class="ghg-kpi-label">Manual Override Rate</div></div></div><div class="ghg-kpi-trend">142 of 1.25M records</div></div></div>' +
-        '<div class="ghg-review-queue"><div class="ghg-review-queue-header"><div class="ghg-review-queue-title"><i class="fa-solid fa-flag"></i><h3>Review Queue</h3><span class="ghg-review-count">15,402 selections require attention</span></div><button class="btn btn-primary btn-small">Review All <i class="fa-solid fa-arrow-right"></i></button></div>' +
-        '<div class="ghg-issue-cards">' +
-          '<div class="ghg-issue-card"><div class="ghg-issue-card-header"><div class="ghg-issue-card-icon ghg-issue-card-icon--warning"><i class="fa-solid fa-location-dot"></i></div><span class="ghg-issue-card-title">Geographic Mismatch</span><span class="ghg-issue-card-count ghg-issue-card-count--warning">5,230</span></div><p class="ghg-issue-card-desc">Non-local EFs applied to local activities</p></div>' +
-          '<div class="ghg-issue-card"><div class="ghg-issue-card-header"><div class="ghg-issue-card-icon ghg-issue-card-icon--danger"><i class="fa-solid fa-clock"></i></div><span class="ghg-issue-card-title">Outdated Factors</span><span class="ghg-issue-card-count ghg-issue-card-count--danger">3,890</span></div><p class="ghg-issue-card-desc">Using pre-2023 factors (DEFRA 2022, ADEME 2021)</p></div>' +
-          '<div class="ghg-issue-card"><div class="ghg-issue-card-header"><div class="ghg-issue-card-icon ghg-issue-card-icon--info"><i class="fa-solid fa-bullseye"></i></div><span class="ghg-issue-card-title">Low Specificity</span><span class="ghg-issue-card-count ghg-issue-card-count--info">6,282</span></div><p class="ghg-issue-card-desc">Generic/average EFs where more specific available</p></div></div></div>' +
-        '<div class="ghg-quick-actions">' +
-          '<div class="ghg-quick-action"><div class="ghg-quick-action-icon"><i class="fa-solid fa-building"></i></div><div class="ghg-quick-action-content"><h4>Review by Entity</h4><p>Drill into EF selections for each organizational entity</p></div><i class="fa-solid fa-chevron-right"></i></div>' +
-          '<div class="ghg-quick-action"><div class="ghg-quick-action-icon"><i class="fa-solid fa-layer-group"></i></div><div class="ghg-quick-action-content"><h4>Review by Category</h4><p>Examine emission factors across scope categories</p></div><i class="fa-solid fa-chevron-right"></i></div>' +
-          '<div class="ghg-quick-action"><div class="ghg-quick-action-icon"><i class="fa-solid fa-sliders"></i></div><div class="ghg-quick-action-content"><h4>Manage Override Rules</h4><p>Configure rules that automatically override system selections</p></div><span class="ghg-quick-action-badge">8 active rules</span><i class="fa-solid fa-chevron-right"></i></div></div>' +
+        '<div class="ghg-efa-layout">' +
+          '<div class="ghg-efa-summary" id="ghg-efa-summary">' + getGhgEfaSummaryInnerHTML() + '</div>' +
+          '<div class="ghg-efa-table-wrap" id="ghg-efa-table-wrap">' +
+            '<table class="ghg-ov-table ghg-efa-table"><thead><tr><th>Entities</th><th>Region</th><th>Type</th><th class="num" style="width:64px">Activity</th><th class="num" style="width:88px">Records</th><th style="width:200px">Successful EF Coverage</th><th>Prominent issues</th></tr></thead>' +
+            '<tbody id="ghg-efa-tbody"></tbody></table>' +
+          '</div>' +
+          '<div class="ghg-efa-panel" id="ghg-efa-panel">' +
+            '<div class="ghg-efa-panel-activities" id="ghg-efa-activities"></div>' +
+            '<div class="ghg-efa-panel-detail" id="ghg-efa-detail"></div>' +
+          '</div>' +
+        '</div>' +
       '</div></div>' +
     '</div>';
   }

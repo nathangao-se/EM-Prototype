@@ -558,23 +558,22 @@
         : document.querySelector('.dm-popout-panel');
       if (!panel) panel = document.querySelector('.dm-popout-panel');
       if (panel) {
-        var open = panel.style.display !== 'none';
-        panel.style.display = open ? 'none' : '';
+        panel.classList.toggle('dm-popout-panel--open');
       }
       return;
     }
     var closeBtn = e.target.closest('[data-action="close-files-panel"]');
     if (closeBtn) {
       var panel = document.querySelector('.dm-popout-panel');
-      if (panel) panel.style.display = 'none';
+      if (panel) panel.classList.remove('dm-popout-panel--open');
       return;
     }
 
     var openPopout = document.querySelector('.dm-popout-panel');
-    if (openPopout && openPopout.style.display !== 'none'
+    if (openPopout && openPopout.classList.contains('dm-popout-panel--open')
         && !_clickInsidePopout
         && !e.target.closest('[data-action="toggle-files-panel"]')) {
-      openPopout.style.display = 'none';
+      openPopout.classList.remove('dm-popout-panel--open');
     }
 
     var cell = e.target.closest('.dm-cell-error[data-control], .dm-cell-corrected[data-control]');
@@ -643,7 +642,7 @@
   function buildPopoutHTML() {
     var html = '';
     html += '<div class="dm-popout-anchor">';
-    html += '<div class="dm-popout-panel" style="display:none">';
+    html += '<div class="dm-popout-panel">';
     html += '<div class="dm-popout-body">';
     html += buildDefaultLeftPanel();
     html += '</div>';

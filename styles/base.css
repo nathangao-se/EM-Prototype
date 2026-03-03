@@ -186,3 +186,20 @@ body {
   gap: 12px;
   margin-top: 4px;
 }
+
+/* ========================================
+   GLOBAL TRANSITIONS
+   ======================================== */
+@keyframes ptFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ptFadeSlideRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.pt-fade-in {
+  animation: ptFadeIn 0.2s ease both;
+}
