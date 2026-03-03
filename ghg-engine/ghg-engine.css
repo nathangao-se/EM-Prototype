@@ -36,9 +36,27 @@
   padding: 0;
 }
 
+/* ---------- keyframes ---------- */
+@keyframes ghgFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ghgFadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ghgPopIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ghgTreeReveal {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ---------- view switching ---------- */
 .ghg-view { display: none; }
-.ghg-view.ghg-view--active { display: flex; flex-direction: column; gap: 24px; flex: 1; min-height: 0; animation: ptFadeIn 0.2s ease both; }
+.ghg-view.ghg-view--active { display: flex; flex-direction: column; gap: 24px; flex: 1; min-height: 0; animation: ghgFadeIn 0.25s ease both; }
 
 /* ========================================
    PAGE HEADER
@@ -161,6 +179,10 @@
   padding: 16px 20px;
   display: flex;
   justify-content: space-between;
+  animation: ghgFadeSlideUp 0.25s ease both;
+}
+.ghg-inv-card:nth-child(2) { animation-delay: 0.05s; }
+.ghg-inv-card:nth-child(3) { animation-delay: 0.1s; }
   align-items: center;
   cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.2s, transform 0.2s;
@@ -256,9 +278,13 @@
   grid-area: 1 / 1;
 }
 
+.ghg-stats-row-wrap > .ghg-stats-row {
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
 .ghg-stats-row--hidden {
   visibility: hidden;
   pointer-events: none;
+  opacity: 0;
 }
 
 .ghg-stats-row {
@@ -460,6 +486,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
   gap: 12px;
 }
 
@@ -551,8 +578,16 @@
 
 .ghg-tabs {
   display: flex;
+  align-items: center;
   border-bottom: 1px solid var(--ghg-border);
   padding: 0;
+}
+.ghg-tabs-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  padding: 0 4px;
+  flex-shrink: 0;
 }
 
 .ghg-tab {
@@ -598,7 +633,7 @@
   padding: 20px 0 0;
 }
 
-.ghg-tab-content--active { display: flex; flex-direction: column; flex: 1; min-height: 0; animation: ptFadeIn 0.2s ease both; }
+.ghg-tab-content--active { display: flex; flex-direction: column; flex: 1; min-height: 0; animation: ghgFadeIn 0.25s ease both; }
 
 /* ========================================
    OVERVIEW TAB — two-column scrollable layout
@@ -634,7 +669,10 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  animation: ghgFadeSlideUp 0.3s ease both;
 }
+.ghg-ov-col-card:nth-child(2) { animation-delay: 0.05s; }
+.ghg-ov-col-card:nth-child(3) { animation-delay: 0.1s; }
 
 .ghg-ov-top-row {
   display: flex;
@@ -925,7 +963,7 @@
 }
 
 .ghg-expanded-content { display: none; }
-.ghg-expanded-content--open { display: table-row; }
+.ghg-expanded-content--open { display: table-row; animation: ghgFadeIn 0.2s ease both; }
 
 .ghg-expanded-inner {
   padding: 16px 20px;
@@ -1059,6 +1097,7 @@
   padding-left: 36px;
 }
 
+.ghg-group-child { transition: opacity 0.2s ease; }
 .ghg-group-child.ghg-hidden { display: none; }
 
 /* ========================================
@@ -1080,6 +1119,7 @@
   border-radius: 12px;
   overflow-y: auto;
   padding: 4px 16px 12px;
+  animation: ghgFadeSlideUp 0.3s ease both;
 }
 
 /* EAD Filter Bar */
@@ -1104,7 +1144,9 @@
   font-weight: 400;
   color: var(--ghg-text);
   white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s;
 }
+.ghg-ead-entity-trigger:hover { border-color: var(--ghg-text); background: #edf1f4; }
 .ghg-ead-entity-trigger strong {
   font-weight: 700;
 }
@@ -1187,6 +1229,7 @@
   flex-direction: column;
   overflow: hidden;
   font-family: var(--ghg-font);
+  animation: ghgPopIn 0.18s ease both;
 }
 .ghg-ep-header {
   display: flex;
@@ -1225,6 +1268,7 @@
   cursor: pointer;
   white-space: nowrap;
   outline: none;
+  transition: background 0.15s ease;
 }
 .ghg-ep-seg:hover { background: #f0f4f8; }
 .ghg-ep-seg--active,
@@ -1480,9 +1524,10 @@
   border-top: 1px solid #dfe7eb;
 }
 /* Hidden children */
+.ghg-ep-tree-children { animation: ghgTreeReveal 0.15s ease both; }
 .ghg-ep-tree-children--hidden { display: none; }
 /* Panel toggle (entities vs factors) */
-.ghg-ep-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.ghg-ep-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; animation: ghgFadeIn 0.2s ease both; }
 .ghg-ep-panel--hidden { display: none; }
 /* EF value column */
 .ghg-ep-col--ef-val { width: 160px; text-align: right; padding: 0 8px; }
@@ -1493,6 +1538,7 @@
   border: 1px solid var(--ghg-border);
   border-radius: 12px;
   padding: 20px;
+  animation: ghgFadeSlideUp 0.3s ease both;
 }
 .ghg-eft-wrap {
   display: flex;
@@ -1526,17 +1572,31 @@
   gap: 16px;
   overflow-y: auto;
   box-sizing: border-box;
+  animation: ghgFadeSlideUp 0.3s 0.05s ease both;
 }
 
+.ghg-ead-detail--animate > * { animation: ghgFadeSlideUp 0.25s ease both; }
 .ghg-ead-detail-placeholder {
-  color: var(--ghg-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex: 1;
+  min-height: 180px;
+  color: #abb3b8;
   font-family: var(--ghg-font);
   font-size: 14px;
+  font-weight: 400;
   text-align: center;
   padding: 40px 20px;
 }
+.ghg-ead-detail-placeholder i {
+  font-size: 28px;
+  opacity: 0.6;
+}
 
-.ghg-ead-row { cursor: pointer; transition: background 0.1s; }
+.ghg-ead-row { cursor: pointer; transition: background 0.15s ease, opacity 0.2s ease; }
 .ghg-ead-row:hover td { background: var(--ghg-surface); }
 .ghg-ead-row--selected td { background: var(--ghg-surface); }
 
@@ -1870,6 +1930,7 @@
   padding: 0 12px;
   border-radius: 2px;
   cursor: pointer;
+  transition: background 0.15s ease;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -1891,6 +1952,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  animation: ghgFadeIn 0.2s ease both;
 }
 
 .ghg-ead-section--hidden {
@@ -2550,7 +2612,8 @@
   .ghg-overview-left { width: 100%; }
   .ghg-ead-layout { flex-direction: column; flex: none; }
   .ghg-ead-table-wrap { overflow-y: visible; }
-  .ghg-ead-detail { width: 100%; }
+  .ghg-ead-detail { width: 100%; min-width: 0; }
+  .ghg-ead-detail-placeholder { min-height: 120px; }
   .ghg-audit-tables { flex-direction: column; }
 }
 

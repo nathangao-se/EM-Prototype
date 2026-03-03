@@ -746,7 +746,6 @@
     function bindEadSelection() {
       var eadDetail = ctx.querySelector('[data-ghg-ead-detail]');
       if (eadDetail) {
-        eadDetail.innerHTML = buildEadDetail(EAD_DATA[0]);
         ctx.addEventListener('click', function (e) {
           var seg = e.target.closest('.ghg-ead-toggle-seg');
           if (seg) {
@@ -768,7 +767,10 @@
           var idx = parseInt(row.getAttribute('data-ead'), 10);
           ctx.querySelectorAll('.ghg-ead-row').forEach(function (r) { r.classList.remove('ghg-ead-row--selected'); });
           row.classList.add('ghg-ead-row--selected');
+          eadDetail.classList.remove('ghg-ead-detail--animate');
+          void eadDetail.offsetWidth;
           eadDetail.innerHTML = buildEadDetail(EAD_DATA[idx]);
+          eadDetail.classList.add('ghg-ead-detail--animate');
         });
       }
     }
@@ -1561,7 +1563,7 @@
             '</tbody></table>' +
           '</div>' +
           '<div class="ghg-ead-detail" data-ghg-ead-detail>' +
-            '<div class="ghg-ead-detail-placeholder">Select a row to view lineage details</div>' +
+            '<div class="ghg-ead-detail-placeholder"><i class="fa-solid fa-arrow-pointer"></i><span>Select an activity to see details</span></div>' +
           '</div>' +
         '</div></div>';
   }
@@ -1628,6 +1630,10 @@
         '<button class="ghg-tab" data-ghg-tab="breakdown">Activities and calculations</button>' +
         '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors active</button>' +
         '<button class="ghg-tab" data-ghg-tab="entities-active">Entities active</button>' +
+        '<div class="ghg-tabs-actions">' +
+          '<button class="btn btn-outline btn-small"><i class="fa-solid fa-pen-to-square"></i> Change inventory</button>' +
+          '<button class="btn btn-primary btn-small">Set status</button>' +
+        '</div>' +
         '</div>' +
       getGhgOverviewTabHTML() +
       buildEadTabHTML() +
