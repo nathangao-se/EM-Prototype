@@ -1402,7 +1402,7 @@
       '</button>' +
       '<div class="ghg-ead-search-wrap">' +
         '<i class="fa-solid fa-magnifying-glass"></i>' +
-        '<input type="text" class="ghg-ead-search" placeholder="Search business entity" data-ghg-ead-search />' +
+        '<input type="text" class="ghg-ead-search" placeholder="Search activity" data-ghg-ead-search />' +
       '</div>' +
       '<button class="ghg-ead-filter-btn">' +
         '<i class="fa-solid fa-filter"></i><span>Filters</span>' +
