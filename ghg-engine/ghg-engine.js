@@ -1018,6 +1018,25 @@
       });
     }
 
+    function bindStatusModal() {
+      ctx.addEventListener('click', function (e) {
+        var trigger = e.target.closest('[data-ghg-status-trigger]');
+        if (!trigger) return;
+        e.stopPropagation();
+        var wrap = document.createElement('div');
+        wrap.innerHTML = buildStatusModalHTML();
+        var overlay = wrap.firstChild;
+        document.body.appendChild(overlay);
+        function close() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
+        overlay.addEventListener('click', function (ev) {
+          if (ev.target === overlay) close();
+        });
+        overlay.querySelectorAll('[data-ghg-status-close]').forEach(function (btn) {
+          btn.addEventListener('click', close);
+        });
+      });
+    }
+
     bindViewSwitching();
     bindTabs();
     bindBreakdownToggle();
@@ -1025,6 +1044,7 @@
     bindEadFilters();
     bindLineageAccordion();
     bindTreeTabs();
+    bindStatusModal();
   }
 
   window.bindGhgEngine = bindGhgEngine;
@@ -1108,10 +1128,10 @@
             '<div class="ghg-ov-col-card">' +
               '<div class="ghg-ov-top-row">' +
                 '<div class="ghg-ov-meta-col">' +
-                  '<div class="ghg-meta-row"><i class="fa-light fa-calendar"></i><span>10/1/25 - 12/31/25 (91 days)</span></div>' +
-                  '<div class="ghg-meta-row"><i class="fa-light fa-book-blank"></i><span>GHG Protocol Corporate Standard</span></div>' +
-                  '<div class="ghg-meta-row"><i class="fa-light fa-sitemap"></i><span>Financial Control</span></div>' +
-                  '<div class="ghg-meta-row"><i class="fa-light fa-sitemap"></i><span>4 entities</span></div>' +
+                  '<div class="ghg-meta-row"><i class="fa-regular fa-calendar"></i><span>10/1/25 - 12/31/25 (91 days)</span></div>' +
+                  '<div class="ghg-meta-row"><i class="fa-solid fa-book"></i><span>GHG Protocol Corporate Standard</span></div>' +
+                  '<div class="ghg-meta-row"><i class="fa-solid fa-sitemap"></i><span>Financial Control</span></div>' +
+                  '<div class="ghg-meta-row"><i class="fa-solid fa-sitemap"></i><span>4 entities</span></div>' +
                 '</div>' +
                 '<div class="ghg-ov-vdivider"></div>' +
                 '<div class="ghg-ov-quality-col">' +
@@ -1620,6 +1640,64 @@
       '</div>';
   }
 
+  function buildStatusModalHTML() {
+    return '<div class="ghg-status-overlay" data-ghg-status-overlay>' +
+      '<div class="ghg-status-modal">' +
+        '<div class="ghg-sm-header">' +
+          '<span class="ghg-sm-title">Change inventory status</span>' +
+          '<button class="ghg-sm-close" data-ghg-status-close><i class="fa-solid fa-xmark"></i></button>' +
+        '</div>' +
+        '<div class="ghg-sm-body">' +
+          '<div class="ghg-sm-card-wrap">' +
+            '<div class="ghg-sm-info">' +
+              '<span class="ghg-sm-icon-box"><i class="fa-regular fa-circle-check ghg-sm-icon ghg-sm-icon--green"></i></span>' +
+              '<p class="ghg-sm-info-text"><strong>This inventory is currently in draft mode.</strong> Once activated, it will stay that way until you deactivate it.</p>' +
+            '</div>' +
+            '<div class="ghg-sm-sep"></div>' +
+            '<div class="ghg-sm-banner">' +
+              '<div class="ghg-sm-banner-content">' +
+                '<span class="ghg-sm-icon-box"><i class="fa-regular fa-circle-check ghg-sm-icon"></i></span>' +
+                '<p class="ghg-sm-banner-text">Mark this inventory as complete and enable statement generation. Can be deactivated</p>' +
+              '</div>' +
+              '<div class="ghg-sm-banner-action"><button class="ghg-sm-btn ghg-sm-btn--activate">Activate inventory</button></div>' +
+            '</div>' +
+            '<div class="ghg-sm-banner">' +
+              '<div class="ghg-sm-banner-content">' +
+                '<span class="ghg-sm-icon-box"><i class="fa-regular fa-circle-xmark ghg-sm-icon"></i></span>' +
+                '<p class="ghg-sm-banner-text">Temporarily prevent your inventory from being used to generate statements.</p>' +
+              '</div>' +
+              '<div class="ghg-sm-banner-action"><button class="ghg-sm-btn ghg-sm-btn--outline">Deactivate inventory</button></div>' +
+            '</div>' +
+            '<div class="ghg-sm-banner">' +
+              '<div class="ghg-sm-banner-content">' +
+                '<span class="ghg-sm-icon-box"><i class="fa-solid fa-lock ghg-sm-icon ghg-sm-icon--muted"></i></span>' +
+                '<p class="ghg-sm-banner-text">Temporarily prevent your inventory from being used to generate statements.</p>' +
+              '</div>' +
+              '<div class="ghg-sm-banner-action"><button class="ghg-sm-btn ghg-sm-btn--outline">Lock inventory</button></div>' +
+            '</div>' +
+            '<div class="ghg-sm-banner">' +
+              '<div class="ghg-sm-banner-content">' +
+                '<span class="ghg-sm-icon-box"><i class="fa-solid fa-box-archive ghg-sm-icon"></i></span>' +
+                '<p class="ghg-sm-banner-text">Put this inventory into your archives. Can be restored indefinitely, cannot be used to generate statements while archived.</p>' +
+              '</div>' +
+              '<div class="ghg-sm-banner-action"><button class="ghg-sm-btn ghg-sm-btn--outline">Archive inventory</button></div>' +
+            '</div>' +
+            '<div class="ghg-sm-banner ghg-sm-banner--delete">' +
+              '<div class="ghg-sm-banner-content">' +
+                '<span class="ghg-sm-icon-box"><i class="fa-solid fa-triangle-exclamation ghg-sm-icon ghg-sm-icon--warn"></i></span>' +
+                '<p class="ghg-sm-banner-text ghg-sm-banner-text--warn">Delete this inventory. Once deleted, it will be restorable within 30 days, after which it will be permanently deleted</p>' +
+              '</div>' +
+              '<div class="ghg-sm-banner-action"><button class="ghg-sm-btn ghg-sm-btn--outline">Delete inventory</button></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ghg-sm-footer">' +
+          '<button class="ghg-sm-btn ghg-sm-btn--outline ghg-sm-btn--done" data-ghg-status-close>Done</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
   function getGhgHTML() {
     return '' +
     buildListViewHTML() +
@@ -1631,8 +1709,11 @@
         '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors active</button>' +
         '<button class="ghg-tab" data-ghg-tab="entities-active">Entities active</button>' +
         '<div class="ghg-tabs-actions">' +
-          '<button class="btn btn-outline btn-small"><i class="fa-solid fa-pen-to-square"></i> Change inventory</button>' +
-          '<button class="btn btn-primary btn-small">Set status</button>' +
+          '<div class="ghg-tabs-status-pill">' +
+            '<div class="ghg-tabs-chip"><i class="fa-regular fa-note-sticky"></i> Draft</div>' +
+            '<button class="ghg-tabs-link" data-ghg-status-trigger><i class="fa-regular fa-circle-right"></i> Update status</button>' +
+          '</div>' +
+          '<button class="btn btn-outline btn-small"><i class="fa-solid fa-gear"></i> Change settings</button>' +
         '</div>' +
         '</div>' +
       getGhgOverviewTabHTML() +
