@@ -574,6 +574,10 @@
   background: transparent;
   border: none;
   border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .ghg-tabs {
@@ -704,6 +708,9 @@
   flex: 1;
   min-width: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .ghg-ov-col-card {
@@ -770,7 +777,7 @@
   background: var(--ghg-white);
   border: 1px solid var(--ghg-border);
   border-radius: 12px;
-  padding: 4px 16px 12px;
+  padding: 20px 16px 12px;
   overflow: hidden;
 }
 
@@ -1584,14 +1591,20 @@
   border-radius: 12px;
   padding: 20px;
   animation: ghgFadeSlideUp 0.3s ease both;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 .ghg-eft-wrap {
   display: flex;
   flex-direction: column;
   gap: 4px;
   max-width: 720px;
+  flex: 1;
+  min-height: 0;
 }
-.ghg-eft-list { max-height: none; overflow: visible; }
+.ghg-eft-list { overflow-y: auto; }
 
 .ghg-ead-table { table-layout: fixed; }
 .ghg-ead-table th:nth-child(3),

@@ -1147,11 +1147,6 @@
                 '</div>' +
               '</div>' +
             '</div>' +
-            '<div class="ghg-ov-table-card">' +
-              '<table class="ghg-ov-table">' + GHG_OV_TABLE_HEAD + '<tbody>' + GHG_OV_TABLE_ROWS + '</tbody></table>' +
-            '</div>' +
-          '</div>' +
-          '<div class="ghg-ov-col-right">' +
             '<div class="ghg-ov-col-card">' +
               '<p class="ghg-audit-title">Audit trail and traceability</p>' +
               '<p class="ghg-audit-desc">Complete calculation logs for external auditor verification. Every emission record traces back to source data, emission factor, and methodology.</p>' +
@@ -1159,6 +1154,12 @@
               '<div class="ghg-ov-audit-tables">' +
                 buildAuditTablesHTML() +
               '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ghg-ov-col-right">' +
+            '<div class="ghg-ov-table-card">' +
+              '<p class="ghg-audit-title">Scope overview</p>' +
+              '<table class="ghg-ov-table">' + GHG_OV_TABLE_HEAD + '<tbody>' + GHG_OV_TABLE_ROWS + '</tbody></table>' +
             '</div>' +
           '</div>' +
         '</div></div>';
