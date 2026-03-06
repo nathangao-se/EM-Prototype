@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chart Color Palette Tester</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+  <div id="app-layout">
+    <aside id="sidebar">
+      <div id="sidebar-sticky">
+        <div class="sticky-top-row">
+          <h1>Color Tester</h1>
+          <div class="sticky-top-actions">
+            <div class="density-toggle" id="density-toggle">
+              <button data-density="less">Less</button>
+              <button data-density="medium" class="active">Med</button>
+              <button data-density="more">More</button>
+              <button data-density="even-more">Max</button>
+            </div>
+            <button id="btn-theme" title="Toggle light/dark mode">Dark</button>
+            <div class="slot-actions">
+              <button id="btn-add-slot" title="Add slot">+</button>
+              <button id="btn-remove-slot" title="Remove last slot">&minus;</button>
+              <button id="btn-clear-slots" title="Clear all slots">Clear</button>
+            </div>
+          </div>
+        </div>
+        <div id="active-slots"></div>
+      </div>
+
+      <div id="sidebar-scroll">
+        <div class="sidebar-section">
+          <h2>SE</h2>
+          <div id="se-palettes"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <h2>Saved Sets</h2>
+          <div class="saved-actions">
+            <button id="btn-save-set" title="Save current slots">Save Current</button>
+            <button id="btn-export" title="Export all saved sets to JSON">Export</button>
+            <button id="btn-import" title="Import saved sets from JSON">Import</button>
+            <input type="file" id="import-file" accept=".json" hidden>
+          </div>
+          <div id="saved-sets-list"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <h2>Presets</h2>
+          <div id="preset-list"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main id="chart-area">
+      <div id="chart-grid">
+        <div class="chart-card"><h3>Vertical Bar</h3><div id="chart-bar" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Horizontal Bar</h3><div id="chart-bar-h" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Line</h3><div id="chart-line" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Area</h3><div id="chart-area-chart" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Pie</h3><div id="chart-pie" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Doughnut</h3><div id="chart-doughnut" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Radar</h3><div id="chart-radar" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Polar Area</h3><div id="chart-polar" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Scatter</h3><div id="chart-scatter" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Stacked Bar</h3><div id="chart-stacked" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Multi-Line</h3><div id="chart-multiline" class="chart-container"></div></div>
+        <div class="chart-card"><h3>Mixed (Bar + Line)</h3><div id="chart-mixed" class="chart-container"></div></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

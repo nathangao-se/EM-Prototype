@@ -700,6 +700,7 @@
         views.forEach(function (v) { v.classList.remove('ghg-view--active'); });
         var target = ctx.querySelector('#ghg-view-' + id) || ctx.querySelector('[data-ghg-view="' + id + '"]');
         if (target) target.classList.add('ghg-view--active');
+        setTimeout(initDonutCharts, 60);
       }
       ctx.querySelectorAll('.ghg-inv-card').forEach(function (card) {
         card.addEventListener('click', function () { switchView('results'); });
@@ -727,6 +728,7 @@
             statsRowActivities.classList.toggle('ghg-stats-row--hidden', isOverview);
           }
           if (tabId === 'ef-selection') efaReset();
+          setTimeout(initDonutCharts, 60);
         });
       });
     }
@@ -1037,6 +1039,62 @@
       });
     }
 
+    var ghgChartInstances = [];
+    var initedEls = new WeakSet();
+
+    function initDonutChart(el) {
+      if (typeof echarts === 'undefined') return;
+      if (initedEls.has(el)) return;
+      if (el.offsetWidth === 0 || el.offsetHeight === 0) return;
+      initedEls.add(el);
+      var chart = echarts.init(el);
+      var isStrip = el.getAttribute('data-ghg-chart') === 'donut-strip';
+      chart.setOption({
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: '#fff',
+          borderColor: '#d5dde0',
+          textStyle: { color: '#1d201f', fontFamily: "'Nunito Sans', sans-serif", fontSize: 12 },
+          formatter: function (p) {
+            return '<strong>' + p.name + '</strong><br/>' +
+              Number(p.value).toLocaleString() + ' records (' + p.percent + '%)';
+          }
+        },
+        series: [{
+          type: 'pie',
+          radius: isStrip ? ['55%', '90%'] : ['50%', '85%'],
+          center: ['50%', '50%'],
+          data: DONUT_DATA.map(function (d) {
+            return { value: d.value, name: d.name, itemStyle: { color: d.color } };
+          }),
+          label: { show: false },
+          labelLine: { show: false },
+          emphasis: {
+            itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.2)' },
+            scale: true,
+            scaleSize: 4
+          },
+          itemStyle: { borderColor: '#fff', borderWidth: 2, borderRadius: 3 },
+          animationType: 'scale',
+          animationEasing: 'elasticOut',
+          animationDuration: 600
+        }]
+      });
+      ghgChartInstances.push(chart);
+    }
+
+    function initDonutCharts() {
+      ctx.querySelectorAll('[data-ghg-chart]').forEach(function (el) {
+        initDonutChart(el);
+      });
+    }
+
+    function resizeDonutCharts() {
+      ghgChartInstances.forEach(function (ch) {
+        if (!ch.isDisposed()) ch.resize();
+      });
+    }
+
     bindViewSwitching();
     bindTabs();
     bindBreakdownToggle();
@@ -1045,6 +1103,20 @@
     bindLineageAccordion();
     bindTreeTabs();
     bindStatusModal();
+
+    setTimeout(initDonutCharts, 50);
+    setTimeout(initDonutCharts, 300);
+
+    var ro = new ResizeObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var el = entry.target;
+        if (el.hasAttribute('data-ghg-chart') && !initedEls.has(el)) {
+          initDonutChart(el);
+        }
+      });
+      resizeDonutCharts();
+    });
+    ctx.querySelectorAll('[data-ghg-chart]').forEach(function (el) { ro.observe(el); });
   }
 
   window.bindGhgEngine = bindGhgEngine;
@@ -1125,25 +1197,29 @@
       '<div class="ghg-tab-content ghg-tab-content--active" id="ghg-tab-overview">' +
         '<div class="ghg-overview-cols pt-stagger-item">' +
           '<div class="ghg-ov-col-left">' +
-            '<div class="ghg-ov-col-card">' +
-              '<div class="ghg-ov-top-row">' +
-                '<div class="ghg-ov-meta-col">' +
-                  '<div class="ghg-meta-row"><i class="fa-regular fa-calendar"></i><span>10/1/25 - 12/31/25 (91 days)</span></div>' +
-                  '<div class="ghg-meta-row"><i class="fa-solid fa-book"></i><span>GHG Protocol Corporate Standard</span></div>' +
-                  '<div class="ghg-meta-row"><i class="fa-solid fa-sitemap"></i><span>Financial Control</span></div>' +
-                  '<div class="ghg-meta-row"><i class="fa-solid fa-sitemap"></i><span>4 entities</span></div>' +
+            '<div class="ghg-ov-col-card ghg-dq-card">' +
+              '<div class="ghg-dq-heading">Data quality score</div>' +
+              '<div class="ghg-dq-score-row">' +
+                '<div class="ghg-dq-score-left">' +
+                  '<div class="ghg-dq-score-icon"><i class="fa-solid fa-circle-check"></i></div>' +
+                  '<span class="ghg-dq-score-val">87</span>' +
+                  '<span class="ghg-dq-score-unit">out of 100</span>' +
                 '</div>' +
-                '<div class="ghg-ov-vdivider"></div>' +
-                '<div class="ghg-ov-quality-col">' +
-                  '<div class="ghg-ov-quality-label">Data quality score</div>' +
-                  '<div class="ghg-ov-quality-score"><i class="fa-solid fa-circle-check ghg-ov-quality-icon"></i><span class="ghg-ov-quality-val">87</span><span class="ghg-ov-quality-unit">out of 100</span></div>' +
-                  '<p class="ghg-ov-quality-desc">Based on data completeness, source quality, and validation status</p>' +
-                  '<div class="ghg-ov-quality-items">' +
-                    '<div class="ghg-ov-qi"><i class="fa-solid fa-circle-check ghg-ov-qi-ok"></i><span class="ghg-ov-qi-val">892 of 920</span><span class="ghg-ov-qi-desc">records complete</span></div>' +
-                    '<div class="ghg-ov-qi"><i class="fa-solid fa-circle-check ghg-ov-qi-ok"></i><span class="ghg-ov-qi-val">100%</span><span class="ghg-ov-qi-desc">emission factors (&lt;12 mo)</span></div>' +
-                    '<div class="ghg-ov-qi"><i class="fa-solid fa-triangle-exclamation ghg-ov-qi-warn"></i><span class="ghg-ov-qi-val">156 (17%)</span><span class="ghg-ov-qi-desc">records using spend-based estimates</span></div>' +
-                    '<div class="ghg-ov-qi"><i class="fa-solid fa-triangle-exclamation ghg-ov-qi-warn"></i><span class="ghg-ov-qi-val">32,598</span><span class="ghg-ov-qi-desc">Unassigned records</span></div>' +
-                  '</div>' +
+                '<div class="ghg-dq-score-desc">Based on data completeness, source quality, and validation status</div>' +
+              '</div>' +
+              '<div class="ghg-dq-divider"></div>' +
+              '<div class="ghg-dq-bottom">' +
+                '<div class="ghg-dq-items">' +
+                  '<div class="ghg-dq-item"><div class="ghg-dq-item-icon ghg-dq-item-icon--ok"><i class="fa-solid fa-circle-check"></i></div><span class="ghg-dq-item-val">892 of 920</span><span class="ghg-dq-item-desc">records complete</span></div>' +
+                  '<div class="ghg-dq-item"><div class="ghg-dq-item-icon ghg-dq-item-icon--ok"><i class="fa-solid fa-circle-check"></i></div><span class="ghg-dq-item-val">100%</span><span class="ghg-dq-item-desc">emission factors (&lt;12 mo)</span></div>' +
+                  '<div class="ghg-dq-item"><div class="ghg-dq-item-icon ghg-dq-item-icon--warn"><i class="fa-solid fa-triangle-exclamation"></i></div><span class="ghg-dq-item-val">156 (17%)</span><span class="ghg-dq-item-desc">records spend-based estimates</span></div>' +
+                  '<div class="ghg-dq-item"><div class="ghg-dq-item-icon ghg-dq-item-icon--warn"><i class="fa-solid fa-triangle-exclamation"></i></div><span class="ghg-dq-item-val">32,598</span><span class="ghg-dq-item-desc">Unassigned records</span></div>' +
+                '</div>' +
+                '<div class="ghg-dq-meta">' +
+                  '<div class="ghg-dq-meta-row"><div class="ghg-dq-meta-icon"><i class="fa-regular fa-calendar"></i></div><span>10/1/25 - 12/31/25 (91 days)</span></div>' +
+                  '<div class="ghg-dq-meta-row"><div class="ghg-dq-meta-icon"><i class="fa-solid fa-book"></i></div><span>GHG Protocol Corporate Standard</span></div>' +
+                  '<div class="ghg-dq-meta-row"><div class="ghg-dq-meta-icon"><i class="fa-solid fa-sitemap"></i></div><span>Financial Control</span></div>' +
+                  '<div class="ghg-dq-meta-row"><div class="ghg-dq-meta-icon"><i class="fa-solid fa-sitemap"></i></div><span>4 entities</span></div>' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -1169,13 +1245,11 @@
     return (window.ghgOverviewVersion === 'v1') ? getGhgOverviewV1() : getGhgOverviewV2();
   }
 
-  function buildDonutSVG(cls) {
-    return '<svg class="ghg-efa-donut' + (cls ? ' ' + cls : '') + '" viewBox="0 0 164 164">' +
-      '<circle cx="82" cy="82" r="41" fill="none" stroke="#008029" stroke-width="82" stroke-dasharray="247.75 257.61" transform="rotate(-90 82 82)"/>' +
-      '<circle cx="82" cy="82" r="41" fill="none" stroke="#d4790a" stroke-width="82" stroke-dasharray="3.16 257.61" stroke-dashoffset="-247.75" transform="rotate(-90 82 82)"/>' +
-      '<circle cx="82" cy="82" r="41" fill="none" stroke="#d42a1a" stroke-width="82" stroke-dasharray="6.70 257.61" stroke-dashoffset="-250.91" transform="rotate(-90 82 82)"/>' +
-    '</svg>';
-  }
+  var DONUT_DATA = [
+    { value: 1206234, name: 'Assigned', color: '#008029' },
+    { value: 15402, name: 'Needs review', color: '#d4790a' },
+    { value: 32598, name: 'Unassigned', color: '#d42a1a' }
+  ];
 
   var METRICS_ASSIGN = [
     { icon: 'fa-circle-check', cls: 'ghg-efa-mi--green', val: '1,206,234', label: 'Records assigned with EF' },
@@ -1217,7 +1291,7 @@
   function getGhgEfaDonutBlockHTML() {
     return '' +
       '<div class="ghg-efa-donut-area">' +
-        buildDonutSVG() +
+        '<div class="ghg-efa-donut" data-ghg-chart="donut-full"></div>' +
         '<div class="ghg-efa-donut-text"><span class="ghg-efa-donut-pct">87 <span>%</span></span><span class="ghg-efa-donut-label">Records assigned<br>with EF</span></div>' +
       '</div>' +
       buildMetricsBlock(METRICS_ASSIGN);
@@ -1226,7 +1300,7 @@
   function getGhgEfaDonutOnlyHTML() {
     return '' +
       '<div class="ghg-qsb-kpi-donut">' +
-        buildDonutSVG('ghg-efa-donut--strip') +
+        '<div class="ghg-efa-donut ghg-efa-donut--strip" data-ghg-chart="donut-strip"></div>' +
         '<div class="ghg-qsb-kpi-donut-text">' +
           '<div class="ghg-qsb-kpi-value-row"><span class="ghg-qsb-kpi-value">87</span><span class="ghg-qsb-kpi-uom">%</span></div>' +
           '<p class="ghg-qsb-kpi-donut-label">Records assigned with EF</p>' +
@@ -1603,6 +1677,102 @@
       '</div>';
   }
 
+  function buildEfTreeHTMLNoCheckbox() {
+    var html = '';
+    EF_TREE.forEach(function (efSet, si) {
+      var totalActs = 0;
+      efSet.children.forEach(function (f) { totalActs += f.activities; });
+      if (si > 0) html += '<div class="ghg-ep-region-sep"></div>';
+      html += '<div class="ghg-ep-tree-row">' +
+        '<div class="ghg-ep-tree-main">' +
+          '<span class="ghg-ep-tree-chevron" data-ep-toggle="efset-' + si + '"><i class="fa-solid fa-chevron-down"></i></span>' +
+          '<span class="ghg-ep-tree-name">' + esc(efSet.set) + ' <span class="ghg-ep-tree-name-count">(' + efSet.year + ')</span></span>' +
+        '</div>' +
+        '<div class="ghg-ep-tree-cell ghg-ep-tree-cell--ef-val"></div>' +
+        '<div class="ghg-ep-tree-cell">' + totalActs + '</div>' +
+      '</div>';
+      html += '<div class="ghg-ep-tree-children" data-ep-children="efset-' + si + '">';
+      efSet.children.forEach(function (factor, fi) {
+        var isLast = fi === efSet.children.length - 1;
+        html += '<div class="ghg-ep-tree-row">' +
+          '<div class="ghg-ep-tree-indent">' +
+            '<div class="ghg-ep-tree-line ' + (isLast ? 'ghg-ep-tree-line--hook' : 'ghg-ep-tree-line--branch') + '"></div>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-main">' +
+            '<span class="ghg-ep-tree-chevron ghg-ep-tree-chevron--leaf"></span>' +
+            '<span class="ghg-ep-tree-name">' + esc(factor.name) + '</span>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-cell ghg-ep-tree-cell--ef-val">' + esc(factor.ef) + '</div>' +
+          '<div class="ghg-ep-tree-cell">' + factor.activities + '</div>' +
+        '</div>';
+      });
+      html += '</div>';
+    });
+    return html;
+  }
+
+  function buildEntityTreeHTMLNoCheckbox() {
+    var html = '';
+    ENTITY_TREE.forEach(function (region, ri) {
+      var rt = getEntityTreeTotals(region);
+      var regionLeafCount = rt.leaves;
+      if (ri > 0) html += '<div class="ghg-ep-region-sep"></div>';
+      html += '<div class="ghg-ep-tree-row" data-ep-region="' + ri + '">' +
+        '<div class="ghg-ep-tree-main">' +
+          '<span class="ghg-ep-tree-chevron" data-ep-toggle="region-' + ri + '"><i class="fa-solid fa-chevron-down"></i></span>' +
+          '<span class="ghg-ep-tree-name">' + esc(region.region) + ' <span class="ghg-ep-tree-name-count">(' + regionLeafCount + ')</span></span>' +
+        '</div>' +
+        '<div class="ghg-ep-tree-cell">' + rt.activities + '</div>' +
+        '<div class="ghg-ep-tree-cell">' + rt.records.toLocaleString() + '</div>' +
+        covBarHTML(50) +
+        issueChipHTML('low') +
+      '</div>';
+      html += '<div class="ghg-ep-tree-children" data-ep-children="region-' + ri + '">';
+      region.children.forEach(function (type, ti) {
+        var tt = getTypeTotals(type);
+        var isLast = ti === region.children.length - 1;
+        html += '<div class="ghg-ep-tree-row" data-ep-type="' + ri + '-' + ti + '">' +
+          '<div class="ghg-ep-tree-indent">' +
+            '<div class="ghg-ep-tree-line ' + (isLast ? 'ghg-ep-tree-line--hook' : 'ghg-ep-tree-line--branch') + '"></div>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-main">' +
+            (type.children.length > 0
+              ? '<span class="ghg-ep-tree-chevron" data-ep-toggle="type-' + ri + '-' + ti + '"><i class="fa-solid fa-chevron-down"></i></span>'
+              : '<span class="ghg-ep-tree-chevron ghg-ep-tree-chevron--leaf"></span>') +
+            '<span class="ghg-ep-tree-name">' + esc(type.type) + ' <span class="ghg-ep-tree-name-count">(' + type.children.length + ')</span></span>' +
+          '</div>' +
+          '<div class="ghg-ep-tree-cell">' + (tt.activities || '') + '</div>' +
+          '<div class="ghg-ep-tree-cell">' + (tt.records ? tt.records.toLocaleString() : '') + '</div>' +
+          covBarHTML(50) +
+          issueChipHTML('low') +
+        '</div>';
+        if (type.children.length > 0) {
+          html += '<div class="ghg-ep-tree-children" data-ep-children="type-' + ri + '-' + ti + '">';
+          type.children.forEach(function (entity, ei) {
+            var isLastEntity = ei === type.children.length - 1;
+            html += '<div class="ghg-ep-tree-row" data-ep-entity="' + esc(entity.name) + '">' +
+              '<div class="ghg-ep-tree-indent">' +
+                '<div class="ghg-ep-tree-line ' + (isLast ? '' : 'ghg-ep-tree-line--vert') + '"></div>' +
+                '<div class="ghg-ep-tree-line ' + (isLastEntity ? 'ghg-ep-tree-line--hook' : 'ghg-ep-tree-line--branch') + '"></div>' +
+              '</div>' +
+              '<div class="ghg-ep-tree-main">' +
+                '<span class="ghg-ep-tree-chevron ghg-ep-tree-chevron--leaf"></span>' +
+                '<span class="ghg-ep-tree-name">' + esc(entity.name) + '</span>' +
+              '</div>' +
+              '<div class="ghg-ep-tree-cell">' + entity.activities + '</div>' +
+              '<div class="ghg-ep-tree-cell">' + entity.records.toLocaleString() + '</div>' +
+              covBarHTML(entity.coverage) +
+              issueChipHTML(entity.issue) +
+            '</div>';
+          });
+          html += '</div>';
+        }
+      });
+      html += '</div>';
+    });
+    return html;
+  }
+
   function buildEfaTabHTML() {
     return '' +
       '<div class="ghg-tab-content" id="ghg-tab-ef-selection">' +
@@ -1615,7 +1785,7 @@
               '<span class="ghg-ep-col ghg-ep-col--ef-val">EF Value</span>' +
               '<span class="ghg-ep-col ghg-ep-col--num">Activities</span>' +
             '</div>' +
-            '<div class="ghg-ep-list ghg-eft-list" data-ghg-eft-list>' + buildEfTreeHTML() + '</div>' +
+            '<div class="ghg-ep-list ghg-eft-list" data-ghg-eft-list>' + buildEfTreeHTMLNoCheckbox() + '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -1635,7 +1805,7 @@
               '<span class="ghg-ep-col ghg-ep-col--cov">EF Coverage</span>' +
               '<span class="ghg-ep-col ghg-ep-col--issues">Issues</span>' +
             '</div>' +
-            '<div class="ghg-ep-list ghg-eft-list" data-ghg-ent-list>' + buildEntityTreeHTML() + '</div>' +
+            '<div class="ghg-ep-list ghg-eft-list" data-ghg-ent-list>' + buildEntityTreeHTMLNoCheckbox() + '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
