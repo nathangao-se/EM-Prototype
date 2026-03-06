@@ -268,16 +268,10 @@
           '<span class="ghg-scope-chip ghg-scope-chip--' + d.scopeCls + '">' + esc(d.scopeLabel) + '</span>' +
         '</div>' +
         '<div class="ghg-ead-detail-file">' + esc(d.dataSource) + '</div>' +
-      '</div>';
+      '</div>' +
+      '<div class="ghg-ead-detail-separator"></div>';
 
-    var toggle =
-      '<div class="ghg-ead-toggle">' +
-        '<span class="ghg-ead-toggle-label">Go to:</span>' +
-        '<div class="ghg-ead-toggle-bar">' +
-          '<button class="ghg-ead-toggle-seg ghg-ead-toggle-seg--active" data-ead-section="calc">Calculations</button>' +
-          '<button class="ghg-ead-toggle-seg" data-ead-section="analysis">Emissions analysis</button>' +
-        '</div>' +
-      '</div>';
+    var toggle = '';
 
     var calcSection =
       '<div class="ghg-ead-section ghg-ead-section--calc">' +
@@ -335,7 +329,7 @@
     }).join('');
 
     var analysisSection =
-      '<div class="ghg-ead-section ghg-ead-section--analysis ghg-ead-section--hidden">' +
+      '<div class="ghg-ead-section ghg-ead-section--analysis">' +
         '<div class="ghg-ead-section-title">Emissions analysis</div>' +
         '<div class="ghg-ead-spec-card">' +
           '<div class="ghg-ead-spec-row">' +
@@ -359,7 +353,7 @@
       '</div>';
 
     return header + toggle +
-      '<div class="ghg-ead-detail-body">' + calcSection + analysisSection + '</div>';
+      '<div class="ghg-ead-detail-body">' + calcSection + '<div class="ghg-ead-detail-body-divider"></div>' + analysisSection + '</div>';
   }
 
   function buildEadTableRows() {
@@ -700,7 +694,7 @@
         views.forEach(function (v) { v.classList.remove('ghg-view--active'); });
         var target = ctx.querySelector('#ghg-view-' + id) || ctx.querySelector('[data-ghg-view="' + id + '"]');
         if (target) target.classList.add('ghg-view--active');
-        setTimeout(initDonutCharts, 60);
+        setTimeout(initGhgCharts, 60);
       }
       ctx.querySelectorAll('.ghg-inv-card').forEach(function (card) {
         card.addEventListener('click', function () { switchView('results'); });
@@ -727,8 +721,8 @@
             statsRowOverview.classList.toggle('ghg-stats-row--hidden', !isOverview);
             statsRowActivities.classList.toggle('ghg-stats-row--hidden', isOverview);
           }
-          if (tabId === 'ef-selection') efaReset();
-          setTimeout(initDonutCharts, 60);
+          if (tabId === 'ef-selection' || tabId === 'active-ef-ent') efaReset();
+          setTimeout(initGhgCharts, 60);
         });
       });
     }
@@ -742,6 +736,19 @@
         ctx.querySelectorAll('.ghg-group-child[data-group-parent="' + gi + '"]').forEach(function (row) {
           row.classList.toggle('ghg-hidden', isCollapsed);
         });
+      });
+    }
+
+    function syncTopCards(container) {
+      requestAnimationFrame(function () {
+        var r = container.querySelector('.ghg-ead-calc-result');
+        var s = container.querySelector('.ghg-ead-spec-card');
+        if (!r || !s) return;
+        r.style.minHeight = '';
+        s.style.minHeight = '';
+        var h = Math.max(r.offsetHeight, s.offsetHeight);
+        r.style.minHeight = h + 'px';
+        s.style.minHeight = h + 'px';
       });
     }
 
@@ -773,6 +780,7 @@
           void eadDetail.offsetWidth;
           eadDetail.innerHTML = buildEadDetail(EAD_DATA[idx]);
           eadDetail.classList.add('ghg-ead-detail--animate');
+          syncTopCards(eadDetail);
         });
       }
     }
@@ -1042,54 +1050,96 @@
     var ghgChartInstances = [];
     var initedEls = new WeakSet();
 
-    function initDonutChart(el) {
+    var SCOPE_BAR_DATA = [
+      { name: 'Scope 1', value: 11.7, color: '#7eb8da' },
+      { name: 'Scope 2', value: 4.3, color: '#2a9d8f' },
+      { name: 'Scope 3', value: 84.0, color: '#9b59b6' }
+    ];
+
+    function initGhgChart(el) {
       if (typeof echarts === 'undefined') return;
       if (initedEls.has(el)) return;
       if (el.offsetWidth === 0 || el.offsetHeight === 0) return;
       initedEls.add(el);
+      var chartType = el.getAttribute('data-ghg-chart');
       var chart = echarts.init(el);
-      var isStrip = el.getAttribute('data-ghg-chart') === 'donut-strip';
-      chart.setOption({
-        tooltip: {
-          trigger: 'item',
-          backgroundColor: '#fff',
-          borderColor: '#d5dde0',
-          textStyle: { color: '#1d201f', fontFamily: "'Nunito Sans', sans-serif", fontSize: 12 },
-          formatter: function (p) {
-            return '<strong>' + p.name + '</strong><br/>' +
-              Number(p.value).toLocaleString() + ' records (' + p.percent + '%)';
-          }
-        },
-        series: [{
-          type: 'pie',
-          radius: isStrip ? ['55%', '90%'] : ['50%', '85%'],
-          center: ['50%', '50%'],
-          data: DONUT_DATA.map(function (d) {
-            return { value: d.value, name: d.name, itemStyle: { color: d.color } };
-          }),
-          label: { show: false },
-          labelLine: { show: false },
-          emphasis: {
-            itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.2)' },
-            scale: true,
-            scaleSize: 4
+
+      if (chartType === 'scope-bar') {
+        chart.setOption({
+          grid: { top: 0, right: 0, bottom: 0, left: 0 },
+          xAxis: { type: 'value', max: 100, show: false },
+          yAxis: { type: 'category', data: [''], show: false },
+          tooltip: {
+            trigger: 'item',
+            appendToBody: true,
+            backgroundColor: '#fff',
+            borderColor: '#d5dde0',
+            textStyle: { color: '#1d201f', fontFamily: "'Nunito Sans', sans-serif", fontSize: 12 },
+            formatter: function (p) { return '<strong>' + p.seriesName + '</strong>: ' + p.value + '%'; }
           },
-          itemStyle: { borderColor: '#fff', borderWidth: 2, borderRadius: 3 },
-          animationType: 'scale',
-          animationEasing: 'elasticOut',
-          animationDuration: 600
-        }]
-      });
+          series: SCOPE_BAR_DATA.map(function (d, i) {
+            var r = SCOPE_BAR_DATA.length;
+            return {
+              name: d.name,
+              type: 'bar',
+              stack: 'scope',
+              data: [d.value],
+              itemStyle: {
+                color: d.color,
+                borderRadius: i === 0 ? [6, 0, 0, 6] : (i === r - 1 ? [0, 6, 6, 0] : 0)
+              },
+              barWidth: '100%',
+              emphasis: { itemStyle: { shadowBlur: 4, shadowColor: 'rgba(0,0,0,0.15)' } }
+            };
+          }),
+          animation: true,
+          animationDuration: 500,
+          animationEasing: 'cubicOut'
+        });
+      } else {
+        chart.setOption({
+          tooltip: {
+            trigger: 'item',
+            appendToBody: true,
+            backgroundColor: '#fff',
+            borderColor: '#d5dde0',
+            textStyle: { color: '#1d201f', fontFamily: "'Nunito Sans', sans-serif", fontSize: 12 },
+            formatter: function (p) {
+              return '<strong>' + p.name + '</strong><br/>' +
+                Number(p.value).toLocaleString() + ' records (' + p.percent + '%)';
+            }
+          },
+          series: [{
+            type: 'pie',
+            radius: ['0%', '90%'],
+            center: ['50%', '50%'],
+            data: DONUT_DATA.map(function (d) {
+              return { value: d.value, name: d.name, itemStyle: { color: d.color } };
+            }),
+            label: { show: false },
+            labelLine: { show: false },
+            emphasis: {
+              itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.15)' },
+              scale: true,
+              scaleSize: 3
+            },
+            itemStyle: { borderColor: 'transparent', borderWidth: 0 },
+            animationType: 'scale',
+            animationEasing: 'elasticOut',
+            animationDuration: 600
+          }]
+        });
+      }
       ghgChartInstances.push(chart);
     }
 
-    function initDonutCharts() {
+    function initGhgCharts() {
       ctx.querySelectorAll('[data-ghg-chart]').forEach(function (el) {
-        initDonutChart(el);
+        initGhgChart(el);
       });
     }
 
-    function resizeDonutCharts() {
+    function resizeGhgCharts() {
       ghgChartInstances.forEach(function (ch) {
         if (!ch.isDisposed()) ch.resize();
       });
@@ -1104,17 +1154,17 @@
     bindTreeTabs();
     bindStatusModal();
 
-    setTimeout(initDonutCharts, 50);
-    setTimeout(initDonutCharts, 300);
+    setTimeout(initGhgCharts, 50);
+    setTimeout(initGhgCharts, 300);
 
     var ro = new ResizeObserver(function (entries) {
       entries.forEach(function (entry) {
         var el = entry.target;
         if (el.hasAttribute('data-ghg-chart') && !initedEls.has(el)) {
-          initDonutChart(el);
+          initGhgChart(el);
         }
       });
-      resizeDonutCharts();
+      resizeGhgCharts();
     });
     ctx.querySelectorAll('[data-ghg-chart]').forEach(function (el) { ro.observe(el); });
   }
@@ -1246,15 +1296,15 @@
   }
 
   var DONUT_DATA = [
-    { value: 1206234, name: 'Assigned', color: '#008029' },
-    { value: 15402, name: 'Needs review', color: '#d4790a' },
-    { value: 32598, name: 'Unassigned', color: '#d42a1a' }
+    { value: 1091184, name: 'Assigned', color: '#3dcd58' },
+    { value: 95402, name: 'Needs review', color: '#ffb04d' },
+    { value: 67648, name: 'Unassigned', color: '#e85d75' }
   ];
 
   var METRICS_ASSIGN = [
-    { icon: 'fa-circle-check', cls: 'ghg-efa-mi--green', val: '1,206,234', label: 'Records assigned with EF' },
-    { icon: 'fa-circle-exclamation', cls: 'ghg-efa-mi--amber', val: '15,402', label: 'Assignment needing review' },
-    { icon: 'fa-triangle-exclamation', cls: 'ghg-efa-mi--red', val: '32,598', label: 'Unassigned records' }
+    { icon: 'fa-circle-check', cls: 'ghg-efa-mi--green', val: '1,091,184', label: 'Records assigned with EF' },
+    { icon: 'fa-circle-exclamation', cls: 'ghg-efa-mi--amber', val: '95,402', label: 'Assignment needing review' },
+    { icon: 'fa-triangle-exclamation', cls: 'ghg-efa-mi--red', val: '67,648', label: 'Unassigned records' }
   ];
   var METRICS_ISSUES = [
     { icon: 'fa-bullseye', cls: 'ghg-efa-mi--grey', val: '6,283', label: 'Low specificity' },
@@ -1390,11 +1440,7 @@
             '<div class="ghg-stat-label">Total emissions</div>' +
             '<div class="ghg-stat-value ghg-stat-value--xl">1,061.9 <span class="ghg-stat-unit ghg-stat-unit--xl">tCO\u2082e</span></div>' +
             '<div class="ghg-stat-bar-wrap">' +
-              '<div class="ghg-stat-bar">' +
-                '<div class="ghg-stat-bar-seg ghg-stat-bar-seg--s1" style="width:11.7%"></div>' +
-                '<div class="ghg-stat-bar-seg ghg-stat-bar-seg--s2" style="width:4.3%"></div>' +
-                '<div class="ghg-stat-bar-seg ghg-stat-bar-seg--s3" style="width:84%"></div>' +
-              '</div>' +
+              '<div data-ghg-chart="scope-bar" style="width:100%;height:12px;"></div>' +
               '<div class="ghg-stat-bar-legend">' +
                 '<span class="ghg-stat-bar-legend-item"><span class="ghg-stat-bar-dot ghg-stat-bar-dot--s1"></span>Scope 1</span>' +
                 '<span class="ghg-stat-bar-legend-item"><span class="ghg-stat-bar-dot ghg-stat-bar-dot--s2"></span>Scope 2</span>' +
@@ -1811,6 +1857,44 @@
       '</div>';
   }
 
+  function buildActiveEfEntTabHTML() {
+    return '' +
+      '<div class="ghg-tab-content" id="ghg-tab-active-ef-ent">' +
+        '<div class="ghg-eft-split">' +
+          '<div class="ghg-eft-split-col">' +
+            '<div class="ghg-eft-card">' +
+              '<div class="ghg-eft-wrap ghg-eft-wrap--full">' +
+                '<span class="ghg-ep-search-label">Filter for specific entities</span>' +
+                '<input type="text" class="ghg-ep-search" placeholder="" data-ghg-ent-search />' +
+                '<div class="ghg-ep-col-header">' +
+                  '<span class="ghg-ep-col ghg-ep-col--entity">Entities</span>' +
+                  '<span class="ghg-ep-col ghg-ep-col--num">Activities</span>' +
+                  '<span class="ghg-ep-col ghg-ep-col--num">Records</span>' +
+                  '<span class="ghg-ep-col ghg-ep-col--cov">EF Coverage</span>' +
+                  '<span class="ghg-ep-col ghg-ep-col--issues">Issues</span>' +
+                '</div>' +
+                '<div class="ghg-ep-list ghg-eft-list" data-ghg-ent-list>' + buildEntityTreeHTMLNoCheckbox() + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ghg-eft-split-col">' +
+            '<div class="ghg-eft-card">' +
+              '<div class="ghg-eft-wrap ghg-eft-wrap--full">' +
+                '<span class="ghg-ep-search-label">Filter for specific emission factors</span>' +
+                '<input type="text" class="ghg-ep-search" placeholder="" data-ghg-eft-search />' +
+                '<div class="ghg-ep-col-header">' +
+                  '<span class="ghg-ep-col ghg-ep-col--entity">Emission Factor Sets</span>' +
+                  '<span class="ghg-ep-col ghg-ep-col--ef-val">EF Value</span>' +
+                  '<span class="ghg-ep-col ghg-ep-col--num">Activities</span>' +
+                '</div>' +
+                '<div class="ghg-ep-list ghg-eft-list" data-ghg-eft-list>' + buildEfTreeHTMLNoCheckbox() + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
   function buildStatusModalHTML() {
     return '<div class="ghg-status-overlay" data-ghg-status-overlay>' +
       '<div class="ghg-status-modal">' +
@@ -1877,8 +1961,7 @@
       '<div class="ghg-tabs-container"><div class="ghg-tabs pt-stagger-item">' +
         '<button class="ghg-tab ghg-tab--active" data-ghg-tab="overview">Overview</button>' +
         '<button class="ghg-tab" data-ghg-tab="breakdown">Activities and calculations</button>' +
-        '<button class="ghg-tab" data-ghg-tab="ef-selection">Emissions factors active</button>' +
-        '<button class="ghg-tab" data-ghg-tab="entities-active">Entities active</button>' +
+        '<button class="ghg-tab" data-ghg-tab="active-ef-ent">Entities and Emissions factors in use</button>' +
         '<div class="ghg-tabs-actions">' +
           '<div class="ghg-tabs-status-pill">' +
             '<div class="ghg-tabs-chip"><i class="fa-regular fa-note-sticky"></i> Draft</div>' +
@@ -1889,8 +1972,7 @@
         '</div>' +
       getGhgOverviewTabHTML() +
       buildEadTabHTML() +
-      buildEfaTabHTML() +
-      buildEntitiesActiveTabHTML() +
+      buildActiveEfEntTabHTML() +
       '</div>' +
     '</div>';
   }

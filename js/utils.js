@@ -3,25 +3,55 @@
 // ========================================
 
 /**
- * Generate an SVG sparkline from an array of values
+ * Generate a sparkline placeholder div that will be rendered by ECharts.
+ * Falls back to inline SVG if ECharts is not loaded.
  */
 function generateSparkline(values, color) {
-  const width = 60;
-  const height = 24;
-  const padding = 2;
-  const maxVal = Math.max(...values.map(Math.abs), 1);
-  const midY = height / 2;
-  
-  const points = values.map((val, i) => {
-    const x = padding + (i / (values.length - 1)) * (width - padding * 2);
-    const y = midY - (val / maxVal) * (height / 2 - padding);
-    return `${x},${y}`;
-  }).join(' ');
-  
-  return `<svg class="sparkline" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    <line x1="${padding}" y1="${midY}" x2="${width - padding}" y2="${midY}" stroke="#dfe7eb" stroke-width="1"/>
-    <polyline fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${points}"/>
-  </svg>`;
+  var encoded = encodeURIComponent(JSON.stringify(values));
+  return '<div class="sparkline" data-sparkline-values="' + encoded + '" data-sparkline-color="' + color + '" style="width:60px;height:24px;"></div>';
+}
+
+/**
+ * Initialize all sparkline placeholders as ECharts mini-line charts.
+ * Call after DOM content is rendered.
+ */
+function initSparklines(root) {
+  if (typeof echarts === 'undefined') return;
+  var container = root || document;
+  container.querySelectorAll('[data-sparkline-values]').forEach(function (el) {
+    if (el._sparkInited) return;
+    if (el.offsetWidth === 0 || el.offsetHeight === 0) return;
+    el._sparkInited = true;
+    var values = JSON.parse(decodeURIComponent(el.getAttribute('data-sparkline-values')));
+    var color = el.getAttribute('data-sparkline-color') || '#676f73';
+    var chart = echarts.init(el);
+    chart.setOption({
+      grid: { top: 2, right: 2, bottom: 2, left: 2 },
+      xAxis: { type: 'category', show: false, boundaryGap: false },
+      yAxis: { type: 'value', show: false },
+      series: [{
+        type: 'line',
+        data: values,
+        symbol: 'none',
+        smooth: true,
+        lineStyle: { color: color, width: 2 },
+        areaStyle: { color: 'transparent' },
+        markLine: {
+          silent: true,
+          symbol: 'none',
+          label: { show: false },
+          lineStyle: { color: '#dfe7eb', width: 1, type: 'solid' },
+          data: [{ yAxis: 0 }]
+        }
+      }],
+      tooltip: { show: false },
+      animation: true,
+      animationDuration: 400,
+      animationEasing: 'cubicOut'
+    });
+    if (typeof window._sparkCharts === 'undefined') window._sparkCharts = [];
+    window._sparkCharts.push(chart);
+  });
 }
 
 /**

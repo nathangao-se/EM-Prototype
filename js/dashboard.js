@@ -177,6 +177,7 @@
     renderTreeHierarchy();
     renderTreeDetailContent();
     renderTreeVisualization();
+    if (typeof initSparklines === 'function') setTimeout(function () { initSparklines(); }, 30);
   }
   
   function renderTreeHierarchy() {
@@ -434,6 +435,7 @@
         updateFlatDetailContent(regionName);
       });
     });
+    if (typeof initSparklines === 'function') setTimeout(function () { initSparklines(); }, 30);
   }
   
   function updateFlatDetailContent(regionName) {
@@ -478,6 +480,7 @@
         }
       });
     });
+    if (typeof initSparklines === 'function') setTimeout(function () { initSparklines(); }, 30);
   }
   
   function handleFlatVizClick(region) {
