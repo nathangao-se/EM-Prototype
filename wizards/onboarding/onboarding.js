@@ -71,7 +71,8 @@
       case 0: renderWelcome(); break;
       case 1: renderProjectType(); break;
       case 2: renderProjectSetup(); break;
-      case 3: renderReview(); break;
+      case 3: renderUpload(); break;
+      case 4: renderReview(); break;
     }
   }
 
@@ -211,7 +212,7 @@
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
       '<button class="wizard-btn-outline" id="onb-ps-back">Back</button>' +
-      '<button class="wizard-btn-green" id="onb-ps-next">Next: Review</button>';
+      '<button class="wizard-btn-green" id="onb-ps-next">Next</button>';
 
     document.getElementById('onb-ps-back').addEventListener('click', function () {
       currentStep = 1; render();
@@ -522,7 +523,207 @@
   }
 
   // ===========================================
-  // STEP 3 — REVIEW
+  // STEP 3 — UPLOAD FILES (with template toggle)
+  // ===========================================
+
+  var onbUploadedFiles = [];
+  var onbShowTemplates = false;
+
+  var ONB_ACTIVITY_TYPES = ['All activity types', 'Electricity only', 'Mixed activities', 'Fuel consumption', 'Water usage'];
+  var ONB_SAMPLE_FILES = [
+    { name: 'Southern Europe Measure Data Point Data 1', size: '999.5mb', type: 'All activity types' },
+    { name: 'Asia Measure Data Point Data 1', size: '999.5mb', type: 'All activity types' },
+    { name: 'North America Measure Data Point Data 1', size: '999.5mb', type: 'All activity types' },
+    { name: 'East Africa Measure Data Point Data 1', size: '999.5mb', type: 'All activity types' }
+  ];
+
+  function buildOnbFileList() {
+    if (!onbUploadedFiles.length) return '';
+    var html = '<div class="upload-wiz-file-list">';
+    onbUploadedFiles.forEach(function (f, i) {
+      var opts = '';
+      ONB_ACTIVITY_TYPES.forEach(function (t) {
+        opts += '<option' + (f.type === t ? ' selected' : '') + '>' + esc(t) + '</option>';
+      });
+      html +=
+        '<div class="upload-wiz-file-row" data-onb-file="' + i + '">' +
+          '<span class="upload-wiz-file-name">' + esc(f.name) + '</span>' +
+          '<span class="upload-wiz-file-size">' + esc(f.size) + '</span>' +
+          '<span class="upload-wiz-file-type"><select>' + opts + '</select></span>' +
+          '<button type="button" class="upload-wiz-file-menu" title="Remove"><i class="fa-solid fa-ellipsis-vertical"></i></button>' +
+        '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function buildOnbTemplateCatalog() {
+    var catalog = window.SampleData && window.SampleData.TEMPLATE_CATALOG ? window.SampleData.TEMPLATE_CATALOG : [];
+    var html = '';
+    html += '<div class="uw-tpl-header">';
+    html += '<a href="#" class="onb-tpl-back-link"><i class="fa-solid fa-arrow-left"></i> Done</a>';
+    html += '<span class="uw-tpl-header-title">Download templates</span>';
+    html += '</div>';
+    var lastSection = '';
+    catalog.forEach(function (t, i) {
+      if (t.section !== lastSection) {
+        if (lastSection) html += '</div>';
+        lastSection = t.section;
+        var count = catalog.filter(function (x) { return x.section === t.section; }).length;
+        html += '<div class="uw-tpl-section">';
+        html += '<div class="uw-tpl-section-header">';
+        html += '<span class="uw-tpl-section-title">' + esc(t.section) + '</span>';
+        html += '<span class="uw-tpl-section-count">' + count + ' template' + (count !== 1 ? 's' : '') + '</span>';
+        html += '</div>';
+      }
+      html += '<div class="uw-tpl-row" data-onb-tpl="' + i + '">';
+      html += '<div class="uw-tpl-row-top">';
+      html += '<span class="uw-tpl-row-title">' + esc(t.title) + '</span>';
+      html += '<span class="uw-tpl-row-subtitle">' + esc(t.subtitle) + '</span>';
+      html += '</div>';
+      html += '<div class="uw-tpl-row-desc">' + esc(t.desc) + '</div>';
+      html += '<div class="uw-tpl-row-dl-feedback" style="display:none"><i class="fa-solid fa-check"></i> Downloaded</div>';
+      html += '</div>';
+    });
+    if (lastSection) html += '</div>';
+    return html;
+  }
+
+  function renderUpload() {
+    wizardEl.style.width = '720px';
+    header.classList.remove('onb-header--hidden');
+    body.classList.remove('onb-ps-body');
+
+    if (onbShowTemplates) {
+      titleEl.textContent = 'Download templates';
+      body.innerHTML = buildOnbTemplateCatalog();
+      footer.className = 'wizard-footer';
+      footer.innerHTML =
+        '<div class="wizard-footer-spacer"></div>' +
+        '<button class="wizard-btn-outline" id="onb-up-tpl-done">Done</button>';
+      bindOnbTemplateEvents();
+      return;
+    }
+
+    titleEl.textContent = 'Add your activity files';
+
+    var html = '';
+    html += '<p class="upload-wiz-desc">First, download the appropriate <a href="#" class="onb-tpl-link">excel templates</a></p>';
+    html += '<p class="upload-wiz-desc">Then, after completing it, upload your activity files below</p>';
+
+    html += '<div class="upload-wiz-section">';
+    html += '<div class="upload-wiz-section-header">';
+    html += '<span class="upload-wiz-section-title">Uploaded files</span>';
+    if (onbUploadedFiles.length > 0) {
+      html += '<div class="upload-wiz-section-actions"><a href="#" class="onb-add-more">+ Upload files</a></div>';
+    }
+    html += '</div>';
+
+    if (onbUploadedFiles.length === 0) {
+      html +=
+        '<div class="upload-wiz-dropzone onb-dropzone">' +
+          '<div class="upload-wiz-dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>' +
+          '<div class="upload-wiz-dropzone-text">Drop your Activity files here, or <a href="#" class="onb-browse">browse</a></div>' +
+          '<div class="upload-wiz-dropzone-meta">Supports: pdf, xls, json, xml, csv<br>Max file size 100MB</div>' +
+        '</div>';
+    } else {
+      html += buildOnbFileList();
+    }
+    html += '</div>';
+
+    body.innerHTML = html;
+
+    footer.className = 'wizard-footer';
+    footer.innerHTML =
+      '<div class="wizard-footer-spacer"></div>' +
+      '<button class="wizard-btn-outline" id="onb-up-back">Back</button>' +
+      '<button class="wizard-btn-green" id="onb-up-next">Next: Review</button>';
+
+    bindOnbUploadEvents();
+  }
+
+  function bindOnbUploadEvents() {
+    var dropzone = body.querySelector('.onb-dropzone');
+    if (dropzone) {
+      dropzone.addEventListener('click', function () {
+        ONB_SAMPLE_FILES.forEach(function (f) {
+          onbUploadedFiles.push({ name: f.name, size: f.size, type: f.type });
+        });
+        renderUpload();
+      });
+    }
+
+    body.querySelectorAll('.onb-browse').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); });
+    });
+
+    body.querySelectorAll('.onb-add-more').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        ONB_SAMPLE_FILES.forEach(function (f) {
+          onbUploadedFiles.push({ name: f.name, size: f.size, type: f.type });
+        });
+        renderUpload();
+      });
+    });
+
+    body.querySelectorAll('.onb-tpl-link').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        onbShowTemplates = true;
+        renderUpload();
+      });
+    });
+
+    body.querySelectorAll('.upload-wiz-file-menu').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var row = btn.closest('[data-onb-file]');
+        if (row) {
+          var idx = parseInt(row.dataset.onbFile, 10);
+          onbUploadedFiles.splice(idx, 1);
+          renderUpload();
+        }
+      });
+    });
+
+    document.getElementById('onb-up-back').addEventListener('click', function () {
+      currentStep = 2; render();
+    });
+    document.getElementById('onb-up-next').addEventListener('click', function () {
+      currentStep = 4; render();
+    });
+  }
+
+  function bindOnbTemplateEvents() {
+    body.querySelectorAll('[data-onb-tpl]').forEach(function (row) {
+      row.addEventListener('click', function () {
+        if (row.classList.contains('uw-tpl-row--downloading')) return;
+        row.classList.add('uw-tpl-row--downloading');
+        var feedback = row.querySelector('.uw-tpl-row-dl-feedback');
+        if (feedback) feedback.style.display = '';
+        setTimeout(function () {
+          row.classList.remove('uw-tpl-row--downloading');
+          if (feedback) feedback.style.display = 'none';
+        }, 1500);
+      });
+    });
+
+    body.querySelectorAll('.onb-tpl-back-link').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        onbShowTemplates = false;
+        renderUpload();
+      });
+    });
+
+    document.getElementById('onb-up-tpl-done').addEventListener('click', function () {
+      onbShowTemplates = false;
+      renderUpload();
+    });
+  }
+
+  // ===========================================
+  // STEP 4 — REVIEW
   // ===========================================
 
   function renderReview() {
@@ -571,10 +772,13 @@
       '<button class="wizard-btn-green" id="onb-rv-create">Create project</button>';
 
     document.getElementById('onb-rv-back').addEventListener('click', function () {
-      currentStep = 2; render();
+      currentStep = 3; render();
     });
     document.getElementById('onb-rv-create').addEventListener('click', function () {
       window.onboardingProject = Object.assign({}, formData);
+      window.onboardingProject.uploadedFiles = onbUploadedFiles.map(function (f) {
+        return { name: f.name, size: f.size, type: f.type };
+      });
       closeWizard();
       if (typeof window.renderPostOnboarding === 'function') {
         window.renderPostOnboarding();

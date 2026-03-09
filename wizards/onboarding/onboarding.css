@@ -8,6 +8,7 @@
 
 .onb-wizard {
   width: 640px;
+  min-height: auto;
   transition: width 0.25s ease;
   border-radius: 16px;
   overflow: hidden;
@@ -655,4 +656,15 @@
 .onb-rv-empty {
   color: #abb3b8;
   font-style: italic;
+}
+
+/* ===========================================
+   STEP 3 — UPLOAD FILES (reuses upload-wizard CSS)
+   =========================================== */
+
+.onb-tpl-link {
+  color: #008029;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
 }
