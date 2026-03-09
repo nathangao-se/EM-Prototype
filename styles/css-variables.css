@@ -17,7 +17,8 @@
   --transition-page-bg:  132ms ease-in-out;
 
   /* Modal sizing */
-  --modal-max-height:    75vh;
+  --modal-min-height:    600px;
+  --modal-max-height:    85vh;
   --overlay-pad-bottom:  10vh;
   --overlay-bg:          rgba(0, 0, 0, 0.45);
 
@@ -29,4 +30,10 @@
   /* Border radius */
   --radius-modal:        16px;
   --radius-btn:          8px;
+}
+
+@media (max-height: 620px) {
+  :root {
+    --modal-min-height: 400px;
+  }
 }

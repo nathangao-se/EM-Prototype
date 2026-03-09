@@ -19,9 +19,8 @@
     openClass: 'wizard-overlay--open',
     onOpen: function () {
       currentStep = 0;
-      selectedType = 'ghg';
-      selectedPerspective = 'global-oversight';
-      setupForm = { name: '', startDate: '', endDate: '' };
+      selectedProject = '';
+      projectLength = 'daily';
       render();
     }
   });
@@ -31,56 +30,19 @@
   var closeBtn  = overlay.querySelector('.wizard-close-btn');
   var body      = overlay.querySelector('.wizard-body');
   var footer    = overlay.querySelector('.wizard-footer');
+  var header    = overlay.querySelector('.wizard-header');
 
   // ===========================================
   // STATE
   // ===========================================
 
   var currentStep = 0;
-  var selectedType = 'ghg';
-  var selectedPerspective = 'global-oversight';
-  var setupForm = { name: '', startDate: '', endDate: '' };
+  var selectedProject = '';
+  var projectLength = 'daily';
+  var ASSET_BASE = 'wizards/onboarding/assets/';
 
-  var STEP_WIDTHS = [720, 960, 720, 720];
-
-  var STEPS = [
-    { label: 'Welcome',      key: 'welcome'     },
-    { label: 'Project type',  key: 'type'        },
-    { label: 'Project setup', key: 'setup'       },
-    { label: 'View',          key: 'perspective'  }
-  ];
-
-  // ===========================================
-  // PROJECT TYPE DATA
-  // ===========================================
-
-  var PROJECT_TYPES = {
-    ghg: {
-      name: 'GHG Projects',
-      desc: 'Designed for greenhouse gas inventories, emissions reporting, and compliance workflows.',
-      groups: [
-        { title: 'Activity / data mgmt', items: ['Activity mapping', 'Add files', 'Data campaign', 'Individual tasks'] },
-        { title: 'Emissions factors', items: ['Calculation methods', 'EF library'] },
-        { title: 'Inventory', items: ['Reporting', 'Inventory / projections list', 'Create inventory / projections'] }
-      ]
-    },
-    seasonal: {
-      name: 'Seasonal Projects',
-      desc: 'Periodic data collection with recurring schedules and reporting cycles.',
-      groups: [
-        { title: 'Activity / data mgmt', items: ['Activity mapping', 'Add files', 'Data campaign', 'Individual tasks'] },
-        { title: 'Operations', items: ['Individual tasks', 'Reporting', 'Scheduling'] }
-      ]
-    },
-    daily: {
-      name: 'Daily / Default',
-      desc: 'Ongoing operational tracking, reconciliation, and routine data management.',
-      groups: [
-        { title: 'Data management', items: ['Data reconciliation', 'Add files', 'Data campaign', 'Individual tasks'] },
-        { title: 'Operations', items: ['Individual tasks', 'Reporting', 'Scheduling', 'Optional workflows'] }
-      ]
-    }
-  };
+  var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var ORDINALS = ['1st', '2nd', '3rd', '4th', 'Last'];
 
   // ===========================================
   // OPEN / CLOSE
@@ -105,58 +67,11 @@
   // ===========================================
 
   function render() {
-    wizardEl.style.width = (STEP_WIDTHS[currentStep] || 720) + 'px';
     switch (currentStep) {
-      case 0: renderWelcome();       break;
-      case 1: renderProjectType();   break;
-      case 2: renderSetup();         break;
-      case 3: renderPerspective();   break;
-    }
-  }
-
-  // ===========================================
-  // STEPPER
-  // ===========================================
-
-  function buildStepper(activeIndex) {
-    var html = '<div class="wizard-stepper">';
-    STEPS.forEach(function (s, i) {
-      var cls = 'wizard-stepper-item';
-      if (i < activeIndex) cls += ' wizard-stepper-item--complete';
-      else if (i === activeIndex) cls += ' wizard-stepper-item--active';
-
-      html += '<div class="' + cls + '">';
-      html += '<span class="wizard-stepper-label">';
-      if (i < activeIndex) {
-        html += '<span class="wizard-stepper-check"><i class="fa-solid fa-check" style="font-size:8px"></i></span>';
-      }
-      html += esc(s.label) + '</span>';
-      html += '<div class="wizard-stepper-bar"><div class="wizard-stepper-bar-fill"></div></div>';
-      html += '</div>';
-    });
-    html += '</div>';
-    return html;
-  }
-
-  // ===========================================
-  // FOOTER NAV HELPER
-  // ===========================================
-
-  function bindFooterNav(backStep, nextStep) {
-    var backBtn = footer.querySelector('#onb-back');
-    var nextBtn = footer.querySelector('#onb-next');
-
-    if (backBtn) {
-      backBtn.addEventListener('click', function () {
-        if (backStep >= 0) { currentStep = backStep; render(); }
-        else closeWizard();
-      });
-    }
-    if (nextBtn) {
-      nextBtn.addEventListener('click', function () {
-        if (nextStep < STEPS.length) { currentStep = nextStep; render(); }
-        else finishWizard();
-      });
+      case 0: renderWelcome(); break;
+      case 1: renderProjectType(); break;
+      case 2: renderProjectSetup(); break;
+      case 3: renderReview(); break;
     }
   }
 
@@ -165,256 +80,509 @@
   // ===========================================
 
   function renderWelcome() {
-    titleEl.textContent = 'Getting started';
+    wizardEl.style.width = '640px';
+    header.classList.add('onb-header--hidden');
+    body.classList.remove('onb-ps-body');
+    titleEl.textContent = '';
 
-    var html = buildStepper(0);
-
-    html +=
-      '<div class="onb-welcome">' +
-        '<div class="onb-welcome-icon"><i class="fa-solid fa-cubes"></i></div>' +
-        '<h2 class="onb-welcome-title">Everything lives in a project</h2>' +
-        '<p class="onb-welcome-subtitle">' +
-          'Projects are the central way to organize your work in EcoStruxure Resource Advisor+. ' +
-          'Whether you\'re running a GHG inventory, collecting seasonal data, or managing daily operations, ' +
-          'every workflow starts inside a project.' +
-        '</p>' +
-        '<div class="onb-welcome-highlight">' +
-          '<i class="fa-solid fa-lightbulb" style="margin-right:6px"></i> ' +
-          'Any feature can live in any project, but each project type is optimized for certain kinds of work.' +
+    body.innerHTML =
+      '<div class="onb-welcome-banner">' +
+        '<img class="onb-welcome-banner-img" src="' + ASSET_BASE + 'banner-left.jpg" alt="">' +
+        '<img class="onb-welcome-banner-img" src="' + ASSET_BASE + 'banner-center.jpg" alt="">' +
+        '<img class="onb-welcome-banner-img" src="' + ASSET_BASE + 'banner-right.jpg" alt="">' +
+        '<div class="onb-welcome-banner-overlay">' +
+          '<div class="onb-welcome-banner-heading">Welcome to<br>Resource Advisor Plus</div>' +
         '</div>' +
+      '</div>' +
+      '<div class="onb-welcome-card">' +
+        '<p>Welcome to Schneider SB\u2019s next generation sustainability platform.</p>' +
+        '<p>We distilled 20 years of Sustainability experience into a new platform where ' +
+        'every inch of software is designed to help you accomplish your sustainability ' +
+        'program management goals faster and more accurately than ever before.</p>' +
       '</div>';
 
-    body.innerHTML = html;
-
-    footer.className = 'wizard-footer';
+    footer.className = 'wizard-footer onb-welcome-footer';
     footer.innerHTML =
-      '<div class="wizard-footer-spacer"></div>' +
-      '<button class="wizard-btn-outline" id="onb-back" style="visibility:hidden">Back</button>' +
-      '<button class="wizard-btn-green" id="onb-next">Next: Choose project type</button>';
+      '<button class="onb-welcome-btn" id="onb-next">Next: set up your projects</button>';
 
-    bindFooterNav(-1, 1);
+    document.getElementById('onb-next').addEventListener('click', function () {
+      currentStep = 1;
+      render();
+    });
   }
 
   // ===========================================
   // STEP 1 — PROJECT TYPE
   // ===========================================
 
-  function buildTypeCard(key) {
-    var t = PROJECT_TYPES[key];
-    var sel = (key === selectedType) ? ' onb-type-card--selected' : '';
+  function renderProjectType() {
+    wizardEl.style.width = '800px';
+    header.classList.remove('onb-header--hidden');
+    body.classList.remove('onb-ps-body');
+    titleEl.textContent = 'Welcome to Resource advisor plus';
 
-    var html = '<div class="onb-type-card' + sel + '" data-onb-type="' + key + '">';
-    html += '<div class="onb-type-card-name">' + esc(t.name) + '</div>';
-    html += '<div class="onb-type-card-desc">' + esc(t.desc) + '</div>';
+    body.innerHTML =
+      '<div class="onb-pt-text">' +
+        '<p>Resource advisor plus is based around projects; you can manage multiple branches of work, ' +
+        'share/request resources, or schedule recurring work with ease, <strong>regardless of scale</strong>.</p>' +
+        '<p>Let\u2019s create your first project. Start by choosing the project setting that\u2019s the best for you.</p>' +
+        '<p>You\u2019ll be able to create multiple concurrent projects and change settings later on if need be.</p>' +
+      '</div>' +
+      '<div class="onb-pt-cards">' +
+        buildProjectCard('continuous',
+          '<div class="onb-pt-icon-week">' +
+            '<div class="onb-pt-day-box">Mon</div>' +
+            '<div class="onb-pt-day-arrow"><i class="fa-solid fa-arrow-right"></i></div>' +
+            '<div class="onb-pt-day-box">Sun</div>' +
+          '</div>',
+          'Continuous or ad hoc',
+          'Often used by site managers/team members with regular day-to-day responsibilities'
+        ) +
+        buildProjectCard('seasonal',
+          '<div class="onb-pt-icon-fa"><i class="fa-regular fa-calendar-days"></i></div>',
+          'Seasonal',
+          'Often used for seasonal reporting for medium-large scale companies'
+        ) +
+        buildProjectCard('ghg',
+          '<div class="onb-pt-icon-fa"><i class="fa-solid fa-clipboard-list"></i></div>',
+          'Greenhouse Gas audit',
+          'Often used for large to multi-national companies reporting to meet global GHG audits'
+        ) +
+      '</div>';
 
-    t.groups.forEach(function (g) {
-      html += '<div class="onb-feature-group">';
-      html += '<div class="onb-feature-group-title">' + esc(g.title) + '</div>';
-      g.items.forEach(function (item) {
-        html += '<div class="onb-feature-item">' + esc(item) + '</div>';
+    footer.className = 'wizard-footer onb-pt-footer';
+    footer.innerHTML = '';
+
+    var PROJECT_LENGTH_MAP = { continuous: 'daily', seasonal: 'monthly', ghg: 'annual' };
+
+    body.querySelectorAll('.onb-pt-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        selectedProject = card.dataset.onbProject;
+        projectLength = PROJECT_LENGTH_MAP[selectedProject] || 'daily';
+        currentStep = 2;
+        render();
       });
-      html += '</div>';
+    });
+  }
+
+  function buildProjectCard(key, iconHtml, title, desc) {
+    return '' +
+      '<div class="onb-pt-card" data-onb-project="' + key + '">' +
+        '<div class="onb-pt-card-icon">' + iconHtml + '</div>' +
+        '<div class="onb-pt-card-divider"></div>' +
+        '<div class="onb-pt-card-title">' + esc(title) + '</div>' +
+        '<div class="onb-pt-card-desc">' + esc(desc) + '</div>' +
+      '</div>';
+  }
+
+  // ===========================================
+  // STEP 2 — PROJECT SETUP
+  // ===========================================
+
+  var HELPER_TEXT = {
+    daily:   'A new project will be created on the selected days at the specified time.',
+    weekly:  'A new project will be created each week on the selected day.',
+    monthly: 'A new project will be created monthly on the selected schedule.',
+    annual:  'A new project will be created for the specified date range.'
+  };
+
+  function renderProjectSetup() {
+    wizardEl.style.width = '640px';
+    header.classList.remove('onb-header--hidden');
+    titleEl.textContent = 'Welcome to Resource advisor plus';
+    body.classList.add('onb-ps-body');
+
+    body.innerHTML =
+      '<p class="onb-ps-required">All fields required unless noted.</p>' +
+      buildSegmentedControl() +
+      '<div id="onb-ps-dynamic"></div>' +
+      '<div class="onb-ps-field">' +
+        '<label class="onb-ps-label">Project name</label>' +
+        '<input class="onb-ps-input" type="text" placeholder="e.g. Q1 2026 Carbon Audit">' +
+      '</div>' +
+      '<div class="onb-ps-field">' +
+        '<label class="onb-ps-label">Project Description</label>' +
+        '<textarea class="onb-ps-textarea" rows="4" placeholder="Describe the scope and goals of this project..."></textarea>' +
+      '</div>';
+
+    renderDynamicFields();
+
+    footer.className = 'wizard-footer';
+    footer.innerHTML =
+      '<div class="wizard-footer-spacer"></div>' +
+      '<button class="wizard-btn-outline" id="onb-ps-back">Back</button>' +
+      '<button class="wizard-btn-green" id="onb-ps-next">Next: Review</button>';
+
+    document.getElementById('onb-ps-back').addEventListener('click', function () {
+      currentStep = 1; render();
+    });
+    document.getElementById('onb-ps-next').addEventListener('click', function () {
+      snapshotFormData();
+      currentStep = 3; render();
     });
 
+    body.querySelector('.onb-ps-seg').addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-onb-len]');
+      if (!btn) return;
+      projectLength = btn.dataset.onbLen;
+      body.querySelectorAll('[data-onb-len]').forEach(function (b) {
+        b.classList.toggle('onb-ps-seg-btn--active', b.dataset.onbLen === projectLength);
+      });
+      renderDynamicFields();
+    });
+  }
+
+  function buildSegmentedControl() {
+    var modes = [
+      { key: 'daily', label: 'Daily/perm' },
+      { key: 'weekly', label: 'Weekly' },
+      { key: 'monthly', label: 'Monthly' },
+      { key: 'annual', label: 'Annual/custom' }
+    ];
+    var html = '<div class="onb-ps-field"><label class="onb-ps-label">Project length</label><div class="onb-ps-seg">';
+    modes.forEach(function (m) {
+      var active = m.key === projectLength ? ' onb-ps-seg-btn--active' : '';
+      html += '<button class="onb-ps-seg-btn' + active + '" data-onb-len="' + m.key + '">' + esc(m.label) + '</button>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  function renderDynamicFields() {
+    var container = document.getElementById('onb-ps-dynamic');
+    if (!container) return;
+    var html = '';
+
+    switch (projectLength) {
+      case 'daily':
+        html = buildDailyFields();
+        break;
+      case 'weekly':
+        html = buildWeeklyFields();
+        break;
+      case 'monthly':
+        html = buildMonthlyFields();
+        break;
+      case 'annual':
+        html = buildAnnualFields();
+        break;
+    }
+
+    var helperCls = (projectLength === 'weekly' || projectLength === 'monthly') ? ' onb-ps-helper--flush' : '';
+    html += '<p class="onb-ps-helper' + helperCls + '">' + esc(HELPER_TEXT[projectLength]) + '</p>';
+    container.innerHTML = html;
+    bindDynamicFields(container);
+  }
+
+  function buildDailyFields() {
+    return '' +
+      '<div class="onb-ps-field">' +
+        '<div class="onb-ps-row" style="align-items:center">' +
+          '<div class="onb-ps-check-row">' +
+            '<input type="checkbox" class="onb-ps-checkbox" id="onb-daily-recur" checked>' +
+            '<label for="onb-daily-recur">Repeat project</label>' +
+          '</div>' +
+          '<div class="onb-ps-field onb-ps-field--grow">' +
+            '<div class="onb-ps-multiselect" id="onb-day-multiselect">' +
+              '<div class="onb-ps-multiselect-trigger" id="onb-day-trigger">' +
+                '<span id="onb-day-label">All days</span>' +
+                '<i class="fa-solid fa-chevron-down"></i>' +
+              '</div>' +
+              '<div class="onb-ps-multiselect-dropdown" id="onb-day-dropdown">' +
+                buildDayCheckboxes() +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<select class="onb-ps-select onb-ps-select--time">' +
+            buildTimeOptions() +
+          '</select>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function buildDayCheckboxes() {
+    var html = '';
+    DAYS.forEach(function (d, i) {
+      html += '<label class="onb-ps-ms-item">' +
+        '<input type="checkbox" data-onb-day="' + i + '" checked>' +
+        '<span>' + d + '</span>' +
+      '</label>';
+    });
+    return html;
+  }
+
+  function updateDayLabel() {
+    var label = document.getElementById('onb-day-label');
+    if (!label) return;
+    var checks = document.querySelectorAll('[data-onb-day]');
+    var selected = [];
+    checks.forEach(function (cb) {
+      if (cb.checked) selected.push(DAYS[parseInt(cb.dataset.onbDay)]);
+    });
+    if (selected.length === 7) label.textContent = 'All days';
+    else if (selected.length === 0) label.textContent = 'No days';
+    else label.textContent = selected.map(function (d) { return d.substring(0, 2); }).join(', ');
+  }
+
+  function buildWeeklyFields() {
+    return '' +
+      '<div class="onb-ps-field">' +
+        '<label class="onb-ps-label">Repeat project:</label>' +
+        '<div class="onb-ps-row" style="align-items:center">' +
+          buildDayPills('weekly', 1) +
+          '<select class="onb-ps-select onb-ps-select--time">' +
+            buildTimeOptions() +
+          '</select>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function buildMonthlyFields() {
+    return '' +
+      '<div class="onb-ps-field">' +
+        '<label class="onb-ps-label">Repeat project every:</label>' +
+        '<div id="onb-ps-month-fields">' +
+          buildMonthDayFields() +
+        '</div>' +
+      '</div>';
+  }
+
+  function buildMonthDayFields() {
+    var html = '<div class="onb-ps-row" style="align-items:center">';
+    html += '<select class="onb-ps-select" id="onb-month-mode">';
+    html += '<option value="day">Day of the month</option>';
+    ORDINALS.forEach(function (o) {
+      html += '<option value="' + o + '">' + o + ' weekday of the month</option>';
+    });
+    html += '</select>';
+    html += '<select class="onb-ps-select" id="onb-month-value">';
+    for (var i = 1; i <= 31; i++) {
+      html += '<option' + (i === 15 ? ' selected' : '') + '>' + ordinalSuffix(i) + '</option>';
+    }
+    html += '</select>';
     html += '</div>';
     return html;
   }
 
-  function renderProjectType() {
-    titleEl.textContent = 'Choose a project type';
-
-    var html = buildStepper(1);
-
-    html += '<p class="onb-type-intro">Select a project type. Each type comes with features optimized for that kind of work.</p>';
-    html += '<div class="onb-type-grid">';
-    html += buildTypeCard('ghg');
-    html += buildTypeCard('seasonal');
-    html += buildTypeCard('daily');
-    html += '</div>';
-
-    body.innerHTML = html;
-
-    footer.className = 'wizard-footer';
-    footer.innerHTML =
-      '<div class="wizard-footer-spacer"></div>' +
-      '<button class="wizard-btn-outline" id="onb-back">Back</button>' +
-      '<button class="wizard-btn-green" id="onb-next">Next: Project setup</button>';
-
-    bindFooterNav(0, 2);
-
-    body.querySelectorAll('[data-onb-type]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        selectedType = this.dataset.onbType;
-        body.querySelectorAll('.onb-type-card').forEach(function (c) {
-          c.classList.toggle('onb-type-card--selected', c.dataset.onbType === selectedType);
-        });
-      });
-    });
+  function ordinalSuffix(n) {
+    var s = ['th','st','nd','rd'];
+    var v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
   }
 
-  // ===========================================
-  // STEP 2 — LIGHT SETUP
-  // ===========================================
-
-  function renderSetup() {
-    titleEl.textContent = 'Set up your project';
-
-    var t = PROJECT_TYPES[selectedType];
-    var html = buildStepper(2);
-
-    html += '<span class="onb-project-type-badge"><i class="fa-solid fa-cube"></i> ' + esc(t.name) + '</span>';
-    html += '<p class="onb-setup-intro">Give your project a name and time range. You can always change these later.</p>';
-
-    html +=
-      '<div class="inv-form-row">' +
-        '<div class="inv-form-field" style="width:100%">' +
-          '<label class="inv-form-label">Project name</label>' +
-          '<input type="text" class="inv-form-input" id="onb-proj-name" placeholder="e.g. Q1 2026 Carbon Audit" value="' + esc(setupForm.name) + '">' +
+  function buildAnnualFields() {
+    return '' +
+      '<div class="onb-ps-row">' +
+        '<div class="onb-ps-field onb-ps-field--grow">' +
+          '<label class="onb-ps-label">Start date</label>' +
+          '<input class="onb-ps-input" type="text" placeholder="MM/DD/YYYY" value="01/01/2026">' +
+        '</div>' +
+        '<div class="onb-ps-field onb-ps-field--grow">' +
+          '<label class="onb-ps-label">End date</label>' +
+          '<input class="onb-ps-input" type="text" placeholder="MM/DD/YYYY" value="12/31/2026">' +
         '</div>' +
       '</div>' +
-      '<div class="inv-form-row">' +
-        '<div class="inv-form-field inv-form-field--flex1">' +
-          '<label class="inv-form-label">Start date</label>' +
-          '<input type="text" class="inv-form-input" id="onb-start" placeholder="mm/dd/yyyy" value="' + esc(setupForm.startDate) + '">' +
-        '</div>' +
-        '<div class="inv-form-field inv-form-field--flex1">' +
-          '<label class="inv-form-label">End date</label>' +
-          '<input type="text" class="inv-form-input" id="onb-end" placeholder="mm/dd/yyyy" value="' + esc(setupForm.endDate) + '">' +
-        '</div>' +
+      '<div class="onb-ps-check-row">' +
+        '<input type="checkbox" class="onb-ps-checkbox" id="onb-annual-recur">' +
+        '<label for="onb-annual-recur">Repeat project</label>' +
       '</div>';
+  }
 
-    if (selectedType === 'ghg') {
-      html +=
-        '<hr class="inv-form-divider">' +
-        '<div class="inv-form-row">' +
-          '<div class="inv-form-field inv-form-field--flex1">' +
-            '<label class="inv-form-label">GHG Framework</label>' +
-            '<select class="inv-form-select"><option>GHG Protocol Corporate Standard</option></select>' +
-          '</div>' +
-          '<div class="inv-form-field inv-form-field--flex1">' +
-            '<label class="inv-form-label">GWP Version</label>' +
-            '<select class="inv-form-select"><option>ARS 100-year GWP (IPCC 2014)</option></select>' +
-          '</div>' +
-        '</div>';
+  function buildDayPills(prefix, activeIdx) {
+    var html = '<div class="onb-ps-pill-seg"><div class="onb-ps-pills">';
+    DAYS.forEach(function (d, i) {
+      var active = i === activeIdx ? ' onb-ps-pill--active' : '';
+      html += '<button class="onb-ps-pill' + active + '" data-onb-pill="' + prefix + '-' + i + '">' + d + '</button>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  function buildTimeOptions() {
+    var html = '';
+    for (var m = 0; m < 1440; m += 15) {
+      var h = Math.floor(m / 60);
+      var mm = m % 60;
+      var period = h < 12 ? 'AM' : 'PM';
+      var h12 = h % 12 || 12;
+      var label = h12 + ':' + (mm < 10 ? '0' : '') + mm + ' ' + period;
+      var sel = (h === 9 && mm === 0) ? ' selected' : '';
+      html += '<option' + sel + '>' + label + '</option>';
+    }
+    return html;
+  }
+
+  function bindDynamicFields(container) {
+    container.querySelectorAll('.onb-ps-pill').forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        pill.closest('.onb-ps-pills').querySelectorAll('.onb-ps-pill').forEach(function (p) {
+          p.classList.remove('onb-ps-pill--active');
+        });
+        pill.classList.add('onb-ps-pill--active');
+      });
+    });
+
+    var modeSelect = container.querySelector('#onb-month-mode');
+    var valueSelect = container.querySelector('#onb-month-value');
+    if (modeSelect && valueSelect) {
+      modeSelect.addEventListener('change', function () {
+        var html = '';
+        if (modeSelect.value === 'day') {
+          for (var i = 1; i <= 31; i++) {
+            html += '<option' + (i === 15 ? ' selected' : '') + '>' + ordinalSuffix(i) + '</option>';
+          }
+        } else {
+          DAYS.forEach(function (d) { html += '<option>' + d + '</option>'; });
+        }
+        valueSelect.innerHTML = html;
+      });
     }
 
-    body.innerHTML = html;
-
-    footer.className = 'wizard-footer';
-    footer.innerHTML =
-      '<div class="wizard-footer-spacer"></div>' +
-      '<button class="wizard-btn-outline" id="onb-back">Back</button>' +
-      '<button class="wizard-btn-green" id="onb-next">Next: Choose view</button>';
-
-    bindFooterNav(1, 3);
-
-    var nameInput = document.getElementById('onb-proj-name');
-    var startInput = document.getElementById('onb-start');
-    var endInput = document.getElementById('onb-end');
-    if (nameInput) nameInput.addEventListener('input', function () { setupForm.name = this.value; });
-    if (startInput) startInput.addEventListener('input', function () { setupForm.startDate = this.value; });
-    if (endInput) endInput.addEventListener('input', function () { setupForm.endDate = this.value; });
+    var msWrap = container.querySelector('#onb-day-multiselect');
+    var trigger = container.querySelector('#onb-day-trigger');
+    var dropdown = container.querySelector('#onb-day-dropdown');
+    if (msWrap && trigger && dropdown) {
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = dropdown.classList.toggle('onb-ps-multiselect-dropdown--open');
+        msWrap.classList.toggle('onb-ps-multiselect--open', open);
+      });
+      dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+      container.querySelectorAll('[data-onb-day]').forEach(function (cb) {
+        cb.addEventListener('change', updateDayLabel);
+      });
+      document.addEventListener('click', function () {
+        dropdown.classList.remove('onb-ps-multiselect-dropdown--open');
+        msWrap.classList.remove('onb-ps-multiselect--open');
+      });
+    }
   }
 
   // ===========================================
-  // STEP 3 — PERSPECTIVE CHOICE
+  // DATA SNAPSHOT (gathered before leaving step 2)
   // ===========================================
 
-  function renderPerspective() {
-    titleEl.textContent = 'Choose your view';
+  var formData = {};
 
-    var html = buildStepper(3);
+  var PROJECT_TYPE_LABELS = {
+    continuous: 'Continuous or ad hoc',
+    seasonal: 'Seasonal',
+    ghg: 'Greenhouse Gas audit'
+  };
 
-    html += '<p class="onb-perspective-intro">How will you be using the platform? This sets your default dashboard layout.</p>';
+  var PROJECT_LENGTH_LABELS = {
+    daily: 'Daily/perm',
+    weekly: 'Weekly',
+    monthly: 'Monthly',
+    annual: 'Annual/custom'
+  };
 
-    html += '<div class="onb-perspective-grid">';
+  function snapshotFormData() {
+    var nameInput = body.querySelector('.onb-ps-input[type="text"]');
+    var descInput = body.querySelector('.onb-ps-textarea');
 
-    var gSel = selectedPerspective === 'global-oversight' ? ' onb-perspective-card--selected' : '';
-    var sSel = selectedPerspective === 'site-manager' ? ' onb-perspective-card--selected' : '';
+    formData.projectType = PROJECT_TYPE_LABELS[selectedProject] || selectedProject;
+    formData.projectLength = PROJECT_LENGTH_LABELS[projectLength] || projectLength;
+    formData.projectName = nameInput ? nameInput.value : '';
+    formData.projectDesc = descInput ? descInput.value : '';
 
-    html +=
-      '<div class="onb-perspective-card' + gSel + '" data-onb-perspective="global-oversight">' +
-        '<div class="onb-perspective-icon onb-perspective-icon--global"><i class="fa-solid fa-globe"></i></div>' +
-        '<div class="onb-perspective-card-name">Global Admin</div>' +
-        '<div class="onb-perspective-card-desc">Multi-site portfolio view with world map and organizational hierarchy. Best for overseeing operations across regions.</div>' +
+    switch (projectLength) {
+      case 'daily':
+        var dayChecks = body.querySelectorAll('[data-onb-day]');
+        var days = [];
+        dayChecks.forEach(function (cb) {
+          if (cb.checked) days.push(DAYS[parseInt(cb.dataset.onbDay)]);
+        });
+        formData.days = days.length === 7 ? 'All days' : (days.length === 0 ? 'None' : days.join(', '));
+        var recurCb = body.querySelector('#onb-daily-recur');
+        formData.recurring = recurCb ? recurCb.checked : false;
+        var timeSel = body.querySelector('.onb-ps-select--time');
+        formData.time = timeSel ? timeSel.value : '';
+        break;
+      case 'weekly':
+        var activePill = body.querySelector('.onb-ps-pill--active');
+        formData.day = activePill ? activePill.textContent : '';
+        var wTimeSel = body.querySelector('.onb-ps-select--time');
+        formData.time = wTimeSel ? wTimeSel.value : '';
+        break;
+      case 'monthly':
+        var modeSel = body.querySelector('#onb-month-mode');
+        var valSel = body.querySelector('#onb-month-value');
+        formData.monthMode = modeSel ? modeSel.options[modeSel.selectedIndex].text : '';
+        formData.monthValue = valSel ? valSel.value : '';
+        break;
+      case 'annual':
+        var dateInputs = body.querySelectorAll('.onb-ps-input[type="text"]');
+        formData.startDate = dateInputs[0] ? dateInputs[0].value : '';
+        formData.endDate = dateInputs[1] ? dateInputs[1].value : '';
+        var annualRecur = body.querySelector('#onb-annual-recur');
+        formData.recurring = annualRecur ? annualRecur.checked : false;
+        break;
+    }
+  }
+
+  // ===========================================
+  // STEP 3 — REVIEW
+  // ===========================================
+
+  function renderReview() {
+    wizardEl.style.width = '640px';
+    header.classList.remove('onb-header--hidden');
+    body.classList.add('onb-ps-body');
+    titleEl.textContent = 'Review your project';
+
+    var rows = [];
+    rows.push(reviewRow('Project type', formData.projectType));
+    rows.push(reviewRow('Project length', formData.projectLength));
+
+    switch (projectLength) {
+      case 'daily':
+        rows.push(reviewRow('Recurring', formData.recurring ? 'Yes' : 'No'));
+        rows.push(reviewRow('Days', formData.days));
+        rows.push(reviewRow('Time', formData.time));
+        break;
+      case 'weekly':
+        rows.push(reviewRow('Repeat day', formData.day));
+        rows.push(reviewRow('Time', formData.time));
+        break;
+      case 'monthly':
+        rows.push(reviewRow('Schedule', formData.monthMode + ' \u2014 ' + formData.monthValue));
+        break;
+      case 'annual':
+        rows.push(reviewRow('Start date', formData.startDate));
+        rows.push(reviewRow('End date', formData.endDate));
+        rows.push(reviewRow('Recurring', formData.recurring ? 'Yes' : 'No'));
+        break;
+    }
+
+    rows.push(reviewRow('Project name', formData.projectName || '<span class="onb-rv-empty">Not provided</span>'));
+    rows.push(reviewRow('Description', formData.projectDesc || '<span class="onb-rv-empty">Not provided</span>'));
+
+    body.innerHTML =
+      '<div class="onb-rv-card">' +
+        '<div class="onb-rv-heading">Project summary</div>' +
+        '<div class="onb-rv-table">' + rows.join('') + '</div>' +
       '</div>';
-
-    html +=
-      '<div class="onb-perspective-card' + sSel + '" data-onb-perspective="site-manager">' +
-        '<div class="onb-perspective-icon onb-perspective-icon--site"><i class="fa-solid fa-building"></i></div>' +
-        '<div class="onb-perspective-card-name">Site Manager</div>' +
-        '<div class="onb-perspective-card-desc">Single-site focus with flat navigation. Best for managing day-to-day operations at one location.</div>' +
-      '</div>';
-
-    html += '</div>';
-
-    body.innerHTML = html;
 
     footer.className = 'wizard-footer';
     footer.innerHTML =
       '<div class="wizard-footer-spacer"></div>' +
-      '<button class="wizard-btn-outline" id="onb-back">Back</button>' +
-      '<button class="wizard-btn-green" id="onb-next">Finish &amp; start collecting data</button>';
+      '<button class="wizard-btn-outline" id="onb-rv-back">Back</button>' +
+      '<button class="wizard-btn-green" id="onb-rv-create">Create project</button>';
 
-    bindFooterNav(2, STEPS.length);
-
-    body.querySelectorAll('[data-onb-perspective]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        selectedPerspective = this.dataset.onbPerspective;
-        body.querySelectorAll('.onb-perspective-card').forEach(function (c) {
-          c.classList.toggle('onb-perspective-card--selected', c.dataset.onbPerspective === selectedPerspective);
-        });
-      });
+    document.getElementById('onb-rv-back').addEventListener('click', function () {
+      currentStep = 2; render();
+    });
+    document.getElementById('onb-rv-create').addEventListener('click', function () {
+      closeWizard();
     });
   }
 
-  // ===========================================
-  // FINISH — load config + open data collection
-  // ===========================================
-
-  function finishWizard() {
-    closeWizard();
-
-    var configs = {
-      'global-oversight': window.CONFIG_GLOBAL_OVERSIGHT,
-      'site-manager': window.CONFIG_SITE_MANAGER
-    };
-
-    var config = configs[selectedPerspective];
-    if (!config) return;
-
-    if (typeof window.deactivateAppShell === 'function') {
-      window.deactivateAppShell();
-    }
-
-    var delivPage = document.getElementById('deliverables-page');
-    if (delivPage) delivPage.style.display = 'none';
-
-    var appContainer = document.querySelector('.app-container');
-    if (appContainer) appContainer.style.display = '';
-
-    function applyConfig() {
-      if (typeof window.loadConfig === 'function') {
-        window.loadConfig(config);
-      }
-
-      var devOptions = document.querySelectorAll('.dev-panel-option[data-config]');
-      devOptions.forEach(function (opt) {
-        opt.classList.toggle('dev-panel-option--active', opt.dataset.config === selectedPerspective);
-      });
-
-      setTimeout(function () {
-        if (typeof window.openActivityDataSetupModal === 'function') {
-          window.openActivityDataSetupModal();
-        }
-      }, 400);
-    }
-
-    if (typeof window.runConfigTransition === 'function') {
-      window.runConfigTransition(applyConfig);
-    } else {
-      applyConfig();
-    }
+  function reviewRow(label, value) {
+    return '<div class="onb-rv-row">' +
+      '<div class="onb-rv-label">' + esc(label) + '</div>' +
+      '<div class="onb-rv-value">' + value + '</div>' +
+    '</div>';
   }
 
 })();

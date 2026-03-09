@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Collection Flow — Design Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ================================================================
+   RESET & BASE
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  background: #eaeff2;
+  min-height: 100vh;
+}
+
+/* ================================================================
+   OPTION SWITCHER (top bar)
+   ================================================================ */
+.fo-switcher {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; gap: 4px;
+  background: #1d201f; padding: 8px 16px;
+  font-size: 13px; font-weight: 600;
+}
+.fo-switcher-label {
+  color: #abb3b8; margin-right: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.fo-switcher-tab {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid transparent;
+  background: transparent; color: #abb3b8; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  transition: all 150ms ease;
+}
+.fo-switcher-tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.fo-switcher-tab--active {
+  background: #008029; color: #fff; border-color: #008029;
+}
+
+/* ================================================================
+   BACKDROP & OPTION CONTAINERS
+   ================================================================ */
+.fo-option {
+  display: none; position: fixed; inset: 0; top: 44px;
+  background: rgba(0,0,0,0.45);
+  justify-content: center; align-items: center;
+}
+.fo-option--active { display: flex; animation: foFadeIn 0.2s ease both; }
+@keyframes foFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ================================================================
+   SHARED WIZARD SHELL
+   ================================================================ */
+.fo-wizard {
+  background: #fff; border-radius: 16px;
+  display: flex; flex-direction: column;
+  max-height: calc(100vh - 80px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: foSlideUp 0.25s ease both;
+  overflow: hidden;
+}
+@keyframes foSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.fo-wiz-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px; border-bottom: 1px solid #d5dde0; flex-shrink: 0;
+}
+.fo-wiz-header-title { font-size: 16px; font-weight: 700; }
+.fo-wiz-close {
+  width: 28px; height: 28px; border-radius: 6px; border: none;
+  background: transparent; color: #676f73; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: background 150ms;
+}
+.fo-wiz-close:hover { background: #f5f8fa; }
+
+/* Stepper */
+.fo-stepper { display: flex; gap: 4px; padding: 12px 24px; flex-shrink: 0; }
+.fo-stepper-item { flex: 1; }
+.fo-stepper-label {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: #abb3b8; margin-bottom: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fo-stepper-item--active .fo-stepper-label { color: #1d201f; }
+.fo-stepper-item--complete .fo-stepper-label { color: #008029; }
+.fo-stepper-bar { height: 4px; background: #dfe7eb; border-radius: 2px; overflow: hidden; }
+.fo-stepper-bar-fill {
+  height: 100%; width: 0; background: #008029; border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.fo-stepper-item--active .fo-stepper-bar-fill,
+.fo-stepper-item--complete .fo-stepper-bar-fill { width: 100%; }
+.fo-stepper-check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #008029; color: #fff; font-size: 7px;
+}
+
+/* Body */
+.fo-wiz-body {
+  flex: 1; overflow-y: auto; padding: 24px;
+  min-height: 0;
+}
+
+/* Footer */
+.fo-wiz-footer {
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  padding: 12px 24px; border-top: 1px solid #d5dde0; flex-shrink: 0;
+}
+.fo-wiz-footer-spacer { flex: 1; }
+
+/* Screens */
+.fo-screen { display: none; animation: foScreenIn 0.25s ease both; }
+.fo-screen--active { display: block; }
+@keyframes foScreenIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ================================================================
+   SHARED BUTTONS
+   ================================================================ */
+.fo-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  height: 36px; padding: 0 20px; border-radius: 6px;
+  cursor: pointer; border: none; transition: all 150ms ease;
+}
+.fo-btn-green { background: #008029; color: #fff; }
+.fo-btn-green:hover { background: #006622; }
+.fo-btn-outline {
+  background: transparent; border: 1px solid #d5dde0; color: #1d201f;
+}
+.fo-btn-outline:hover { background: #f5f8fa; }
+.fo-btn-ghost {
+  background: transparent; border: none; color: #676f73;
+}
+.fo-btn-ghost:hover { color: #1d201f; }
+
+/* ================================================================
+   SHARED FORM ELEMENTS
+   ================================================================ */
+.fo-form-row { margin-bottom: 16px; }
+.fo-form-label {
+  display: block; font-size: 12px; font-weight: 700; color: #1d201f;
+  margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.fo-form-input, .fo-form-select {
+  width: 100%; height: 36px; padding: 0 12px;
+  border: 1px solid #d5dde0; border-radius: 6px;
+  font-family: inherit; font-size: 14px; color: #1d201f;
+  background: #fff; outline: none; transition: border-color 150ms;
+}
+.fo-form-input:focus, .fo-form-select:focus { border-color: #008029; }
+.fo-form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23676f73'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+.fo-form-row-inline { display: flex; gap: 12px; }
+.fo-form-row-inline > * { flex: 1; }
+
+/* Segmented control */
+.fo-seg { display: flex; border: 1px solid #d5dde0; border-radius: 6px; overflow: hidden; }
+.fo-seg-btn {
+  flex: 1; padding: 8px 12px; text-align: center;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  background: #fff; border: none; color: #676f73;
+  cursor: pointer; transition: all 150ms;
+  border-right: 1px solid #d5dde0;
+}
+.fo-seg-btn:last-child { border-right: none; }
+.fo-seg-btn--active { background: #008029; color: #fff; }
+.fo-seg-btn:hover:not(.fo-seg-btn--active) { background: #f5f8fa; }
+
+/* Toggle */
+.fo-toggle-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; font-size: 14px;
+}
+.fo-toggle {
+  position: relative; width: 36px; height: 20px;
+  background: #d5dde0; border-radius: 10px; cursor: pointer;
+  transition: background 0.2s;
+}
+.fo-toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: transform 0.2s;
+}
+.fo-toggle--on { background: #008029; }
+.fo-toggle--on::after { transform: translateX(16px); }
+
+/* ================================================================
+   SHARED UTILITY
+   ================================================================ */
+.fo-callout {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+}
+.fo-callout-green { background: #e8f4ec; color: #006622; }
+.fo-callout-green i { color: #008029; }
+
+.fo-muted { color: #676f73; }
+.fo-mb-16 { margin-bottom: 16px; }
+.fo-mb-12 { margin-bottom: 12px; }
+.fo-mb-8 { margin-bottom: 8px; }
+.fo-mb-24 { margin-bottom: 24px; }
+.fo-mt-16 { margin-top: 16px; }
+.fo-mt-24 { margin-top: 24px; }
+
+/* ================================================================
+   OPTION A — Classic wizard with photo banner
+   ================================================================ */
+.fo-a-banner {
+  width: calc(100% + 48px); margin: -24px -24px 20px;
+  height: 160px; position: relative; overflow: hidden;
+  border-radius: 0;
+}
+.fo-a-banner img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.fo-a-banner-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,80,29,0.7), rgba(0,0,0,0.4));
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 20px 24px;
+}
+.fo-a-banner-title { color: #fff; font-size: 22px; font-weight: 700; }
+.fo-a-banner-sub { color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 4px; }
+
+.fo-a-steps { list-style: none; margin: 0 0 20px; }
+.fo-a-steps li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid #f0f3f5;
+}
+.fo-a-steps li:last-child { border-bottom: none; }
+.fo-a-step-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: #f5f8fa; display: flex; align-items: center; justify-content: center;
+  color: #008029; font-size: 14px; flex-shrink: 0;
+}
+.fo-a-step-text strong { display: block; font-size: 14px; font-weight: 700; }
+.fo-a-step-text span { font-size: 13px; color: #676f73; }
+
+/* ================================================================
+   OPTION B — Left-sidebar wizard
+   ================================================================ */
+.fo-b-body { display: flex; gap: 0; margin: -24px; }
+.fo-b-sidebar {
+  width: 280px; flex-shrink: 0; background: #f5f8fa;
+  border-right: 1px solid #dfe7eb; padding: 0;
+  display: flex; flex-direction: column;
+}
+.fo-b-sidebar-photo {
+  width: 100%; height: 180px; object-fit: cover; display: block;
+}
+.fo-b-progress { padding: 20px; flex: 1; }
+.fo-b-progress-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #676f73; margin-bottom: 16px; }
+.fo-b-progress-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding-bottom: 20px; position: relative;
+}
+.fo-b-progress-item:not(:last-child)::after {
+  content: ''; position: absolute; left: 13px; top: 28px;
+  width: 1px; height: calc(100% - 24px); background: #d5dde0;
+}
+.fo-b-progress-dot {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  background: #fff; border: 2px solid #d5dde0; color: #abb3b8;
+  position: relative; z-index: 1;
+}
+.fo-b-progress-item--active .fo-b-progress-dot { border-color: #008029; color: #008029; background: #e8f4ec; }
+.fo-b-progress-item--complete .fo-b-progress-dot { border-color: #008029; color: #fff; background: #008029; }
+.fo-b-progress-item--disabled { opacity: 0.45; }
+.fo-b-progress-text { font-size: 13px; font-weight: 600; color: #676f73; padding-top: 3px; }
+.fo-b-progress-item--active .fo-b-progress-text { color: #1d201f; }
+
+.fo-b-content { flex: 1; padding: 24px; overflow-y: auto; }
+.fo-b-content h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.fo-b-content > p { color: #676f73; margin-bottom: 20px; }
+
+.fo-b-info-cards { display: flex; flex-direction: column; gap: 10px; }
+.fo-b-info-card {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px; border: 1px solid #dfe7eb; border-radius: 8px;
+}
+.fo-b-info-card-icon {
+  width: 32px; height: 32px; border-radius: 6px;
+  background: #e8f4ec; color: #008029;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.fo-b-info-card strong { display: block; font-size: 13px; font-weight: 700; }
+.fo-b-info-card span { font-size: 12px; color: #676f73; }
+
+.fo-b-form-card {
+  padding: 16px; border: 1px solid #dfe7eb; border-radius: 10px;
+  margin-bottom: 12px;
+}
+.fo-b-form-card-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+.fo-b-tiles { display: flex; gap: 8px; }
+.fo-b-tile {
+  flex: 1; padding: 14px 12px; border: 2px solid #dfe7eb; border-radius: 8px;
+  text-align: center; cursor: pointer; transition: all 150ms;
+  background: #fff;
+}
+.fo-b-tile:hover { border-color: #abb3b8; }
+.fo-b-tile--active { border-color: #008029; background: #f0faf3; }
+.fo-b-tile i { font-size: 18px; color: #676f73; display: block; margin-bottom: 6px; }
+.fo-b-tile--active i { color: #008029; }
+.fo-b-tile strong { display: block; font-size: 13px; }
+.fo-b-tile span { font-size: 11px; color: #676f73; }
+
+/* ================================================================
+   OPTION C — Compact wizard with hero strip
+   ================================================================ */
+.fo-c-hero {
+  width: calc(100% + 48px); margin: -24px -24px 20px;
+  height: 100px; position: relative; overflow: hidden;
+}
+.fo-c-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fo-c-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.65), rgba(0,0,0,0.3));
+  display: flex; align-items: center; padding: 0 24px;
+}
+.fo-c-hero-title { color: #fff; font-size: 18px; font-weight: 700; }
+
+.fo-c-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.fo-c-grid-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 14px; border: 1px solid #dfe7eb; border-radius: 8px;
+}
+.fo-c-grid-item--disabled { opacity: 0.4; }
+.fo-c-grid-icon {
+  width: 32px; height: 32px; border-radius: 6px;
+  background: #e8f4ec; color: #008029;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.fo-c-grid-item--disabled .fo-c-grid-icon { background: #f5f8fa; color: #abb3b8; }
+.fo-c-grid-text strong { display: block; font-size: 13px; font-weight: 700; }
+.fo-c-grid-text span { font-size: 12px; color: #676f73; }
+.fo-c-grid-badge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 6px; border-radius: 4px;
+  background: #f5f8fa; color: #abb3b8; margin-left: 6px;
+  text-transform: uppercase; letter-spacing: 0.3px;
+}
+
+.fo-c-summary {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px;
+}
+.fo-c-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 999px;
+  background: #f5f8fa; border: 1px solid #dfe7eb;
+  font-size: 12px; font-weight: 600; color: #1d201f;
+}
+.fo-c-chip i { color: #008029; font-size: 10px; }
+
+/* ================================================================
+   OPTION D — Two-column intro wizard
+   ================================================================ */
+.fo-d-cols { display: flex; gap: 24px; }
+.fo-d-col-left { flex: 1.2; }
+.fo-d-col-right { flex: 1; }
+
+.fo-d-photo {
+  width: 100%; height: 180px; object-fit: cover;
+  border-radius: 10px; display: block; margin-bottom: 16px;
+}
+.fo-d-col-left h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.fo-d-col-left p { color: #676f73; font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+
+.fo-d-step-cards { display: flex; flex-direction: column; gap: 8px; }
+.fo-d-step-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px; border: 1px solid #dfe7eb; border-radius: 8px;
+  background: #fff; transition: all 150ms;
+}
+.fo-d-step-card:hover { border-color: #abb3b8; }
+.fo-d-step-card--disabled { opacity: 0.4; }
+.fo-d-step-card-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #f5f8fa; border: 1px solid #dfe7eb;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #676f73; flex-shrink: 0;
+}
+.fo-d-step-card strong { font-size: 13px; display: block; }
+.fo-d-step-card span { font-size: 11px; color: #676f73; }
+.fo-d-step-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; background: #f5f8fa; color: #abb3b8;
+  text-transform: uppercase;
+}
+
+/* Collapsible sections */
+.fo-d-section {
+  border: 1px solid #dfe7eb; border-radius: 10px;
+  margin-bottom: 10px; overflow: hidden;
+}
+.fo-d-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; cursor: pointer; transition: background 150ms;
+  user-select: none;
+}
+.fo-d-section-header:hover { background: #fafbfc; }
+.fo-d-section-header-left { display: flex; align-items: center; gap: 8px; }
+.fo-d-section-header-left strong { font-size: 14px; }
+.fo-d-section-status {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid #d5dde0; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: transparent; flex-shrink: 0;
+}
+.fo-d-section--done .fo-d-section-status { border-color: #008029; background: #008029; color: #fff; }
+.fo-d-section-chevron { color: #abb3b8; font-size: 12px; transition: transform 0.2s; }
+.fo-d-section--open .fo-d-section-chevron { transform: rotate(180deg); }
+.fo-d-section-body {
+  max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 16px;
+}
+.fo-d-section--open .fo-d-section-body { max-height: 400px; padding: 0 16px 16px; }
+
+/* ================================================================
+   OPTION E — Checklist wizard
+   ================================================================ */
+.fo-e-photo {
+  width: 100%; height: 120px; object-fit: cover;
+  border-radius: 10px; display: block; margin-bottom: 16px;
+}
+.fo-e-heading { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+.fo-e-checklist { list-style: none; margin-bottom: 16px; }
+.fo-e-check-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid #f0f3f5;
+}
+.fo-e-check-item:last-child { border-bottom: none; }
+.fo-e-check-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid #d5dde0; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: transparent; transition: all 0.2s;
+}
+.fo-e-check-item--done .fo-e-check-icon { border-color: #008029; background: #008029; color: #fff; }
+.fo-e-check-text strong { display: block; font-size: 14px; font-weight: 700; }
+.fo-e-check-text span { font-size: 13px; color: #676f73; }
+.fo-e-check-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; background: #f5f8fa; color: #abb3b8;
+  text-transform: uppercase; align-self: center;
+}
+.fo-e-note {
+  font-size: 12px; color: #676f73; font-style: italic; margin-top: 4px;
+}
+
+/* Timeline bar */
+.fo-e-timeline { margin-bottom: 20px; }
+.fo-e-timeline-label { display: flex; justify-content: space-between; font-size: 11px; color: #abb3b8; margin-bottom: 6px; }
+.fo-e-timeline-bar {
+  height: 8px; background: #dfe7eb; border-radius: 4px; position: relative; overflow: hidden;
+}
+.fo-e-timeline-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: #008029; border-radius: 4px; transition: width 0.3s;
+}
+.fo-e-freq-cards { display: flex; gap: 8px; margin-bottom: 16px; }
+.fo-e-freq-card {
+  flex: 1; padding: 14px; border: 2px solid #dfe7eb; border-radius: 8px;
+  text-align: center; cursor: pointer; transition: all 150ms;
+}
+.fo-e-freq-card:hover { border-color: #abb3b8; }
+.fo-e-freq-card--active { border-color: #008029; background: #f0faf3; }
+.fo-e-freq-card i { font-size: 20px; color: #676f73; display: block; margin-bottom: 6px; }
+.fo-e-freq-card--active i { color: #008029; }
+.fo-e-freq-card strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.fo-e-freq-card span { font-size: 11px; color: #676f73; }
+.fo-e-check-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.fo-e-checkbox {
+  width: 16px; height: 16px; border: 2px solid #d5dde0; border-radius: 3px;
+  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: transparent; transition: all 0.15s;
+}
+.fo-e-checkbox--checked { border-color: #008029; background: #008029; color: #fff; }
+
+/* ================================================================
+   OPTION F — Large-tile wizard
+   ================================================================ */
+.fo-f-hero {
+  width: calc(100% + 48px); margin: -24px -24px 20px;
+  height: 140px; position: relative; overflow: hidden;
+}
+.fo-f-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fo-f-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,80,29,0.65), rgba(0,0,0,0.35));
+  display: flex; align-items: center; justify-content: center;
+}
+.fo-f-hero-title { color: #fff; font-size: 22px; font-weight: 700; text-align: center; }
+
+.fo-f-tiles { display: flex; gap: 12px; margin-bottom: 16px; }
+.fo-f-tile {
+  flex: 1; padding: 20px 16px; border: 2px solid #dfe7eb; border-radius: 12px;
+  text-align: center; transition: all 0.2s; cursor: default;
+}
+.fo-f-tile:hover { border-color: #abb3b8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.fo-f-tile-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: #e8f4ec; color: #008029;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 10px;
+}
+.fo-f-tile strong { display: block; font-size: 14px; margin-bottom: 4px; }
+.fo-f-tile span { font-size: 12px; color: #676f73; line-height: 1.4; }
+
+.fo-f-note { text-align: center; font-size: 12px; color: #abb3b8; }
+
+/* Calendar card */
+.fo-f-cal-card {
+  border: 1px solid #dfe7eb; border-radius: 10px;
+  padding: 16px; margin-bottom: 14px;
+}
+.fo-f-cal-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+.fo-f-cal-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
+  margin-bottom: 12px;
+}
+.fo-f-cal-cell {
+  height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: #676f73; background: #f5f8fa;
+}
+.fo-f-cal-cell--active { background: #008029; color: #fff; }
+.fo-f-cal-cell--edge { background: #b8e6c8; color: #006622; }
+
+.fo-f-pills { display: flex; gap: 8px; margin-bottom: 14px; }
+.fo-f-pill {
+  flex: 1; height: 38px; border-radius: 999px;
+  border: 2px solid #dfe7eb; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: #676f73;
+  cursor: pointer; transition: all 150ms;
+}
+.fo-f-pill:hover { border-color: #abb3b8; }
+.fo-f-pill--active { border-color: #008029; background: #008029; color: #fff; }
+
+.fo-f-bottom-row { display: flex; gap: 12px; }
+.fo-f-bottom-row > * { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     OPTION SWITCHER
+     ================================================================ -->
+<div class="fo-switcher">
+  <span class="fo-switcher-label">Design Option</span>
+  <button class="fo-switcher-tab fo-switcher-tab--active" data-fo-switch="a">A — Classic</button>
+  <button class="fo-switcher-tab" data-fo-switch="b">B — Sidebar</button>
+  <button class="fo-switcher-tab" data-fo-switch="c">C — Compact</button>
+  <button class="fo-switcher-tab" data-fo-switch="d">D — Two-Column</button>
+  <button class="fo-switcher-tab" data-fo-switch="e">E — Checklist</button>
+  <button class="fo-switcher-tab" data-fo-switch="f">F — Large Tiles</button>
+</div>
+
+<!-- ================================================================
+     OPTION A — Classic wizard with photo banner
+     ================================================================ -->
+<div class="fo-option fo-option--active" id="fo-opt-a">
+  <div class="fo-wizard" style="width:800px">
+    <div class="fo-wiz-header">
+      <span class="fo-wiz-header-title">Data Collection Setup</span>
+      <button class="fo-wiz-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fo-stepper" data-fo-stepper="a"></div>
+    <div class="fo-wiz-body">
+      <!-- Screen 1: Introduction -->
+      <div class="fo-screen fo-screen--active" data-fo-opt="a" data-fo-screen="1">
+        <div class="fo-a-banner">
+          <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&h=320&fit=crop&crop=bottom" alt="">
+          <div class="fo-a-banner-overlay">
+            <div class="fo-a-banner-title">Welcome to data collection setup</div>
+            <div class="fo-a-banner-sub">We'll guide you through configuring your sustainability data pipeline</div>
+          </div>
+        </div>
+        <p class="fo-muted fo-mb-16">This guided process helps you define your reporting schedule, upload or connect your data sources, and set up quality review workflows. Here's what we'll cover:</p>
+        <ul class="fo-a-steps">
+          <li>
+            <div class="fo-a-step-icon"><i class="fa-regular fa-calendar"></i></div>
+            <div class="fo-a-step-text">
+              <strong>Define your schedule</strong>
+              <span>Set the reporting period, collection frequency, and framework alignment</span>
+            </div>
+          </li>
+          <li>
+            <div class="fo-a-step-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <div class="fo-a-step-text">
+              <strong>Upload or connect your data</strong>
+              <span>Add activity data via file upload, API connections, or manual entry</span>
+            </div>
+          </li>
+          <li>
+            <div class="fo-a-step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div class="fo-a-step-text">
+              <strong>Review and validate</strong>
+              <span>Run quality checks, resolve issues, and approve submissions</span>
+            </div>
+          </li>
+        </ul>
+        <div class="fo-callout fo-callout-green">
+          <i class="fa-solid fa-circle-info"></i>
+          This process typically takes 10–15 minutes. You can save and return at any time.
+        </div>
+      </div>
+      <!-- Screen 2: Scheduling -->
+      <div class="fo-screen" data-fo-opt="a" data-fo-screen="2">
+        <h3 class="fo-mb-8" style="font-size:18px;font-weight:700;">Set up your reporting period</h3>
+        <p class="fo-muted fo-mb-24">Define when data should be collected and how often.</p>
+        <div class="fo-form-row">
+          <label class="fo-form-label">Collection name</label>
+          <input class="fo-form-input" type="text" placeholder="e.g. 2026 Annual GHG Inventory" value="2026 Annual GHG Inventory">
+        </div>
+        <div class="fo-form-row fo-form-row-inline">
+          <div>
+            <label class="fo-form-label">Start date</label>
+            <input class="fo-form-input" type="text" value="01/01/2026" placeholder="MM/DD/YYYY">
+          </div>
+          <div>
+            <label class="fo-form-label">End date</label>
+            <input class="fo-form-input" type="text" value="12/31/2026" placeholder="MM/DD/YYYY">
+          </div>
+        </div>
+        <div class="fo-form-row">
+          <label class="fo-form-label">Collection frequency</label>
+          <div class="fo-seg">
+            <button class="fo-seg-btn">One-time</button>
+            <button class="fo-seg-btn fo-seg-btn--active">Quarterly</button>
+            <button class="fo-seg-btn">Monthly</button>
+          </div>
+        </div>
+        <div class="fo-form-row">
+          <label class="fo-form-label">Reporting framework</label>
+          <select class="fo-form-select">
+            <option>GHG Protocol Corporate Standard</option>
+            <option>ISO 14064-1</option>
+            <option>CDP Climate Change</option>
+            <option>TCFD Recommendations</option>
+          </select>
+        </div>
+        <div class="fo-form-row">
+          <label class="fo-form-label">Baseline year</label>
+          <select class="fo-form-select">
+            <option>2024</option>
+            <option selected>2025</option>
+            <option>2026</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="fo-wiz-footer" data-fo-footer="a">
+      <div class="fo-wiz-footer-spacer"></div>
+      <button class="fo-btn fo-btn-outline" data-fo-back style="display:none">Back</button>
+      <button class="fo-btn fo-btn-green" data-fo-next>Next: Set up schedule <i class="fa-solid fa-arrow-right" style="font-size:12px"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     OPTION B — Left-sidebar wizard
+     ================================================================ -->
+<div class="fo-option" id="fo-opt-b">
+  <div class="fo-wizard" style="width:960px">
+    <div class="fo-wiz-header">
+      <span class="fo-wiz-header-title">Set up data collection</span>
+      <button class="fo-wiz-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fo-stepper" data-fo-stepper="b"></div>
+    <div class="fo-wiz-body" style="padding:0">
+      <!-- Screen 1: Introduction -->
+      <div class="fo-screen fo-screen--active" data-fo-opt="b" data-fo-screen="1">
+        <div class="fo-b-body">
+          <div class="fo-b-sidebar">
+            <img class="fo-b-sidebar-photo" src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop" alt="">
+            <div class="fo-b-progress">
+              <div class="fo-b-progress-title">Setup progress</div>
+              <div class="fo-b-progress-item fo-b-progress-item--active">
+                <div class="fo-b-progress-dot">1</div>
+                <div class="fo-b-progress-text">Introduction</div>
+              </div>
+              <div class="fo-b-progress-item">
+                <div class="fo-b-progress-dot">2</div>
+                <div class="fo-b-progress-text">Schedule</div>
+              </div>
+              <div class="fo-b-progress-item">
+                <div class="fo-b-progress-dot">3</div>
+                <div class="fo-b-progress-text">Collect data</div>
+              </div>
+              <div class="fo-b-progress-item">
+                <div class="fo-b-progress-dot">4</div>
+                <div class="fo-b-progress-text">Review</div>
+              </div>
+              <div class="fo-b-progress-item fo-b-progress-item--disabled">
+                <div class="fo-b-progress-dot">5</div>
+                <div class="fo-b-progress-text">Entity setup</div>
+              </div>
+            </div>
+          </div>
+          <div class="fo-b-content">
+            <h2>Welcome</h2>
+            <p>Set up your sustainability data collection pipeline. We'll walk you through scheduling, data ingestion, and quality review.</p>
+            <div class="fo-b-info-cards">
+              <div class="fo-b-info-card">
+                <div class="fo-b-info-card-icon"><i class="fa-regular fa-calendar"></i></div>
+                <div>
+                  <strong>Schedule &amp; cadence</strong>
+                  <span>Define your reporting period, frequency, and framework alignment</span>
+                </div>
+              </div>
+              <div class="fo-b-info-card">
+                <div class="fo-b-info-card-icon"><i class="fa-solid fa-database"></i></div>
+                <div>
+                  <strong>Data sources</strong>
+                  <span>Upload files, connect via API, or enter activity data manually</span>
+                </div>
+              </div>
+              <div class="fo-b-info-card">
+                <div class="fo-b-info-card-icon"><i class="fa-solid fa-check-double"></i></div>
+                <div>
+                  <strong>Review &amp; approval</strong>
+                  <span>Validation rules, quality checks, and stakeholder sign-off</span>
+                </div>
+              </div>
+            </div>
+            <div class="fo-callout fo-callout-green fo-mt-16">
+              <i class="fa-regular fa-clock"></i>
+              Estimated time: 10–15 minutes
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Screen 2: Scheduling -->
+      <div class="fo-screen" data-fo-opt="b" data-fo-screen="2">
+        <div class="fo-b-body">
+          <div class="fo-b-sidebar">
+            <img class="fo-b-sidebar-photo" src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop" alt="">
+            <div class="fo-b-progress">
+              <div class="fo-b-progress-title">Setup progress</div>
+              <div class="fo-b-progress-item fo-b-progress-item--complete">
+                <div class="fo-b-progress-dot"><i class="fa-solid fa-check" style="font-size:9px"></i></div>
+                <div class="fo-b-progress-text">Introduction</div>
+              </div>
+              <div class="fo-b-progress-item fo-b-progress-item--active">
+                <div class="fo-b-progress-dot">2</div>
+                <div class="fo-b-progress-text">Schedule</div>
+              </div>
+              <div class="fo-b-progress-item">
+                <div class="fo-b-progress-dot">3</div>
+                <div class="fo-b-progress-text">Collect data</div>
+              </div>
+              <div class="fo-b-progress-item">
+                <div class="fo-b-progress-dot">4</div>
+                <div class="fo-b-progress-text">Review</div>
+              </div>
+              <div class="fo-b-progress-item fo-b-progress-item--disabled">
+                <div class="fo-b-progress-dot">5</div>
+                <div class="fo-b-progress-text">Entity setup</div>
+              </div>
+            </div>
+          </div>
+          <div class="fo-b-content">
+            <h2 style="font-size:18px">Configure your schedule</h2>
+            <p>Define when and how often data will be collected for this inventory.</p>
+            <div class="fo-b-form-card">
+              <div class="fo-b-form-card-title">Reporting period</div>
+              <div class="fo-form-row">
+                <label class="fo-form-label">Collection name</label>
+                <input class="fo-form-input" type="text" value="2026 Annual GHG Inventory">
+              </div>
+              <div class="fo-form-row fo-form-row-inline" style="margin-bottom:0">
+                <div>
+                  <label class="fo-form-label">Start date</label>
+                  <input class="fo-form-input" type="text" value="01/01/2026">
+                </div>
+                <div>
+                  <label class="fo-form-label">End date</label>
+                  <input class="fo-form-input" type="text" value="12/31/2026">
+                </div>
+              </div>
+            </div>
+            <div class="fo-b-form-card">
+              <div class="fo-b-form-card-title">Collection cadence</div>
+              <div class="fo-b-tiles">
+                <div class="fo-b-tile">
+                  <i class="fa-regular fa-calendar-check"></i>
+                  <strong>Monthly</strong>
+                  <span>12 collection periods</span>
+                </div>
+                <div class="fo-b-tile fo-b-tile--active">
+                  <i class="fa-regular fa-calendar"></i>
+                  <strong>Quarterly</strong>
+                  <span>4 collection periods</span>
+                </div>
+                <div class="fo-b-tile">
+                  <i class="fa-regular fa-calendar-days"></i>
+                  <strong>Annual</strong>
+                  <span>1 collection period</span>
+                </div>
+              </div>
+            </div>
+            <div class="fo-b-form-card" style="margin-bottom:0">
+              <div class="fo-b-form-card-title">Additional settings</div>
+              <div class="fo-form-row fo-form-row-inline" style="margin-bottom:0">
+                <div>
+                  <label class="fo-form-label">Reporting framework</label>
+                  <select class="fo-form-select">
+                    <option>GHG Protocol Corporate Standard</option>
+                    <option>ISO 14064-1</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="fo-form-label">Baseline year</label>
+                  <select class="fo-form-select">
+                    <option>2024</option>
+                    <option selected>2025</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fo-wiz-footer" data-fo-footer="b">
+      <div class="fo-wiz-footer-spacer"></div>
+      <button class="fo-btn fo-btn-outline" data-fo-back style="display:none">Back</button>
+      <button class="fo-btn fo-btn-green" data-fo-next>Begin <i class="fa-solid fa-arrow-right" style="font-size:12px"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     OPTION C — Compact wizard with hero strip
+     ================================================================ -->
+<div class="fo-option" id="fo-opt-c">
+  <div class="fo-wizard" style="width:720px">
+    <div class="fo-wiz-header">
+      <span class="fo-wiz-header-title">New data collection</span>
+      <button class="fo-wiz-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fo-stepper" data-fo-stepper="c"></div>
+    <div class="fo-wiz-body">
+      <!-- Screen 1: Introduction -->
+      <div class="fo-screen fo-screen--active" data-fo-opt="c" data-fo-screen="1">
+        <div class="fo-c-hero">
+          <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=200&fit=crop" alt="">
+          <div class="fo-c-hero-overlay">
+            <div class="fo-c-hero-title">Sustainability Data Collection</div>
+          </div>
+        </div>
+        <p class="fo-muted fo-mb-16">Set up and manage your environmental data pipeline in four steps.</p>
+        <div class="fo-c-grid">
+          <div class="fo-c-grid-item">
+            <div class="fo-c-grid-icon"><i class="fa-regular fa-calendar"></i></div>
+            <div class="fo-c-grid-text">
+              <strong>Schedule</strong>
+              <span>Reporting period &amp; frequency</span>
+            </div>
+          </div>
+          <div class="fo-c-grid-item">
+            <div class="fo-c-grid-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <div class="fo-c-grid-text">
+              <strong>Collect</strong>
+              <span>Upload files or connect APIs</span>
+            </div>
+          </div>
+          <div class="fo-c-grid-item">
+            <div class="fo-c-grid-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div class="fo-c-grid-text">
+              <strong>Review</strong>
+              <span>Validate &amp; approve data</span>
+            </div>
+          </div>
+          <div class="fo-c-grid-item fo-c-grid-item--disabled">
+            <div class="fo-c-grid-icon"><i class="fa-solid fa-sitemap"></i></div>
+            <div class="fo-c-grid-text">
+              <strong>Entity setup <span class="fo-c-grid-badge">Later</span></strong>
+              <span>Map to org structure</span>
+            </div>
+          </div>
+        </div>
+        <div class="fo-callout fo-callout-green">
+          <i class="fa-solid fa-circle-info"></i>
+          Takes about 10–15 minutes. Save progress at any point.
+        </div>
+      </div>
+      <!-- Screen 2: Scheduling -->
+      <div class="fo-screen" data-fo-opt="c" data-fo-screen="2">
+        <h3 class="fo-mb-8" style="font-size:16px;font-weight:700;">Reporting period &amp; schedule</h3>
+        <p class="fo-muted fo-mb-16">Configure when data is collected and reviewed.</p>
+        <div class="fo-form-row fo-form-row-inline">
+          <div>
+            <label class="fo-form-label">Start</label>
+            <input class="fo-form-input" type="text" value="01/01/2026">
+          </div>
+          <div style="flex:0;display:flex;align-items:flex-end;padding-bottom:8px;color:#abb3b8">—</div>
+          <div>
+            <label class="fo-form-label">End</label>
+            <input class="fo-form-input" type="text" value="12/31/2026">
+          </div>
+        </div>
+        <div class="fo-form-row">
+          <label class="fo-form-label">Frequency</label>
+          <div class="fo-seg">
+            <button class="fo-seg-btn">One-time</button>
+            <button class="fo-seg-btn">Monthly</button>
+            <button class="fo-seg-btn fo-seg-btn--active">Quarterly</button>
+            <button class="fo-seg-btn">Annually</button>
+          </div>
+        </div>
+        <div class="fo-form-row">
+          <label class="fo-form-label">Reporting framework</label>
+          <select class="fo-form-select">
+            <option>GHG Protocol Corporate Standard</option>
+            <option>ISO 14064-1</option>
+            <option>CDP Climate Change</option>
+          </select>
+        </div>
+        <div class="fo-toggle-row">
+          <div class="fo-toggle fo-toggle--on" data-fo-toggle></div>
+          <span>Set up recurring collection reminders</span>
+        </div>
+        <div class="fo-c-summary">
+          <div class="fo-c-chip"><i class="fa-solid fa-check"></i> Jan–Dec 2026</div>
+          <div class="fo-c-chip"><i class="fa-solid fa-check"></i> Quarterly</div>
+          <div class="fo-c-chip"><i class="fa-solid fa-check"></i> GHG Protocol</div>
+          <div class="fo-c-chip"><i class="fa-solid fa-check"></i> Reminders on</div>
+        </div>
+      </div>
+    </div>
+    <div class="fo-wiz-footer" data-fo-footer="c">
+      <div class="fo-wiz-footer-spacer"></div>
+      <button class="fo-btn fo-btn-outline" data-fo-back style="display:none">Back</button>
+      <button class="fo-btn fo-btn-green" data-fo-next>Get started <i class="fa-solid fa-arrow-right" style="font-size:12px"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     OPTION D — Two-column intro wizard
+     ================================================================ -->
+<div class="fo-option" id="fo-opt-d">
+  <div class="fo-wizard" style="width:840px">
+    <div class="fo-wiz-header">
+      <span class="fo-wiz-header-title">Data Collection</span>
+      <button class="fo-wiz-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fo-stepper" data-fo-stepper="d"></div>
+    <div class="fo-wiz-body">
+      <!-- Screen 1: Introduction -->
+      <div class="fo-screen fo-screen--active" data-fo-opt="d" data-fo-screen="1">
+        <div class="fo-d-cols">
+          <div class="fo-d-col-left">
+            <img class="fo-d-photo" src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=500&h=350&fit=crop" alt="">
+            <h2>Streamline your sustainability data</h2>
+            <p>This guided flow helps you set up a structured process for collecting, validating, and managing your environmental data — aligned with industry-standard frameworks like the GHG Protocol.</p>
+            <div class="fo-callout fo-callout-green">
+              <i class="fa-regular fa-clock"></i>
+              About 10–15 minutes to complete
+            </div>
+          </div>
+          <div class="fo-d-col-right">
+            <div class="fo-d-step-cards">
+              <div class="fo-d-step-card">
+                <div class="fo-d-step-card-num">1</div>
+                <div>
+                  <strong>Set up schedule</strong>
+                  <span>Reporting period, frequency, framework</span>
+                </div>
+              </div>
+              <div class="fo-d-step-card">
+                <div class="fo-d-step-card-num">2</div>
+                <div>
+                  <strong>Collect data</strong>
+                  <span>Upload files, APIs, or manual entry</span>
+                </div>
+              </div>
+              <div class="fo-d-step-card">
+                <div class="fo-d-step-card-num">3</div>
+                <div>
+                  <strong>Review &amp; validate</strong>
+                  <span>Quality checks and approvals</span>
+                </div>
+              </div>
+              <div class="fo-d-step-card fo-d-step-card--disabled">
+                <div class="fo-d-step-card-num">4</div>
+                <div>
+                  <strong>Entity setup</strong>
+                  <span>Map to organizational units</span>
+                </div>
+                <div class="fo-d-step-badge">Later</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Screen 2: Scheduling (progressive disclosure) -->
+      <div class="fo-screen" data-fo-opt="d" data-fo-screen="2">
+        <h3 class="fo-mb-8" style="font-size:18px;font-weight:700;">Configure your schedule</h3>
+        <p class="fo-muted fo-mb-16">Complete each section to define your reporting parameters.</p>
+
+        <div class="fo-d-section fo-d-section--open" data-fo-collapse>
+          <div class="fo-d-section-header">
+            <div class="fo-d-section-header-left">
+              <div class="fo-d-section-status"><i class="fa-solid fa-check" style="font-size:9px"></i></div>
+              <strong>Reporting period</strong>
+            </div>
+            <i class="fa-solid fa-chevron-down fo-d-section-chevron"></i>
+          </div>
+          <div class="fo-d-section-body">
+            <div class="fo-form-row">
+              <label class="fo-form-label">Collection name</label>
+              <input class="fo-form-input" type="text" value="2026 Annual GHG Inventory">
+            </div>
+            <div class="fo-form-row fo-form-row-inline">
+              <div>
+                <label class="fo-form-label">Start date</label>
+                <input class="fo-form-input" type="text" value="01/01/2026">
+              </div>
+              <div>
+                <label class="fo-form-label">End date</label>
+                <input class="fo-form-input" type="text" value="12/31/2026">
+              </div>
+            </div>
+            <div class="fo-form-row" style="margin-bottom:0">
+              <label class="fo-form-label">Reporting framework</label>
+              <select class="fo-form-select">
+                <option>GHG Protocol Corporate Standard</option>
+                <option>ISO 14064-1</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="fo-d-section" data-fo-collapse>
+          <div class="fo-d-section-header">
+            <div class="fo-d-section-header-left">
+              <div class="fo-d-section-status"><i class="fa-solid fa-check" style="font-size:9px"></i></div>
+              <strong>Collection frequency</strong>
+            </div>
+            <i class="fa-solid fa-chevron-down fo-d-section-chevron"></i>
+          </div>
+          <div class="fo-d-section-body">
+            <div class="fo-form-row" style="margin-bottom:0">
+              <div class="fo-seg">
+                <button class="fo-seg-btn">One-time</button>
+                <button class="fo-seg-btn">Monthly</button>
+                <button class="fo-seg-btn fo-seg-btn--active">Quarterly</button>
+                <button class="fo-seg-btn">Annually</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fo-d-section" data-fo-collapse>
+          <div class="fo-d-section-header">
+            <div class="fo-d-section-header-left">
+              <div class="fo-d-section-status"><i class="fa-solid fa-check" style="font-size:9px"></i></div>
+              <strong>Preferences</strong>
+            </div>
+            <i class="fa-solid fa-chevron-down fo-d-section-chevron"></i>
+          </div>
+          <div class="fo-d-section-body">
+            <div class="fo-form-row">
+              <label class="fo-form-label">Baseline year</label>
+              <select class="fo-form-select">
+                <option>2024</option>
+                <option selected>2025</option>
+              </select>
+            </div>
+            <div class="fo-toggle-row" style="margin-bottom:0">
+              <div class="fo-toggle fo-toggle--on" data-fo-toggle></div>
+              <span>Send deadline reminders</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fo-wiz-footer" data-fo-footer="d">
+      <div class="fo-wiz-footer-spacer"></div>
+      <button class="fo-btn fo-btn-outline" data-fo-back style="display:none">Back</button>
+      <button class="fo-btn fo-btn-green" data-fo-next>Start setup <i class="fa-solid fa-arrow-right" style="font-size:12px"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     OPTION E — Checklist wizard
+     ================================================================ -->
+<div class="fo-option" id="fo-opt-e">
+  <div class="fo-wizard" style="width:800px">
+    <div class="fo-wiz-header">
+      <span class="fo-wiz-header-title">Prepare for data collection</span>
+      <button class="fo-wiz-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fo-stepper" data-fo-stepper="e"></div>
+    <div class="fo-wiz-body">
+      <!-- Screen 1: Introduction -->
+      <div class="fo-screen fo-screen--active" data-fo-opt="e" data-fo-screen="1">
+        <img class="fo-e-photo" src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&h=240&fit=crop" alt="">
+        <div class="fo-e-heading">Here's what you'll set up</div>
+        <ul class="fo-e-checklist">
+          <li class="fo-e-check-item">
+            <div class="fo-e-check-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="fo-e-check-text">
+              <strong>Reporting schedule</strong>
+              <span>Define your reporting period, collection cadence, and GHG framework alignment</span>
+            </div>
+          </li>
+          <li class="fo-e-check-item">
+            <div class="fo-e-check-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="fo-e-check-text">
+              <strong>Data sources</strong>
+              <span>Upload activity data files, connect via API, or set up manual entry forms</span>
+            </div>
+          </li>
+          <li class="fo-e-check-item">
+            <div class="fo-e-check-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="fo-e-check-text">
+              <strong>Quality review</strong>
+              <span>Configure validation rules, assign reviewers, and define approval workflows</span>
+            </div>
+          </li>
+          <li class="fo-e-check-item">
+            <div class="fo-e-check-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="fo-e-check-text">
+              <strong>Entity mapping</strong>
+              <span>Assign data to organizational entities, business units, and facilities</span>
+            </div>
+            <div class="fo-e-check-badge">Optional</div>
+          </li>
+        </ul>
+        <p class="fo-e-note">You can always adjust these settings after initial setup.</p>
+      </div>
+      <!-- Screen 2: Scheduling -->
+      <div class="fo-screen" data-fo-opt="e" data-fo-screen="2">
+        <h3 class="fo-mb-8" style="font-size:18px;font-weight:700;">Define your reporting schedule</h3>
+        <p class="fo-muted fo-mb-16">Set the time window and collection frequency for this inventory.</p>
+
+        <div class="fo-e-timeline fo-mb-16">
+          <div class="fo-e-timeline-label"><span>Jan 2026</span><span>Dec 2026</span></div>
+          <div class="fo-e-timeline-bar">
+            <div class="fo-e-timeline-fill" style="width:100%"></div>
+          </div>
+        </div>
+
+        <div class="fo-form-row fo-form-row-inline">
+          <div>
+            <label class="fo-form-label">Start date</label>
+            <input class="fo-form-input" type="text" value="01/01/2026">
+          </div>
+          <div>
+            <label class="fo-form-label">End date</label>
+            <input class="fo-form-input" type="text" value="12/31/2026">
+          </div>
+        </div>
+
+        <label class="fo-form-label">Collection frequency</label>
+        <div class="fo-e-freq-cards fo-mb-16">
+          <div class="fo-e-freq-card">
+            <i class="fa-regular fa-calendar-check"></i>
+            <strong>Monthly</strong>
+            <span>12 periods per year</span>
+          </div>
+          <div class="fo-e-freq-card fo-e-freq-card--active">
+            <i class="fa-regular fa-calendar"></i>
+            <strong>Quarterly</strong>
+            <span>4 periods per year</span>
+          </div>
+          <div class="fo-e-freq-card">
+            <i class="fa-regular fa-calendar-days"></i>
+            <strong>Annually</strong>
+            <span>1 period per year</span>
+          </div>
+        </div>
+
+        <div class="fo-form-row">
+          <label class="fo-form-label">Reporting framework</label>
+          <select class="fo-form-select">
+            <option>GHG Protocol Corporate Standard</option>
+            <option>ISO 14064-1</option>
+            <option>CDP Climate Change</option>
+          </select>
+        </div>
+
+        <div class="fo-e-check-row">
+          <div class="fo-e-checkbox fo-e-checkbox--checked" data-fo-checkbox><i class="fa-solid fa-check" style="font-size:9px"></i></div>
+          <span>Align with fiscal year</span>
+        </div>
+      </div>
+    </div>
+    <div class="fo-wiz-footer" data-fo-footer="e">
+      <div class="fo-wiz-footer-spacer"></div>
+      <button class="fo-btn fo-btn-outline" data-fo-back style="display:none">Back</button>
+      <button class="fo-btn fo-btn-green" data-fo-next>I'm ready, let's go <i class="fa-solid fa-arrow-right" style="font-size:12px"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     OPTION F — Large-tile wizard
+     ================================================================ -->
+<div class="fo-option" id="fo-opt-f">
+  <div class="fo-wizard" style="width:920px">
+    <div class="fo-wiz-header">
+      <span class="fo-wiz-header-title">New data collection</span>
+      <button class="fo-wiz-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fo-stepper" data-fo-stepper="f"></div>
+    <div class="fo-wiz-body">
+      <!-- Screen 1: Introduction -->
+      <div class="fo-screen fo-screen--active" data-fo-opt="f" data-fo-screen="1">
+        <div class="fo-f-hero">
+          <img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=920&h=280&fit=crop" alt="">
+          <div class="fo-f-hero-overlay">
+            <div class="fo-f-hero-title">Sustainability Data Collection</div>
+          </div>
+        </div>
+        <p class="fo-muted fo-mb-16" style="text-align:center">Set up your data pipeline in three steps. Entity mapping is available as a later configuration.</p>
+        <div class="fo-f-tiles">
+          <div class="fo-f-tile">
+            <div class="fo-f-tile-icon"><i class="fa-regular fa-calendar"></i></div>
+            <strong>Schedule</strong>
+            <span>Define your reporting period, collection cadence, and framework</span>
+          </div>
+          <div class="fo-f-tile">
+            <div class="fo-f-tile-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <strong>Collect</strong>
+            <span>Upload activity data via files, API connections, or manual entry</span>
+          </div>
+          <div class="fo-f-tile">
+            <div class="fo-f-tile-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <strong>Review</strong>
+            <span>Run validation checks, resolve issues, and approve submissions</span>
+          </div>
+        </div>
+        <p class="fo-f-note fo-mt-16"><i class="fa-solid fa-sitemap" style="margin-right:4px"></i> Entity setup can be configured later from project settings</p>
+      </div>
+      <!-- Screen 2: Scheduling -->
+      <div class="fo-screen" data-fo-opt="f" data-fo-screen="2">
+        <h3 class="fo-mb-8" style="font-size:18px;font-weight:700;">Set up your schedule</h3>
+        <p class="fo-muted fo-mb-16">Choose your reporting window and how often data is collected.</p>
+
+        <div class="fo-f-cal-card">
+          <div class="fo-f-cal-title">Reporting period — 2026</div>
+          <div class="fo-f-cal-grid">
+            <div class="fo-f-cal-cell fo-f-cal-cell--edge">Jan</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Feb</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Mar</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Apr</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">May</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Jun</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Jul</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Aug</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Sep</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Oct</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--active">Nov</div>
+            <div class="fo-f-cal-cell fo-f-cal-cell--edge">Dec</div>
+          </div>
+          <div class="fo-form-row fo-form-row-inline" style="margin-bottom:0">
+            <div>
+              <label class="fo-form-label">Start date</label>
+              <input class="fo-form-input" type="text" value="01/01/2026">
+            </div>
+            <div>
+              <label class="fo-form-label">End date</label>
+              <input class="fo-form-input" type="text" value="12/31/2026">
+            </div>
+          </div>
+        </div>
+
+        <div class="fo-form-row">
+          <label class="fo-form-label">How often?</label>
+          <div class="fo-f-pills">
+            <div class="fo-f-pill">Monthly</div>
+            <div class="fo-f-pill fo-f-pill--active">Quarterly</div>
+            <div class="fo-f-pill">Annually</div>
+          </div>
+        </div>
+
+        <div class="fo-f-bottom-row">
+          <div class="fo-form-row" style="margin-bottom:0">
+            <label class="fo-form-label">Reporting framework</label>
+            <select class="fo-form-select">
+              <option>GHG Protocol Corporate Standard</option>
+              <option>ISO 14064-1</option>
+              <option>CDP Climate Change</option>
+            </select>
+          </div>
+          <div class="fo-form-row" style="margin-bottom:0">
+            <label class="fo-form-label">Baseline year</label>
+            <select class="fo-form-select">
+              <option>2024</option>
+              <option selected>2025</option>
+              <option>2026</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fo-wiz-footer" data-fo-footer="f">
+      <div class="fo-wiz-footer-spacer"></div>
+      <button class="fo-btn fo-btn-outline" data-fo-back style="display:none">Back</button>
+      <button class="fo-btn fo-btn-green" data-fo-next>Begin <i class="fa-solid fa-arrow-right" style="font-size:12px"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     JAVASCRIPT
+     ================================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  var STEPS = ['Introduction', 'Schedule', 'Collect data', 'Review', 'Entity setup'];
+  var OPTIONS = ['a', 'b', 'c', 'd', 'e', 'f'];
+  var NEXT_LABELS = {
+    a: ['Next: Set up schedule', 'Next: Collect data'],
+    b: ['Begin', 'Continue to data collection'],
+    c: ['Get started', 'Next: Collect data'],
+    d: ['Start setup', 'Next: Collect data'],
+    e: ["I'm ready, let's go", 'Next: Collect data'],
+    f: ['Begin', 'Next: Collect data']
+  };
+
+  var currentScreens = {};
+  OPTIONS.forEach(function (o) { currentScreens[o] = 1; });
+
+  // Build steppers
+  document.querySelectorAll('[data-fo-stepper]').forEach(function (el) {
+    var opt = el.getAttribute('data-fo-stepper');
+    renderStepper(el, opt);
+  });
+
+  function renderStepper(el, opt) {
+    var activeIdx = currentScreens[opt] - 1;
+    var html = '';
+    STEPS.forEach(function (label, i) {
+      var cls = 'fo-stepper-item';
+      if (i < activeIdx) cls += ' fo-stepper-item--complete';
+      else if (i === activeIdx) cls += ' fo-stepper-item--active';
+      html += '<div class="' + cls + '">';
+      html += '<span class="fo-stepper-label">';
+      if (i < activeIdx) html += '<span class="fo-stepper-check"><i class="fa-solid fa-check"></i></span> ';
+      html += label + '</span>';
+      html += '<div class="fo-stepper-bar"><div class="fo-stepper-bar-fill"></div></div>';
+      html += '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function showScreen(opt, screen) {
+    currentScreens[opt] = screen;
+    var container = document.getElementById('fo-opt-' + opt);
+    container.querySelectorAll('[data-fo-opt="' + opt + '"]').forEach(function (s) {
+      s.classList.toggle('fo-screen--active', s.getAttribute('data-fo-screen') === String(screen));
+    });
+    var stepper = container.querySelector('[data-fo-stepper]');
+    if (stepper) renderStepper(stepper, opt);
+
+    var footer = container.querySelector('[data-fo-footer]');
+    var backBtn = footer.querySelector('[data-fo-back]');
+    var nextBtn = footer.querySelector('[data-fo-next]');
+    backBtn.style.display = screen === 1 ? 'none' : '';
+    var lbl = NEXT_LABELS[opt][screen - 1] || 'Next';
+    nextBtn.innerHTML = lbl + ' <i class="fa-solid fa-arrow-right" style="font-size:12px"></i>';
+  }
+
+  // Option switcher
+  document.querySelector('.fo-switcher').addEventListener('click', function (e) {
+    var tab = e.target.closest('[data-fo-switch]');
+    if (!tab) return;
+    var opt = tab.getAttribute('data-fo-switch');
+    document.querySelectorAll('.fo-switcher-tab').forEach(function (t) {
+      t.classList.toggle('fo-switcher-tab--active', t === tab);
+    });
+    document.querySelectorAll('.fo-option').forEach(function (o) {
+      o.classList.toggle('fo-option--active', o.id === 'fo-opt-' + opt);
+    });
+  });
+
+  // Next / Back
+  document.addEventListener('click', function (e) {
+    var nextBtn = e.target.closest('[data-fo-next]');
+    if (nextBtn) {
+      var footer = nextBtn.closest('[data-fo-footer]');
+      var opt = footer.getAttribute('data-fo-footer');
+      if (currentScreens[opt] < 2) showScreen(opt, currentScreens[opt] + 1);
+      return;
+    }
+    var backBtn = e.target.closest('[data-fo-back]');
+    if (backBtn) {
+      var footer2 = backBtn.closest('[data-fo-footer]');
+      var opt2 = footer2.getAttribute('data-fo-footer');
+      if (currentScreens[opt2] > 1) showScreen(opt2, currentScreens[opt2] - 1);
+      return;
+    }
+  });
+
+  // Segmented controls
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.fo-seg-btn');
+    if (!btn) return;
+    btn.parentElement.querySelectorAll('.fo-seg-btn').forEach(function (b) {
+      b.classList.remove('fo-seg-btn--active');
+    });
+    btn.classList.add('fo-seg-btn--active');
+  });
+
+  // Toggles
+  document.addEventListener('click', function (e) {
+    var toggle = e.target.closest('[data-fo-toggle]');
+    if (toggle) toggle.classList.toggle('fo-toggle--on');
+  });
+
+  // Checkboxes
+  document.addEventListener('click', function (e) {
+    var cb = e.target.closest('[data-fo-checkbox]');
+    if (cb) cb.classList.toggle('fo-e-checkbox--checked');
+  });
+
+  // Collapsible sections (Option D)
+  document.addEventListener('click', function (e) {
+    var header = e.target.closest('.fo-d-section-header');
+    if (!header) return;
+    var section = header.closest('.fo-d-section');
+    section.classList.toggle('fo-d-section--open');
+  });
+
+  // Tile selectors (Option B)
+  document.addEventListener('click', function (e) {
+    var tile = e.target.closest('.fo-b-tile');
+    if (!tile) return;
+    tile.parentElement.querySelectorAll('.fo-b-tile').forEach(function (t) {
+      t.classList.remove('fo-b-tile--active');
+    });
+    tile.classList.add('fo-b-tile--active');
+  });
+
+  // Frequency cards (Option E)
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest('.fo-e-freq-card');
+    if (!card) return;
+    card.parentElement.querySelectorAll('.fo-e-freq-card').forEach(function (c) {
+      c.classList.remove('fo-e-freq-card--active');
+    });
+    card.classList.add('fo-e-freq-card--active');
+  });
+
+  // Pill selectors (Option F)
+  document.addEventListener('click', function (e) {
+    var pill = e.target.closest('.fo-f-pill');
+    if (!pill) return;
+    pill.parentElement.querySelectorAll('.fo-f-pill').forEach(function (p) {
+      p.classList.remove('fo-f-pill--active');
+    });
+    pill.classList.add('fo-f-pill--active');
+  });
+
+})();
+</script>
+</body>
+</html>

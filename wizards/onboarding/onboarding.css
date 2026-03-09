@@ -2,251 +2,657 @@
    ONBOARDING WIZARD
    ======================================== */
 
+#onb-wizard-overlay {
+  background: linear-gradient(180deg, #f5f8fa 0%, #ffffff 100%);
+}
+
 .onb-wizard {
-  width: 720px;
-  max-height: 85vh;
-  transition: width 0.25s ease, height 0.25s ease;
+  width: 640px;
+  transition: width 0.25s ease;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .onb-wizard .wizard-body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-}
-
-/* ========================================
-   STEP 0 — WELCOME
-   ======================================== */
-
-.onb-welcome {
+  padding: 24px 24px 40px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 24px;
-  padding: 24px 16px 0;
-}
-
-.onb-welcome-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  background: #e6f4ec;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  color: #008029;
-}
-
-.onb-welcome-title {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: #1d201f;
-  line-height: 1.3;
-  margin: 0;
-}
-
-.onb-welcome-subtitle {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 400;
-  color: #676f73;
-  line-height: 1.5;
-  max-width: 520px;
-  margin: 0;
-}
-
-.onb-welcome-highlight {
-  background: #f0faf3;
-  border: 1px solid #c8e5d2;
-  border-radius: 10px;
-  padding: 16px 20px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a5c2e;
-  line-height: 1.5;
-  max-width: 520px;
-}
-
-/* ========================================
-   STEP 1 — PROJECT TYPE CARDS
-   ======================================== */
-
-.onb-type-intro {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  color: #676f73;
-  line-height: 1.5;
-  margin: 0 0 8px;
-}
-
-.onb-type-grid {
-  display: flex;
   gap: 16px;
-  width: 100%;
 }
 
-.onb-type-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  border: 2px solid #d5dde0;
-  border-radius: 12px;
-  background: #ffffff;
-  cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+/* Step 0 needs wider padding */
+.onb-header--hidden ~ .wizard-body {
+  padding: 40px 40px 0;
+  gap: 40px;
 }
 
-.onb-type-card:hover {
-  border-color: #a3d4b5;
+.onb-welcome-footer {
+  border-top: none;
 }
 
-.onb-type-card--selected {
-  border-color: #008029;
-  box-shadow: 0 0 0 1px #008029;
+/* Hide standard header for the welcome screen */
+.onb-header--hidden {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  border-bottom: none;
+  background: transparent;
+  padding: 12px 16px;
+  justify-content: flex-end;
 }
-
-.onb-type-card-name {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: #1d201f;
-  line-height: 1.3;
+.onb-header--hidden .wizard-header-title { display: none; }
+.onb-header--hidden .wizard-close-btn {
+  color: #fff;
+  background: rgba(0,0,0,0.25);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
 }
-
-.onb-type-card-desc {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 12px;
-  color: #676f73;
-  line-height: 1.4;
-}
-
-.onb-feature-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.onb-feature-group-title {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  color: #3a3f44;
-  margin-bottom: 2px;
-}
-
-.onb-feature-item {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  color: #676f73;
-  padding-left: 12px;
-  line-height: 1.6;
+.onb-header--hidden .wizard-close-btn:hover {
+  background: rgba(0,0,0,0.45);
 }
 
 /* ========================================
-   STEP 2 — LIGHT SETUP FORM
+   STEP 0 — WELCOME BANNER
    ======================================== */
 
-.onb-setup-intro {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  color: #676f73;
-  line-height: 1.5;
-  margin: 0 0 4px;
+.onb-welcome-banner {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
 }
 
-.onb-project-type-badge {
+.onb-welcome-banner-img {
+  flex: 1;
+  min-width: 0;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.onb-welcome-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 24px;
+}
+
+.onb-welcome-banner-heading {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  color: #ffffff;
+  text-align: center;
+  letter-spacing: 0;
+}
+
+/* ========================================
+   STEP 0 — WELCOME BODY CARD
+   ======================================== */
+
+.onb-welcome-card {
+  background: #ffffff;
+  border: 1px solid #ced3d6;
+  border-radius: 12px;
+  padding: 12px 24px;
+}
+
+.onb-welcome-card p {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #1d201f;
+  margin: 0;
+}
+
+.onb-welcome-card p + p {
+  margin-top: 16px;
+}
+
+/* ========================================
+   STEP 0 — WELCOME FOOTER
+   ======================================== */
+
+.onb-welcome-footer {
+  justify-content: center;
+  padding: 20px 24px;
+}
+
+.onb-welcome-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: #e6f4ec;
-  color: #1a5c2e;
+  justify-content: center;
+  height: 32px;
+  width: 240px;
+  padding: 0 8px;
+  background: #008029;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
-  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.onb-welcome-btn:hover {
+  background: #006622;
 }
 
 /* ========================================
-   STEP 3 — PERSPECTIVE CHOICE
+   STEP 1 — PROJECT TYPE
    ======================================== */
 
-.onb-perspective-intro {
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  color: #676f73;
-  line-height: 1.5;
-  margin: 0 0 8px;
+.onb-pt-text {
+  flex-shrink: 0;
 }
 
-.onb-perspective-grid {
+.onb-pt-text p {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #1d201f;
+  margin: 0;
+}
+
+.onb-pt-text p + p {
+  margin-top: 16px;
+}
+
+.onb-pt-text strong {
+  font-weight: 700;
+}
+
+/* Card grid */
+.onb-pt-cards {
   display: flex;
   gap: 16px;
-  width: 100%;
+  flex-shrink: 0;
 }
 
-.onb-perspective-card {
+.onb-pt-card {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 24px 20px;
-  border: 2px solid #d5dde0;
-  border-radius: 12px;
+  gap: 16px;
+  padding: 24px 16px;
+  height: 320px;
   background: #ffffff;
-  cursor: pointer;
-  text-align: center;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.onb-perspective-card:hover {
-  border-color: #a3d4b5;
-}
-
-.onb-perspective-card--selected {
-  border-color: #008029;
-  box-shadow: 0 0 0 1px #008029;
-}
-
-.onb-perspective-icon {
-  width: 48px;
-  height: 48px;
+  border: 1px solid #41494d;
   border-radius: 12px;
+  box-shadow: 0 3px 6px 0 rgba(9, 11, 12, 0.12);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.onb-pt-card:hover {
+  border-color: #008029;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px 0 rgba(9, 11, 12, 0.15);
+}
+
+.onb-pt-card--selected {
+  border-color: #008029;
+  box-shadow: 0 0 0 2px #008029, 0 3px 6px 0 rgba(9, 11, 12, 0.12);
+}
+
+/* Card icon area */
+.onb-pt-card-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  width: 200px;
+  height: 104px;
+  flex-shrink: 0;
 }
 
-.onb-perspective-icon--global {
-  background: #e3ecf9;
-  color: #2d5fa0;
+/* Card divider */
+.onb-pt-card-divider {
+  width: 100%;
+  height: 1px;
+  background: #d5dde0;
+  flex-shrink: 0;
 }
 
-.onb-perspective-icon--site {
-  background: #fdf0e3;
-  color: #a05e2d;
-}
-
-.onb-perspective-card-name {
+/* Card title */
+.onb-pt-card-title {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 20px;
+  color: #1d201f;
+  text-align: center;
+}
+
+/* Card description */
+.onb-pt-card-desc {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #1d201f;
+  text-align: center;
+}
+
+/* No footer on project type screen */
+.onb-pt-footer {
+  display: none;
+}
+
+/* ----------------------------------------
+   Card 1 icon — Mon → Sun
+   ---------------------------------------- */
+
+.onb-pt-icon-week {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.onb-pt-day-box {
+  width: 48px;
+  height: 40px;
+  border: 1px solid #1d201f;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 18px;
   font-weight: 700;
   color: #1d201f;
 }
 
-.onb-perspective-card-desc {
+.onb-pt-day-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  color: #1d201f;
+  font-size: 14px;
+}
+
+/* ----------------------------------------
+   Card 2 & 3 — FontAwesome icons
+   ---------------------------------------- */
+
+.onb-pt-icon-fa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onb-pt-icon-fa i {
+  font-size: 56px;
+  color: #1d201f;
+}
+
+/* ========================================
+   STEP 2 — PROJECT SETUP
+   ======================================== */
+
+/* Override body padding for step 2 */
+.onb-wizard .wizard-body.onb-ps-body {
+  padding: 4px 24px 24px;
+}
+
+#onb-ps-dynamic {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.onb-ps-required {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 400;
   color: #676f73;
-  line-height: 1.4;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Field layout */
+.onb-ps-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.onb-ps-field--grow { flex: 1; min-width: 0; }
+
+.onb-ps-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.onb-ps-label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+}
+
+/* Inputs & selects */
+.onb-ps-input,
+.onb-ps-select,
+.onb-ps-textarea {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1d201f;
+  border: 1px solid #676f73;
+  border-radius: 4px;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.onb-ps-input:focus,
+.onb-ps-select:focus,
+.onb-ps-textarea:focus {
+  border-color: #008029;
+}
+
+.onb-ps-input {
+  height: 32px;
+  padding: 0 8px;
+}
+
+.onb-ps-select {
+  height: 28px;
+  padding: 0 28px 0 8px;
+  font-size: 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23676f73'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  border-color: #1d201f;
+}
+.onb-ps-select--time { width: 120px; flex-shrink: 0; }
+
+.onb-ps-textarea {
+  padding: 8px;
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Segmented control */
+.onb-ps-seg {
+  display: flex;
+  gap: 4px;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.onb-ps-seg-btn {
+  flex: 1;
+  height: 20px;
+  padding: 0 12px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.onb-ps-seg-btn:hover:not(.onb-ps-seg-btn--active) { background: #f0f4f5; }
+.onb-ps-seg-btn--active {
+  background: #dbf5ff;
+  color: #1d201f;
+  font-weight: 400;
+}
+
+/* Day pills (weekly / monthly day selection) */
+.onb-ps-pills {
+  display: flex;
+  gap: 4px;
+}
+
+.onb-ps-pill {
+  flex: 1;
+  height: 20px;
+  min-width: 0;
+  padding: 0 4px;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.onb-ps-pill:hover:not(.onb-ps-pill--active) { background: #f0f4f5; }
+.onb-ps-pill--active {
+  background: #dbf5ff;
+  color: #1d201f;
+}
+
+/* Pill segmented wrapper (matching segmented control style) */
+.onb-ps-pill-seg {
+  display: inline-flex;
+  gap: 4px;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+/* Monthly toggle (specific day vs nth weekday) */
+.onb-ps-month-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.onb-ps-mtog-btn {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid #d5dde0;
+  border-radius: 4px;
+  background: #fff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #676f73;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.onb-ps-mtog-btn:hover:not(.onb-ps-mtog-btn--active) { background: #f5f8fa; }
+.onb-ps-mtog-btn--active {
+  background: #1d201f;
+  color: #fff;
+  border-color: #1d201f;
+}
+
+/* Checkbox row */
+.onb-ps-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.onb-ps-checkbox {
+  width: 20px;
+  height: 20px;
+  accent-color: #008029;
+  cursor: pointer;
+  margin: 0;
+  border-radius: 4px;
+}
+
+.onb-ps-check-row label {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d201f;
+  cursor: pointer;
+}
+
+/* Multi-select dropdown (daily day picker) */
+.onb-ps-multiselect {
+  position: relative;
+}
+
+.onb-ps-multiselect-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #1d201f;
+  border-radius: 4px;
+  background: #fff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: #1d201f;
+  cursor: pointer;
+  user-select: none;
+}
+
+.onb-ps-multiselect-trigger i {
+  font-size: 10px;
+  color: #676f73;
+  margin-left: 8px;
+  transition: transform 0.15s;
+}
+
+.onb-ps-multiselect--open .onb-ps-multiselect-trigger i {
+  transform: rotate(180deg);
+}
+
+.onb-ps-multiselect-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #d5dde0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(9, 11, 12, 0.12);
+  padding: 4px 0;
+  z-index: 10;
+  display: none;
+}
+
+.onb-ps-multiselect-dropdown--open {
+  display: block;
+}
+
+.onb-ps-ms-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.onb-ps-ms-item:hover {
+  background: #f5f8fa;
+}
+
+.onb-ps-ms-item input {
+  width: 16px;
+  height: 16px;
+  accent-color: #008029;
+  cursor: pointer;
+  margin: 0;
+}
+
+.onb-ps-ms-item span {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+}
+
+/* Helper text */
+.onb-ps-helper {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #676f73;
+  margin: -12px 0 0;
+  padding-left: 28px;
+}
+.onb-ps-helper--flush {
+  padding-left: 0;
+}
+
+/* ========================================
+   STEP 3 — REVIEW
+   ======================================== */
+
+.onb-rv-card {
+  border: 1px solid #d5dde0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.onb-rv-heading {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d201f;
+  padding: 16px 20px;
+  border-bottom: 1px solid #d5dde0;
+}
+
+.onb-rv-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.onb-rv-row {
+  display: flex;
+  padding: 12px 20px;
+  border-bottom: 1px solid #eef1f3;
+}
+
+.onb-rv-row:last-child {
+  border-bottom: none;
+}
+
+.onb-rv-label {
+  width: 140px;
+  flex-shrink: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #676f73;
+}
+
+.onb-rv-value {
+  flex: 1;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1d201f;
+  word-break: break-word;
+}
+
+.onb-rv-empty {
+  color: #abb3b8;
+  font-style: italic;
 }

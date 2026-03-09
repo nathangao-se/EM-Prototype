@@ -5,9 +5,7 @@
 /* Dynamic width via JS; default to 800px */
 .inv-wizard {
   width: 800px;
-  height: 800px;
-  max-height: var(--modal-max-height);
-  transition: width 220ms ease-in-out, height 220ms ease-in-out;
+  transition: width 220ms ease-in-out;
 }
 
 .inv-wizard .wizard-body {
