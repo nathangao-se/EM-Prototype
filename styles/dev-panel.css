@@ -175,7 +175,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, #f5f8fa 0%, #ffffff 100%);
   z-index: var(--z-dev-toggle);
   align-items: center;
   justify-content: center;
