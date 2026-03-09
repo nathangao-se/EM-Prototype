@@ -574,7 +574,11 @@
       currentStep = 2; render();
     });
     document.getElementById('onb-rv-create').addEventListener('click', function () {
+      window.onboardingProject = Object.assign({}, formData);
       closeWizard();
+      if (typeof window.renderPostOnboarding === 'function') {
+        window.renderPostOnboarding();
+      }
     });
   }
 

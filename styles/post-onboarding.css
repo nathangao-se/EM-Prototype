@@ -1,0 +1,10 @@
+/* ========================================
+   POST-ONBOARDING — minimal additions
+   Everything else comes from the existing
+   base.css, project-bar.css, goals.css, dashboard.css
+   ======================================== */
+
+.project-bar__kpi-icon--neutral {
+  background: #eef1f3;
+  color: #abb3b8;
+}

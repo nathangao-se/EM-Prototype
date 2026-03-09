@@ -60,6 +60,9 @@
     if (currentConfigId === 'deliverables') {
       deactivateDeliverables();
     }
+    if (currentConfigId === 'post-onboarding') {
+      if (typeof window.exitPostOnboarding === 'function') window.exitPostOnboarding();
+    }
 
     if (configId === 'deliverables') {
       currentConfigId = configId;
@@ -72,6 +75,15 @@
       deactivateDeliverables();
       if (typeof window.openOnboardingWizard === 'function') {
         window.openOnboardingWizard();
+      }
+      return;
+    }
+
+    if (configId === 'post-onboarding') {
+      currentConfigId = configId;
+      deactivateDeliverables();
+      if (typeof window.renderPostOnboarding === 'function') {
+        window.renderPostOnboarding();
       }
       return;
     }
@@ -120,6 +132,8 @@
           switchToConfig('global-oversight');
         } else if (target === 'site-manager') {
           switchToConfig('site-manager');
+        } else if (target === 'post-onboarding') {
+          switchToConfig('post-onboarding');
         } else if (target === 'app-shell') {
           switchToConfig('app-shell');
         }

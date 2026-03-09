@@ -42,6 +42,7 @@
   <link rel="stylesheet" href="ghg-engine/ghg-engine.css">
   <link rel="stylesheet" href="styles/app-shell.css">
   <link rel="stylesheet" href="wizards/onboarding/onboarding.css">
+  <link rel="stylesheet" href="styles/post-onboarding.css">
   <link rel="stylesheet" href="styles/clickable-hints.css">
 </head>
 <body>
@@ -367,6 +368,10 @@
           <span class="landing-sel-option-label">Admin concept</span>
           <span class="landing-sel-option-desc">Individual site manager view</span>
         </button>
+        <button class="landing-sel-option" data-landing="post-onboarding">
+          <span class="landing-sel-option-label">Post-onboarding</span>
+          <span class="landing-sel-option-desc">Zero-state project dashboard after setup</span>
+        </button>
         <button class="landing-sel-option" data-landing="app-shell">
           <span class="landing-sel-option-label">Older nav view</span>
           <span class="landing-sel-option-desc">Side navigation layout</span>
@@ -409,6 +414,7 @@
           <button class="dev-panel-option" data-config="onboarding">Onboarding</button>
           <button class="dev-panel-option dev-panel-option--active" data-config="global-oversight">Global Admin</button>
           <button class="dev-panel-option" data-config="site-manager">Site Manager</button>
+          <button class="dev-panel-option" data-config="post-onboarding">Post-onboarding</button>
           <button class="dev-panel-option" data-config="app-shell">Older side nav view</button>
         </div>
       </div>
@@ -520,6 +526,7 @@
   })();
   </script>
   <script src="wizards/onboarding/onboarding.js"></script>
+  <script src="js/post-onboarding.js"></script>
   <script src="js/app-shell.js"></script>
   <script src="js/clickable-hints.js"></script>
   <script src="js/dev-panel.js"></script>
