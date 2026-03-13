@@ -263,7 +263,7 @@
       return;
     }
 
-    var isVersionB = window.uploadWizardVersion === 'b';
+    var isVersionB = window.uploadWizardVersion === 'b' || window.uploadWizardVersion === 'c';
 
     if (ctx.showManualEntry) {
       html += buildManualEntryForm();
