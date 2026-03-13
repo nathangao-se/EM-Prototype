@@ -151,6 +151,72 @@
     unrecognizedNames: ['Date', 'method', 'UOM', 'Total', 'Revenue', 'descrkption'],
     columnMatches: [],
 
+    v3OperativeCardIdx: -1,
+    v3OperativeFileIdx: -1,
+    v3SelectedCategory: 'Carbon',
+    v3Categories: {
+      'Carbon': [
+        { label: 'Business entity', desc: 'Business Entity name as appears in Resource Advisor+.', files: [
+          { source: 'Scope 1 Stationary Combustion activities', range: 'A8:H9800' }
+        ]},
+        { label: 'Start date', desc: 'Start Date of Activity.', files: [
+          { source: 'Scope 3.13 Downstream Leased Assets', range: 'A8:H9800' }
+        ]},
+        { label: 'End date', desc: 'End Date of Activity.', files: [
+          { source: 'Scope 1 Stationary Combustion activities', range: 'A8:H9800' }
+        ]},
+        { label: 'Estimation method', desc: 'Method used to estimate emissions.', files: [
+          { source: 'Scope 1 Stationary Combustion activities', range: 'A8:H9800' }
+        ]},
+        { label: 'Investment type', desc: 'Type of investment.', files: [
+          { source: 'Scope 1 Stationary Combustion activities', range: 'A8:H9800' }
+        ]},
+        { label: 'Emissions of the investment', desc: 'Emissions of the investment. Required for emissions calculations.', files: [
+          { source: 'File name', range: 'A8:H9800' }
+        ]},
+        { label: 'Emissions UoM', desc: 'Unit of measure for the investment emissions.', files: [
+          { source: 'File name', range: 'A8:H9800' }
+        ]}
+      ],
+      'Energy': [
+        { label: 'Energy type', desc: 'Select the energy type for the activity.', files: [
+          { source: 'Scope 2 Purchased Electricity', range: 'B2:G1200' }
+        ]},
+        { label: 'Energy attribute type', desc: 'Select one of the drop-down Energy Attribute Types.', files: [
+          { source: 'Scope 2 Purchased Electricity', range: 'B2:G1200' },
+          { source: 'Scope 3.3 Fuel and Energy', range: 'C5:H800' }
+        ]},
+        { label: 'Usage value', desc: 'Usage quantity for the activity.', files: [
+          { source: 'Scope 2 Purchased Electricity', range: 'D2:D1200' }
+        ]},
+        { label: 'Usage UOM', desc: 'Usage Unit of Measure.', files: [
+          { source: 'Scope 2 Purchased Electricity', range: 'E2:E1200' }
+        ]}
+      ],
+      'Transport': [
+        { label: 'Vehicle type', desc: 'Type of vehicle driven. Required when Category is Mobile Combustion.', files: [
+          { source: 'Scope 1 Mobile Combustion', range: 'A2:F3400' }
+        ]},
+        { label: 'Distance value', desc: 'Distance traveled for Mobile Combustion.', files: [
+          { source: 'Scope 1 Mobile Combustion', range: 'D2:D3400' }
+        ]},
+        { label: 'Distance UOM', desc: 'Distance Unit of Measure for Mobile Combustion.', files: [
+          { source: 'Scope 1 Mobile Combustion', range: 'E2:E3400' }
+        ]},
+        { label: 'Cabin class', desc: 'Select Cabin Class used for Air travel.', files: [
+          { source: 'Scope 3.6 Business Travel', range: 'C10:H500' }
+        ]},
+        { label: 'Origin', desc: 'Starting location of the transport or activity.', files: [
+          { source: 'Scope 3.6 Business Travel', range: 'F10:F500' },
+          { source: 'Scope 3.4 Upstream Transport', range: 'B5:B2000' }
+        ]},
+        { label: 'Destination', desc: 'Ending location of the transport or activity.', files: [
+          { source: 'Scope 3.6 Business Travel', range: 'G10:G500' },
+          { source: 'Scope 3.4 Upstream Transport', range: 'C5:C2000' }
+        ]}
+      ]
+    },
+
     // Step renderers (populated by step files)
     renderStep0: null,
     renderStep1: null,
@@ -299,6 +365,9 @@
       ctx.savedSections = [];
       ctx.savedRanges = [];
       ctx.columnMatches.forEach(function (c) { c.selected = ''; });
+      ctx.v3OperativeCardIdx = -1;
+      ctx.v3OperativeFileIdx = -1;
+      ctx.v3SelectedCategory = Object.keys(ctx.v3Categories)[0];
       render();
     }
   });
@@ -315,6 +384,8 @@
     if (window.uploadWizardVersion === 'a') return [0];
     return [0, 1, 2];
   }
+
+  ctx.isV3 = function () { return window.uploadWizardVersion === 'c'; };
   ctx.getVisibleSteps = getVisibleSteps;
 
   function nextVisibleStep(from) {
@@ -408,8 +479,8 @@
 
     backBtn.textContent = isFirst ? 'Cancel' : 'Back';
     backBtn.style.visibility = '';
-    nextBtn.textContent = isLast ? 'Save' : 'Next';
-    discardLink.style.display = 'none';
+    nextBtn.textContent = isLast ? 'Save' : (ctx.isV3() && ctx.currentStep === 0 ? 'Next' : 'Review');
+    discardLink.style.display = (ctx.isV3() && ctx.currentStep > 0) ? '' : 'none';
 
     var checkRow = overlay.querySelector('.uw-s2-check-row');
     if (checkRow) {
@@ -419,7 +490,8 @@
 
   function updateModalWidth() {
     var inSwap = ctx.currentStep === 0 && (ctx.showManualEntry || ctx.showTemplateList);
-    wiz.classList.toggle('upload-wiz--wide', ctx.currentStep === 1 && ctx.showTablePreview);
+    var v3Wide = ctx.isV3() && ctx.currentStep === 1;
+    wiz.classList.toggle('upload-wiz--wide', v3Wide || (ctx.currentStep === 1 && ctx.showTablePreview));
     wiz.classList.toggle('upload-wiz--swap', inSwap);
   }
 
@@ -445,7 +517,10 @@
     void bodyEl.offsetWidth;
     bodyEl.style.animation = anim + ' 220ms ease-in-out';
     if (ctx.currentStep === 0) ctx.renderStep0();
-    else if (ctx.currentStep === 1) ctx.renderStep1();
+    else if (ctx.currentStep === 1) {
+      if (ctx.isV3() && ctx.renderStep1V3) ctx.renderStep1V3();
+      else ctx.renderStep1();
+    }
     else ctx.renderStep2();
   }
   ctx.render = render;

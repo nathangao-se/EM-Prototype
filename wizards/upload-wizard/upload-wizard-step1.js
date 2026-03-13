@@ -10,6 +10,12 @@
   var overlay = ctx.overlay;
   var bodyEl = ctx.bodyEl;
 
+  function csvKeyForFile(name, index) {
+    if (ctx.SAMPLE_CSV_DATA[name]) return name;
+    var fallback = ctx.SAMPLE_IMPORTED[index !== undefined ? index : 0];
+    return fallback ? fallback.name : name;
+  }
+
   // ── Layouts tab (left pane) ─────────────────────────────────────
 
   function renderLayoutsTab() {
@@ -377,8 +383,8 @@
 
       if (epContainer && window.ExcelParser) {
         var allFiles = ctx.uploadedFiles.length > 0 ? ctx.uploadedFiles : ctx.SAMPLE_IMPORTED;
-        var initialName = allFiles[0] ? allFiles[0].name : '';
-        var initialCSV = ctx.SAMPLE_CSV_DATA[initialName];
+        var initialKey = csvKeyForFile(allFiles[0] ? allFiles[0].name : '', 0);
+        var initialCSV = ctx.SAMPLE_CSV_DATA[initialKey];
 
         window.ExcelParser.init(epContainer, {
           onSelectionChange: function () { updateSaveBtns(); }
@@ -389,7 +395,8 @@
 
       if (fileSelect && window.ExcelParser) {
         fileSelect.addEventListener('change', function () {
-          var csv = ctx.SAMPLE_CSV_DATA[fileSelect.value];
+          var key = csvKeyForFile(fileSelect.value, fileSelect.selectedIndex);
+          var csv = ctx.SAMPLE_CSV_DATA[key];
           if (csv) {
             window.ExcelParser.loadCSV(csv);
             updateSaveBtns();
@@ -402,6 +409,251 @@
   // ── Register on context ─────────────────────────────────────────
 
   ctx.renderStep1 = renderStep1;
+
+  // ── V3 renderer (card-based, category-grouped) ────────────────
+  function renderStep1V3() {
+    var cats = ctx.v3Categories;
+    var selectedCat = ctx.v3SelectedCategory || Object.keys(cats)[0];
+    var columns = cats[selectedCat] || [];
+    var allFiles = ctx.uploadedFiles.length > 0 ? ctx.uploadedFiles : ctx.SAMPLE_IMPORTED;
+
+    var html = '<div class="uw-v3-split">';
+
+    // ── Left panel ──────────────────────────────────────────
+    html += '<div class="uw-v3-left">';
+    html += '<p class="uw-v3-intro">Map your uploaded columns to standard emission categories. Select a category, then associate files and cell ranges for each column.</p>';
+
+    html += '<div class="uw-v3-cat-row">';
+    html += '<label class="uw-v3-cat-label">Emissions category</label>';
+    html += '<select class="uw-v3-cat-select">';
+    Object.keys(cats).forEach(function (c) {
+      html += '<option' + (c === selectedCat ? ' selected' : '') + '>' + esc(c) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    html += '<div class="uw-v3-cards">';
+    columns.forEach(function (col, ci) {
+      var isOperative = ctx.v3OperativeCardIdx === ci;
+      html += '<div class="uw-v3-card' + (isOperative ? ' uw-v3-card--active' : '') + '" data-card="' + ci + '">';
+      html += '<div class="uw-v3-card-header">';
+      html += '<div class="uw-v3-card-titles">';
+      html += '<span class="uw-v3-card-title">' + esc(col.label) + '</span>';
+      html += '<span class="uw-v3-card-desc">' + esc(col.desc) + '</span>';
+      html += '</div>';
+      html += '<button type="button" class="uw-v3-card-add" data-card-add="' + ci + '" title="Add file mapping"><i class="fa-solid fa-plus"></i></button>';
+      html += '</div>';
+
+      if (col.files && col.files.length) {
+        html += '<div class="uw-v3-card-files">';
+        col.files.forEach(function (f, fi) {
+          var isActiveFile = isOperative && ctx.v3OperativeFileIdx === fi;
+          html += '<div class="uw-v3-file-row' + (isActiveFile ? ' uw-v3-file-row--active' : '') + '" data-card="' + ci + '" data-file="' + fi + '">';
+          html += '<div class="uw-v3-file-info">';
+          html += '<span class="uw-v3-file-source">' + esc(f.source) + '</span>';
+          html += '<span class="uw-v3-file-range">' + esc(f.range) + '</span>';
+          html += '</div>';
+          html += '<button type="button" class="uw-v3-file-chevron" data-card="' + ci + '" data-file="' + fi + '" title="Show in table"><i class="fa-solid fa-chevron-right"></i></button>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+
+    // ── Right panel ─────────────────────────────────────────
+    html += '<div class="uw-v3-right">';
+    html += '<div class="uw-v3-right-toolbar">';
+    html += '<select class="uw-v3-file-select">';
+    allFiles.forEach(function (f) {
+      html += '<option>' + esc(f.name) + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
+    html += '<div class="uw-v3-right-table" id="ep-container-v3"></div>';
+
+    html += '<div class="uw-v3-designation">';
+    html += '<button type="button" class="btn btn-outline uw-v3-desig-btn" data-action="v3-save-block" disabled><i class="fa-solid fa-table"></i> Designate selection</button>';
+    html += '<button type="button" class="btn btn-outline uw-v3-desig-btn" data-action="v3-save-headers" disabled><i class="fa-solid fa-table-list"></i> Designate using selected row as header</button>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>';
+
+    bodyEl.classList.add('upload-wiz-body--split');
+    bodyEl.innerHTML = html;
+    bindStep1V3Events();
+  }
+
+  function bindStep1V3Events() {
+    var catSelect = bodyEl.querySelector('.uw-v3-cat-select');
+    if (catSelect) {
+      catSelect.addEventListener('change', function () {
+        ctx.v3SelectedCategory = catSelect.value;
+        ctx.v3OperativeCardIdx = -1;
+        ctx.v3OperativeFileIdx = -1;
+        ctx.render();
+      });
+    }
+
+    // Card add buttons
+    bodyEl.querySelectorAll('.uw-v3-card-add').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var ci = parseInt(btn.getAttribute('data-card-add'), 10);
+        var cols = ctx.v3Categories[ctx.v3SelectedCategory];
+        if (cols && cols[ci]) {
+          cols[ci].files.push({ source: '(select a file)', range: '' });
+          ctx.v3OperativeCardIdx = ci;
+          ctx.v3OperativeFileIdx = cols[ci].files.length - 1;
+          ctx.render();
+        }
+      });
+    });
+
+    // File row chevron
+    bodyEl.querySelectorAll('.uw-v3-file-chevron').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var ci = parseInt(btn.getAttribute('data-card'), 10);
+        var fi = parseInt(btn.getAttribute('data-file'), 10);
+        ctx.v3OperativeCardIdx = ci;
+        ctx.v3OperativeFileIdx = fi;
+
+        var cols = ctx.v3Categories[ctx.v3SelectedCategory];
+        var fileRow = cols && cols[ci] && cols[ci].files[fi];
+        if (fileRow && fileRow.source) {
+          var fileSelect = bodyEl.querySelector('.uw-v3-file-select');
+          if (fileSelect) {
+            var allFiles = ctx.uploadedFiles.length > 0 ? ctx.uploadedFiles : ctx.SAMPLE_IMPORTED;
+            var matchIdx = -1;
+            allFiles.forEach(function (f, i) {
+              if (f.name.indexOf(fileRow.source) > -1 || fileRow.source.indexOf(f.name) > -1) matchIdx = i;
+            });
+            if (matchIdx >= 0) {
+              fileSelect.selectedIndex = matchIdx;
+              var csv = ctx.SAMPLE_CSV_DATA[allFiles[matchIdx].name];
+              if (csv && window.ExcelParser) {
+                window.ExcelParser.loadCSV(csv);
+              }
+            }
+          }
+          if (fileRow.range && window.ExcelParser) {
+            highlightV3Range(fileRow.range);
+          }
+        }
+        ctx.render();
+      });
+    });
+
+    // File select dropdown
+    var fileSelect = bodyEl.querySelector('.uw-v3-file-select');
+    if (fileSelect && window.ExcelParser) {
+      fileSelect.addEventListener('change', function () {
+        var key = csvKeyForFile(fileSelect.value, fileSelect.selectedIndex);
+        var csv = ctx.SAMPLE_CSV_DATA[key];
+        if (csv) {
+          window.ExcelParser.loadCSV(csv);
+          updateV3DesigBtns();
+        }
+      });
+    }
+
+    // Init ExcelParser
+    var epContainer = bodyEl.querySelector('#ep-container-v3');
+    if (epContainer && window.ExcelParser) {
+      var allFiles = ctx.uploadedFiles.length > 0 ? ctx.uploadedFiles : ctx.SAMPLE_IMPORTED;
+      var initialKey = csvKeyForFile(allFiles[0] ? allFiles[0].name : '', 0);
+      var initialCSV = ctx.SAMPLE_CSV_DATA[initialKey];
+      window.ExcelParser.init(epContainer, {
+        onSelectionChange: function () { updateV3DesigBtns(); }
+      });
+      if (initialCSV) window.ExcelParser.loadCSV(initialCSV);
+      updateV3DesigBtns();
+    }
+
+    // Designation buttons
+    var saveBlockBtn = bodyEl.querySelector('[data-action="v3-save-block"]');
+    var saveHeadersBtn = bodyEl.querySelector('[data-action="v3-save-headers"]');
+
+    function updateV3DesigBtns() {
+      if (!window.ExcelParser) return;
+      var hasSel = window.ExcelParser.hasSelection();
+      var canHeader = window.ExcelParser.canSaveWithHeader();
+      if (saveBlockBtn) saveBlockBtn.disabled = !hasSel;
+      if (saveHeadersBtn) saveHeadersBtn.disabled = !canHeader;
+    }
+
+    if (saveBlockBtn) {
+      saveBlockBtn.addEventListener('click', function () {
+        if (!window.ExcelParser || !window.ExcelParser.hasSelection()) return;
+        var sel = window.ExcelParser.getSelection();
+        var block = window.ExcelParser.saveBlock();
+        var rangeLabel = block ? block.rangeLabel : '';
+        if (!rangeLabel && sel) {
+          rangeLabel = colToLetter(sel.minCol) + (sel.minRow + 1) + ':' + colToLetter(sel.maxCol) + (sel.maxRow + 1);
+        }
+        writeBackDesignation(rangeLabel);
+      });
+    }
+
+    if (saveHeadersBtn) {
+      saveHeadersBtn.addEventListener('click', function () {
+        if (!window.ExcelParser || !window.ExcelParser.canSaveWithHeader()) return;
+        var sel = window.ExcelParser.getSelection();
+        var block = window.ExcelParser.saveBlockWithHeader();
+        var rangeLabel = block ? block.rangeLabel : '';
+        if (!rangeLabel && sel) {
+          var endRow = sel.minRow + (block && block.rows ? block.rows.length : 0);
+          rangeLabel = colToLetter(sel.minCol) + (sel.minRow + 1) + ':' + colToLetter(sel.maxCol) + (endRow + 1);
+        }
+        writeBackDesignation(rangeLabel);
+      });
+    }
+  }
+
+  function writeBackDesignation(rangeLabel) {
+    if (ctx.v3OperativeCardIdx < 0) return;
+    var cols = ctx.v3Categories[ctx.v3SelectedCategory];
+    var col = cols && cols[ctx.v3OperativeCardIdx];
+    if (!col) return;
+    var fi = ctx.v3OperativeFileIdx;
+    if (fi >= 0 && fi < col.files.length) {
+      var fileSelect = bodyEl.querySelector('.uw-v3-file-select');
+      if (fileSelect) col.files[fi].source = fileSelect.value;
+      col.files[fi].range = rangeLabel;
+      ctx.render();
+    }
+  }
+
+  function highlightV3Range(rangeStr) {
+    if (!window.ExcelParser) return;
+    var m = rangeStr.match(/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/i);
+    if (!m) return;
+    var minCol = letterToCol(m[1]);
+    var minRow = parseInt(m[2], 10) - 1;
+    var maxCol = letterToCol(m[3]);
+    var maxRow = parseInt(m[4], 10) - 1;
+    window.ExcelParser.setSelection(minRow, maxRow, minCol, maxCol);
+  }
+
+  function colToLetter(n) {
+    var s = '';
+    while (n >= 0) { s = String.fromCharCode(65 + (n % 26)) + s; n = Math.floor(n / 26) - 1; }
+    return s;
+  }
+
+  function letterToCol(s) {
+    var n = 0;
+    for (var i = 0; i < s.length; i++) { n = n * 26 + s.charCodeAt(i) - 64; }
+    return n - 1;
+  }
+
+  ctx.renderStep1V3 = renderStep1V3;
 
   window.getColumnsTabHTML = function () { return renderColumnsTab(); };
   window.bindColumnsTabEvents = function (container) {
